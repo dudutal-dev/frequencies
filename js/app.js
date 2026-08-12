@@ -190,7 +190,7 @@ function journeyCardHTML(j) {
          style="background: linear-gradient(140deg, ${j.colors[0]}, ${j.colors[1]})">
       <span class="jc-glyph">${j.glyph}</span>
       <div class="jc-title">${j.title}</div>
-      <div class="jc-sub">${playing ? `● מתנגן · שלב ${seq.index + 1}/${j.steps.length}` : j.sub}</div>
+      <div class="jc-sub">${playing ? `● מתנגן · שלב ${seq.index + 1}/${j.steps.length}` : `${j.sub} · ♬ עם מלודיה`}</div>
       <div class="jc-desc">${j.desc}</div>
       <div class="jc-steps">${dots}</div>
     </div>`;
@@ -394,10 +394,14 @@ function refreshSeqViews() {
 
 function startJourney(j) {
   activeSeqId = j.id;
-  seq.start(j.title, j.steps.map(s => ({ track: byId[s.id], seconds: Math.round(s.min * 60) })));
+  /* כל שלב במסע מקבל שכבת מלודיה גנרטיבית מעל התדר הפעיל */
+  seq.start(j.title, j.steps.map(s => ({
+    track: { ...byId[s.id], melody: true },
+    seconds: Math.round(s.min * 60),
+  })));
   armTimer();
   openPlayer();
-  toast(`המסע "${j.title}" יצא לדרך ✦`);
+  toast(`המסע "${j.title}" יצא לדרך ✦♬`);
 }
 
 function startPlaylist(p) {
@@ -449,7 +453,8 @@ function closePlayer() {
 }
 
 function updatePlayerView(track) {
-  els.pMode.textContent = `${MODE_LABEL[track.mode]} · ${track.freq}Hz${track.beat ? ` + ביט ${track.beat}Hz` : ''}`;
+  const melodySuffix = track.melody && track.mode !== 'melodic' ? ' · ♬ מלודיה חיה' : '';
+  els.pMode.textContent = `${MODE_LABEL[track.mode]} · ${track.freq}Hz${track.beat ? ` + ביט ${track.beat}Hz` : ''}${melodySuffix}`;
   els.pTitle.textContent = track.title;
   els.pSub.textContent = track.sub;
   els.pDesc.textContent = track.desc;
