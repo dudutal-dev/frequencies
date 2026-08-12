@@ -613,6 +613,53 @@ export const JOURNEYS = [
     ],
   },
 
+  /* ------------------------------ אינטימי — לשמיעה רציפה בזוג ------------------------------ */
+  {
+    id: 'journey-intimate-evening',
+    title: 'ערב אינטימי',
+    sub: '4 שלבים · 72 דקות',
+    desc: 'שעה וחצי בלי קצב ובלי הפרעות: לחישה בכוונון 432 לפתיחה, ליל ונוס, מגע, ועור לסיום. פאדים רציפים שמתחלפים בעדינות — אין רגע אחד שקוטע.',
+    colors: ['#d53f8c', '#fbb6ce'], glyph: '♀',
+    steps: [
+      { id: 'love-whisper', min: 18 }, { id: 'love-venus-night', min: 18 },
+      { id: 'love-touch', min: 18 }, { id: 'love-skin', min: 18 },
+    ],
+  },
+  {
+    id: 'journey-lovers-night',
+    title: 'לילה שלם ביחד',
+    sub: '5 שלבים · 100 דקות',
+    desc: 'המסע הזוגי הארוך: נשימה משותפת שמסנכרנת, ליל ונוס, טנטרה, לילה ארוך ב-174Hz — ו"אחרי" שמנחית בשקט. שעה ארבעים ברצף.',
+    colors: ['#805ad5', '#4fd1c5'], glyph: '♀',
+    steps: [
+      { id: 'love-breath', min: 20 }, { id: 'love-venus-night', min: 20 },
+      { id: 'love-tantra', min: 20 }, { id: 'love-longnight', min: 20 },
+      { id: 'love-afterglow', min: 20 },
+    ],
+  },
+  {
+    id: 'journey-tantra',
+    title: 'תרגול טנטרי',
+    sub: '4 שלבים · 64 דקות',
+    desc: 'תרגול איטי לזוג: נשימה משותפת להתכווננות, מגע, טנטרה על תדר הנס, ופתיחת הלב לסיום. בלי כלי הקשה בכלל — רק פאדים ונשימה.',
+    colors: ['#f6e05e', '#f687b3'], glyph: '♀',
+    steps: [
+      { id: 'love-breath', min: 16 }, { id: 'love-touch', min: 16 },
+      { id: 'love-tantra', min: 16 }, { id: 'chakra-heart', min: 16 },
+    ],
+  },
+  {
+    id: 'journey-morning-after',
+    title: 'בוקר שאחרי',
+    sub: '3 שלבים · 45 דקות',
+    desc: 'שלוש רבעי שעה של אור רך: "אחרי" עם הקריסטל, שדה הלב עם הנבל, ושחר. לבוקר עצל שאף אחד לא ממהר לקום בו.',
+    colors: ['#4fd1c5', '#f6e05e'], glyph: '♀',
+    steps: [
+      { id: 'love-afterglow', min: 15 }, { id: 'amb-heartfield', min: 15 },
+      { id: 'amb-dawn', min: 15 },
+    ],
+  },
+
   /* ------------------------------ סטים של טכנו — עולים ------------------------------ */
   {
     id: 'journey-techno-rise',

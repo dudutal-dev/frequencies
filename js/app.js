@@ -171,6 +171,9 @@ const ICON_BY_ID = {
   'calm-inner-quiet': 'ripple', 'calm-anger': 'flame', 'calm-emotions': 'drop',
   'calm-grounding': 'anchor', 'calm-soundbath': 'ripple',
   'love-magnet': 'heart', 'love-self': 'heart', 'love-heartbreak': 'heart',
+  'love-touch': 'heart', 'love-skin': 'drop', 'love-breath': 'ripple',
+  'love-venus-night': 'planet', 'love-tantra': 'infinity', 'love-longnight': 'moon',
+  'love-afterglow': 'cloud', 'love-whisper': 'feather',
   'love-open-heart': 'heart',
   'dna-528': 'helix', 'dna-285': 'helix', 'dna-temple': 'star',
   'dna-amplify': 'helix', 'dna-youth': 'crystal',
@@ -317,6 +320,21 @@ function tileHTML(t) {
     </div>`;
 }
 
+/* כרטיס מסע כעטיפת אלבום: הילה צבעונית, עמוד אור מרכזי,
+   האייקון זוהר במרכזו והשם חרוט בתחתית. */
+function journeyCoverHTML(j) {
+  const [c0, c1] = j.colors;
+  return `
+    <div class="jcard" data-journey="${j.id}">
+      <div class="jart" style="--a:${hexA(c0, 0.55)}; --b:${hexA(c1, 0.5)}; --edge:${hexA(c0, 0.3)}">
+        <span class="jart-beam"></span>
+        <span class="jart-icon">${journeyIcon(j)}</span>
+        <span class="jart-title">${j.title}</span>
+      </div>
+      <div class="jcard-sub">${j.sub}</div>
+    </div>`;
+}
+
 function renderHome() {
   const hero = byId['dna-528'] || TRACKS[0];
   const recents = state.recents.map(id => byId[id]).filter(Boolean);
@@ -336,7 +354,7 @@ function renderHome() {
   const picks = [
     'journey-techno-rise', 'journey-chakras', 'journey-psychedelic',
     'journey-soundbath', 'journey-genres', 'journey-sleep',
-    'journey-shaman-classic', 'journey-schumann-ladder',
+    'journey-intimate-evening', 'journey-inner-space',
   ].map(id => journeyById[id]).filter(Boolean);
 
   html += `
@@ -345,13 +363,7 @@ function renderHome() {
         <div class="section-title"><span class="sec-icon">✦</span>מסעות מומלצים</div>
         <button class="section-more" data-goto-journeys="1">הכול ←</button>
       </div>
-      <div class="row">${picks.map(j => `
-        <div class="jcard-mini" data-journey="${j.id}"
-             style="background: linear-gradient(140deg, ${j.colors[0]}, ${j.colors[1]})">
-          <span class="jm-icon">${journeyIcon(j)}</span>
-          <div class="jm-title">${j.title}</div>
-          <div class="jm-sub">${j.sub}</div>
-        </div>`).join('')}</div>
+      <div class="row">${picks.map(journeyCoverHTML).join('')}</div>
     </div>`;
 
   for (const cat of CATEGORIES) {
