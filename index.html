@@ -30,6 +30,23 @@
       <!-- בית -->
       <section class="view active" id="view-home"></section>
 
+      <!-- מסעות ופלייליסטים -->
+      <section class="view" id="view-journeys">
+        <div class="j-intro">
+          <div class="j-intro-title">✦ מסעות מודרכים</div>
+          <div class="j-intro-sub">רצפים אוצרים שמחליפים תדרים אוטומטית — שכבו, עצמו עיניים, והמסע ינווט לבדו.</div>
+        </div>
+        <div class="journeys" id="journeys-list"></div>
+        <div class="j-intro" style="margin-top: 30px">
+          <div class="j-intro-title">♪ הפלייליסטים שלי</div>
+          <div class="j-intro-sub">רצפים אישיים משלכם — הוסיפו יצירות דרך כפתור + בנגן.</div>
+        </div>
+        <div class="list" id="playlists-list"></div>
+        <div class="pl-create-wrap">
+          <button class="pl-create" id="pl-create">+ פלייליסט חדש</button>
+        </div>
+      </section>
+
       <!-- ספרייה -->
       <section class="view" id="view-library">
         <div class="search-wrap">
@@ -88,6 +105,7 @@
     <!-- ניווט תחתון -->
     <nav class="tabbar">
       <button class="tab active" data-view="home"><span class="t-icon">⌂</span>בית</button>
+      <button class="tab" data-view="journeys"><span class="t-icon">✦</span>מסעות</button>
       <button class="tab" data-view="library"><span class="t-icon">♪</span>ספרייה</button>
       <button class="tab" data-view="favorites"><span class="t-icon">♡</span>מועדפים</button>
       <button class="tab" data-view="about"><span class="t-icon">☯</span>אודות</button>
@@ -99,9 +117,19 @@
       <div class="player-scrim"></div>
       <div class="player-top">
         <button class="p-close" id="p-close" aria-label="סגירה">⌄</button>
-        <button class="p-fav" id="p-fav" aria-label="מועדף">♡</button>
+        <div class="p-top-actions">
+          <button class="p-fav" id="p-add" aria-label="הוספה לפלייליסט">+</button>
+          <button class="p-fav" id="p-fav" aria-label="מועדף">♡</button>
+        </div>
       </div>
       <div class="player-bottom">
+        <div class="p-journey" id="p-journey" hidden>
+          <div class="pj-head">
+            <span class="pj-name" id="pj-name"></span>
+            <span class="pj-step" id="pj-step"></span>
+          </div>
+          <div class="pj-bar"><div class="pj-fill" id="pj-fill"></div></div>
+        </div>
         <div class="p-mode" id="p-mode"></div>
         <div class="p-title" id="p-title"></div>
         <div class="p-sub" id="p-sub"></div>
@@ -109,13 +137,25 @@
         <div class="p-tags" id="p-tags"></div>
         <div class="phones-note" id="phones-note">🎧 יצירה בינאורלית — האזינו עם אוזניות סטריאו לאפקט מלא</div>
         <div class="p-controls">
+          <button class="p-step" id="p-prev" aria-label="שלב קודם" hidden>⏮</button>
           <button class="p-play" id="p-play" aria-label="נגן / עצור">❚❚</button>
+          <button class="p-step" id="p-next" aria-label="שלב הבא" hidden>⏭</button>
           <button class="p-timer" id="p-timer">טיימר ∞</button>
           <div class="p-vol">
             <span class="v-icon">🔊</span>
             <input type="range" id="p-volume" min="0" max="1" step="0.01" value="0.7" aria-label="עוצמה" />
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Bottom Sheet — הוספה לפלייליסט -->
+    <div class="sheet-backdrop" id="sheet-backdrop" hidden>
+      <div class="sheet">
+        <div class="sheet-grip"></div>
+        <div class="sheet-title">הוספה לפלייליסט</div>
+        <div class="sheet-list" id="sheet-list"></div>
+        <button class="sheet-new" id="sheet-new">+ פלייליסט חדש</button>
       </div>
     </div>
 

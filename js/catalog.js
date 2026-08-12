@@ -8,16 +8,19 @@
    ============================================================ */
 
 export const CATEGORIES = [
-  { id: 'featured',   label: 'נבחרות',            icon: '✦' },
-  { id: 'solfeggio',  label: 'סולפג\'יו',          icon: '♪' },
-  { id: 'chakra',     label: 'צ\'אקרות',           icon: '◉' },
-  { id: 'brainwave',  label: 'גלי מוח',           icon: '∿' },
-  { id: 'sleep',      label: 'שינה עמוקה',        icon: '☾' },
-  { id: 'focus',      label: 'ריכוז ולמידה',      icon: '◎' },
-  { id: 'dna',        label: 'תיקון DNA ותאים',   icon: '⧬' },
-  { id: 'earth',      label: 'תדרי כדור הארץ',    icon: '⊕' },
-  { id: 'meditation', label: 'מדיטציה',           icon: '☯' },
-  { id: 'energy',     label: 'אנרגיה ושפע',       icon: '☀' },
+  { id: 'featured',   label: 'נבחרות',              icon: '✦' },
+  { id: 'solfeggio',  label: 'סולפג\'יו',            icon: '♪' },
+  { id: 'chakra',     label: 'צ\'אקרות',             icon: '◉' },
+  { id: 'brainwave',  label: 'גלי מוח',             icon: '∿' },
+  { id: 'sleep',      label: 'שינה עמוקה',          icon: '☾' },
+  { id: 'focus',      label: 'ריכוז ולמידה',        icon: '◎' },
+  { id: 'calm',       label: 'רוגע ואיזון רגשי',    icon: '༄' },
+  { id: 'love',       label: 'אהבה וזוגיות',        icon: '♥' },
+  { id: 'dna',        label: 'תיקון DNA ותאים',     icon: '⧬' },
+  { id: 'planets',    label: 'תדרים פלנטריים',      icon: '☉' },
+  { id: 'earth',      label: 'תדרי כדור הארץ',      icon: '⊕' },
+  { id: 'meditation', label: 'מדיטציה',             icon: '☯' },
+  { id: 'energy',     label: 'אנרגיה ושפע',         icon: '☀' },
 ];
 
 export const TRACKS = [
@@ -257,10 +260,195 @@ export const TRACKS = [
     desc: 'תדר היסוד בפעימות דלתא איטיות — הפרוטוקול המסורתי המלא לשיכוך כאב ולהרפיית שרירים עמוקה.',
     tags: ['כאב', 'שרירים'], colors: ['#805ad5', '#150d29'], glyph: '☁', ambience: 0.06 },
 
-  { id: 'relief-anxiety', category: 'brainwave', freq: 396, mode: 'binaural', beat: 10,
+  { id: 'relief-anxiety', category: 'calm', freq: 396, mode: 'binaural', beat: 10, featured: true,
     title: 'אנטי-חרדה', sub: '396Hz + אלפא 10Hz · 🎧',
     desc: 'שילוב מכוון: תדר שחרור הפחד כנשא, ביט אלפא מרגיע כקצב. לרגעים שבהם הלב דוהר.',
     tags: ['חרדה', 'רוגע'], colors: ['#4fd1c5', '#0b2422'], glyph: '༄', ambience: 0.055 },
+
+  /* ------------------------------ רוגע ואיזון רגשי ------------------------------ */
+  { id: 'calm-inner-quiet', category: 'calm', freq: 432, mode: 'isochronic', beat: 8,
+    title: 'שקט פנימי', sub: '432Hz · פעימות אלפא',
+    desc: 'הכוונון הטבעי בפעימות אלפא רכות — כיבוי הדרגתי של רעש המחשבות. עובד גם ברמקולים, בבית או במשרד.',
+    tags: ['רוגע', 'שקט'], colors: ['#81e6d9', '#0d3331'], glyph: '༄', ambience: 0.05 },
+
+  { id: 'calm-anger', category: 'calm', freq: 741, mode: 'binaural', beat: 10,
+    title: 'שחרור כעס', sub: '741Hz + אלפא · 🎧',
+    desc: 'תדר הניקוי עם ביט אלפא מקרקע — לפרוק את היום, את הפקק, את הוויכוח. עשר דקות והחזה נפתח.',
+    tags: ['כעס', 'שחרור'], colors: ['#fc8181', '#3d0f0f'], glyph: '🜂', ambience: 0.045 },
+
+  { id: 'calm-emotions', category: 'calm', freq: 417, mode: 'binaural', beat: 5.5,
+    title: 'עיבוד רגשי', sub: '417Hz + תטא 5.5Hz · 🎧',
+    desc: 'תטא עמוק על תדר השינוי — המרחב שבו רגשות תקועים מקבלים רשות לזוז. מומלץ אחרי יום קשה או שיחה כואבת.',
+    tags: ['רגש', 'עיבוד', 'תטא'], colors: ['#f6ad55', '#2b1608'], glyph: '❦', ambience: 0.055 },
+
+  { id: 'calm-grounding', category: 'calm', freq: 396, mode: 'isochronic', beat: 10,
+    title: 'קרקוע מהיר', sub: '396Hz · פעימות אלפא',
+    desc: 'גרסת הרמקולים של האנטי-חרדה: תדר השורש בפעימות אלפא. חמש דקות לפני פגישה מלחיצה.',
+    tags: ['קרקוע', 'ביטחון'], colors: ['#e53e3e', '#1f0808'], glyph: '⚓', ambience: 0.04 },
+
+  { id: 'calm-soundbath', category: 'calm', freq: 174, mode: 'binaural', beat: 8,
+    title: 'אמבט צליל', sub: '174Hz + אלפא · 🎧',
+    desc: 'התדר הנמוך ביותר עם ביט אלפא עוטף — תחושה של שקיעה במים חמים. הרפיה מלאה של הגוף בלי להירדם.',
+    tags: ['הרפיה', 'פינוק'], colors: ['#9f7aea', '#1a1030'], glyph: '≋', ambience: 0.07 },
+
+  /* ------------------------------ אהבה וזוגיות ------------------------------ */
+  { id: 'love-magnet', category: 'love', freq: 639, mode: 'isochronic', beat: 8, featured: true,
+    title: 'מגנט אהבה', sub: '639Hz · פעימות אלפא',
+    desc: 'תדר החיבור בפעימות פתוחות — מסורתית, התדר שמושך יחסים חדשים ומרפא קיימים. השמיעו בחלל הבית.',
+    tags: ['אהבה', 'משיכה'], colors: ['#f687b3', '#4a1230'], glyph: '♥', ambience: 0.045 },
+
+  { id: 'love-self', category: 'love', freq: 528, mode: 'binaural', beat: 8,
+    title: 'אהבה עצמית', sub: '528Hz + אלפא · 🎧',
+    desc: 'תדר הנס מופנה פנימה: מדיטציית חמלה עצמית על ביט אלפא. הקשר הכי חשוב שיש לכם הוא איתכם.',
+    tags: ['אהבה עצמית', 'חמלה'], colors: ['#fbb6ce', '#5a1b34'], glyph: '✿', ambience: 0.04 },
+
+  { id: 'love-heartbreak', category: 'love', freq: 639, mode: 'isochronic', beat: 6,
+    title: 'ריפוי לב שבור', sub: '639Hz · פעימות תטא',
+    desc: 'תדר הלב בקצב תטא איטי ומרפא — ליווי עדין בתקופת פרידה או אובדן. הלב יודע לתקן את עצמו כשנותנים לו קצב.',
+    tags: ['פרידה', 'ריפוי לב'], colors: ['#feb2b2', '#3d1515'], glyph: '💔', ambience: 0.06 },
+
+  { id: 'love-open-heart', category: 'love', freq: 341.3, mode: 'pure',
+    title: 'פתיחת הלב — 341Hz', sub: 'Heart Harmonic · הסקאלה ההרמונית',
+    desc: 'תדר הלב במיפוי ההרמוני-מוזיקלי (סקאלת C) — גרסה רכה וזורמת יותר של מרכז החזה. לזמן איכות זוגי.',
+    tags: ['לב', 'זוגיות'], colors: ['#9ae6b4', '#1a3d2a'], glyph: '❣', ambience: 0.045 },
+
+  /* ------------------------------ תדרים פלנטריים (האוקטבה הקוסמית של קוסטו) ------------------------------ */
+  { id: 'planet-sun', category: 'planets', freq: 126.22, mode: 'pure', featured: true,
+    title: 'השמש — 126.22Hz', sub: 'Sun Tone · חיוניות והארה',
+    desc: 'תדר השמש מתוך "האוקטבה הקוסמית" של הנס קוסטו. מסורתית — מרכז החיות, הביטחון והנוכחות המלכותית.',
+    tags: ['שמש', 'חיוניות'], colors: ['#f6e05e', '#744210'], glyph: '☉', ambience: 0.04 },
+
+  { id: 'planet-moon', category: 'planets', freq: 210.42, mode: 'pure',
+    title: 'הירח — 210.42Hz', sub: 'Moon Tone · רגש ואינטואיציה',
+    desc: 'תדר המחזור הסינודי של הירח. מסורתית — מאזן את עולם הרגש, מחובר לנשיות, לזרימה ולמחזוריות הטבעית.',
+    tags: ['ירח', 'רגש'], colors: ['#cbd5e0', '#1a202c'], glyph: '☽', ambience: 0.05 },
+
+  { id: 'planet-mercury', category: 'planets', freq: 141.27, mode: 'pure',
+    title: 'מרקורי — 141.27Hz', sub: 'Mercury Tone · תקשורת ושכל',
+    desc: 'תדר כוכב חמה — כוכב התקשורת. מסורתית — מחדד דיבור, כתיבה, מסחר וזריזות מחשבה.',
+    tags: ['תקשורת', 'שכל'], colors: ['#90cdf4', '#153e63'], glyph: '☿', ambience: 0.035 },
+
+  { id: 'planet-venus', category: 'planets', freq: 221.23, mode: 'pure',
+    title: 'ונוס — 221.23Hz', sub: 'Venus Tone · יופי ואינטימיות',
+    desc: 'תדר נוגה — כוכב האהבה. מסורתית — מעורר חושניות, אסתטיקה, הרמוניה זוגית ורוך. תדר הערב המושלם.',
+    tags: ['אהבה', 'יופי', 'אינטימיות'], colors: ['#f687b3', '#44102b'], glyph: '♀', ambience: 0.045 },
+
+  { id: 'planet-mars', category: 'planets', freq: 144.72, mode: 'pure',
+    title: 'מאדים — 144.72Hz', sub: 'Mars Tone · כוח ואומץ',
+    desc: 'תדר מאדים — כוכב הפעולה. מסורתית — מצית אומץ, החלטיות ואנרגיית עשייה. לפני אתגר גדול.',
+    tags: ['אומץ', 'פעולה'], colors: ['#fc8181', '#4d1010'], glyph: '♂', ambience: 0.035 },
+
+  { id: 'planet-jupiter', category: 'planets', freq: 183.58, mode: 'pure',
+    title: 'צדק — 183.58Hz', sub: 'Jupiter Tone · שפע וצמיחה',
+    desc: 'תדר צדק — כוכב ההתרחבות והמזל הטוב. מסורתית — פותח שערי שפע, אופטימיות וראייה גדולה.',
+    tags: ['שפע', 'צמיחה', 'מזל'], colors: ['#f6ad55', '#5a3407'], glyph: '♃', ambience: 0.04 },
+
+  { id: 'planet-saturn', category: 'planets', freq: 147.85, mode: 'pure',
+    title: 'שבתאי — 147.85Hz', sub: 'Saturn Tone · משמעת ומבנה',
+    desc: 'תדר שבתאי — המורה הגדול. מסורתית — מחזק משמעת עצמית, ריכוז, גבולות בריאים ובגרות.',
+    tags: ['משמעת', 'מבנה'], colors: ['#a0aec0', '#1c2230'], glyph: '♄', ambience: 0.04 },
+
+  { id: 'planet-earth-day', category: 'planets', freq: 194.18, mode: 'pure',
+    title: 'יום כדור הארץ — 194.18Hz', sub: 'Earth Day Tone · נוכחות בהווה',
+    desc: 'תדר סיבוב כדור הארץ סביב צירו — צליל היממה. מסורתית — מעגן את התודעה ברגע הזה, כאן ועכשיו.',
+    tags: ['הארקה', 'הווה'], colors: ['#68d391', '#0d2b1a'], glyph: '⊕', ambience: 0.05 },
+
+  /* ------------------------------ גלי מוח — הרחבות ------------------------------ */
+  { id: 'wave-theta7', category: 'brainwave', freq: 210, mode: 'binaural', beat: 7,
+    title: 'תטא 7 — חלימה צלולה', sub: 'Theta 7Hz · 🎧',
+    desc: 'הגבול העליון של תטא — מצב היפנוגוגי שבו התודעה ערה בתוך החלום. לתרגול חלימה צלולה ודמיון מודרך.',
+    tags: ['חלימה צלולה', 'דמיון'], colors: ['#805ad5', '#12082b'], glyph: '☁', ambience: 0.05 },
+
+  { id: 'wave-smr', category: 'brainwave', freq: 220, mode: 'isochronic', beat: 13,
+    title: 'SMR — קשב רגוע', sub: '13Hz · הקצב הסנסומוטורי',
+    desc: 'תדר ה-SMR (12–15Hz) שנחקר בהקשרי קשב וויסות — ערנות שקטה בלי תזזיתיות. מוכר ממחקרי נוירופידבק.',
+    tags: ['קשב', 'ויסות'], colors: ['#63b3ed', '#0e2438'], glyph: 'Ϟ', ambience: 0.03 },
+
+  { id: 'wave-delta1', category: 'brainwave', freq: 90, mode: 'binaural', beat: 1,
+    title: 'דלתא 1 — ריפוי לילי', sub: 'Delta 1Hz · 🎧 · העמוק ביותר',
+    desc: 'הביט האיטי ביותר בספרייה: 1Hz בלבד, על נשא 90Hz עמוק כתהום. שלב השינה שבו הגוף משקם את עצמו.',
+    tags: ['שינה עמוקה', 'שיקום'], colors: ['#1a365d', '#04060f'], glyph: 'δ', ambience: 0.065 },
+
+  { id: 'wave-hypnagogia', category: 'brainwave', freq: 200, mode: 'binaural', beat: 7.5,
+    title: 'שער ההיפנוזה', sub: 'Alpha-Theta 7.5Hz · 🎧',
+    desc: 'קו התפר המדויק בין אלפא לתטא — המצב שמהפנטים ומדיטטורים מחפשים: גוף רדום, תודעה צלולה.',
+    tags: ['היפנוזה', 'סף'], colors: ['#b794f4', '#231245'], glyph: '𓁿', ambience: 0.05 },
+
+  /* ------------------------------ שינה — הרחבות ------------------------------ */
+  { id: 'sleep-rem', category: 'sleep', freq: 150, mode: 'binaural', beat: 5,
+    title: 'שינת חלום — REM', sub: 'Theta 5Hz · 🎧',
+    desc: 'תטא 5Hz — קצב שנת החלום. לחצי השני של הלילה או לשינה מאוחרת של בוקר, כשהחלומות עושים את עבודתם.',
+    tags: ['חלומות', 'REM'], colors: ['#667eea', '#0c0f2b'], glyph: '💭', ambience: 0.06 },
+
+  { id: 'sleep-powernap', category: 'sleep', freq: 180, mode: 'isochronic', beat: 8,
+    title: 'פאוור-נאפ', sub: '180Hz · פעימות אלפא · 20 דק\'',
+    desc: 'שנ"צ מדויק: אלפא נמוך שמרדים חלקית בלי ליפול לדלתא — קמים רעננים, לא מטושטשים. כוונו טיימר ל-20 דקות.',
+    tags: ['שנ"צ', 'רענון'], colors: ['#4fd1c5', '#0a2624'], glyph: '⏾', ambience: 0.055 },
+
+  { id: 'sleep-blanket', category: 'sleep', freq: 120, mode: 'pure',
+    title: 'שמיכת חורף', sub: '120Hz · חום צלילי עמוק',
+    desc: 'תדר נמוך וחם בלי שום פעימה — רק זמזום עמוק ואווירת רוח רכה. למי שנרדם הכי טוב עם "רעש" קבוע.',
+    tags: ['חום', 'רעש לבן'], colors: ['#744210', '#170e02'], glyph: '🜁', ambience: 0.1 },
+
+  /* ------------------------------ ריכוז — הרחבות ------------------------------ */
+  { id: 'focus-reading', category: 'focus', freq: 230, mode: 'isochronic', beat: 14,
+    title: 'קריאה ולמידה', sub: '230Hz · פעימות בטא 14Hz',
+    desc: 'בטא נמוך ויציב — הקצב של קריאת עומק ארוכה. פחות אינטנסיבי ממנהרת הריכוז, מחזיק שעות.',
+    tags: ['קריאה', 'למידה'], colors: ['#4299e1', '#0a1f33'], glyph: '📖', ambience: 0.025 },
+
+  { id: 'focus-creative', category: 'focus', freq: 195, mode: 'binaural', beat: 7.5,
+    title: 'יצירתיות פרועה', sub: 'Theta 7.5Hz · 🎧',
+    desc: 'תטא גבוה — התדר של רעיונות משום מקום. לסיעור מוחות, כתיבה חופשית וסקיצות ראשונות. לא לעבודה מדויקת.',
+    tags: ['יצירתיות', 'רעיונות'], colors: ['#ed64a6', '#330f22'], glyph: '✏', ambience: 0.04 },
+
+  { id: 'focus-code', category: 'focus', freq: 320, mode: 'binaural', beat: 40,
+    title: 'קוד ומספרים', sub: '320Hz + גמא 40Hz · 🎧',
+    desc: 'גרסת המתכנתים של גמא 40: נשא גבוה וצלול לעבודה אנליטית — קוד, אקסל, מתמטיקה. חדות כירורגית.',
+    tags: ['תכנות', 'אנליטי'], colors: ['#68d391', '#0a2b14'], glyph: '⌘', ambience: 0.02 },
+
+  /* ------------------------------ DNA — הרחבות ------------------------------ */
+  { id: 'dna-amplify', category: 'dna', freq: 285, mode: 'binaural', beat: 3,
+    title: 'אמפליפיקציה תאית', sub: '285Hz + דלתא 3Hz · 🎧',
+    desc: 'תדר ההתחדשות על ביט דלתא — מיועד להאזנה לפני שינה, כשהגוף ממילא נכנס למצב תיקון. תנו לו תדר לעבוד איתו.',
+    tags: ['תאים', 'לילה'], colors: ['#4fd1c5', '#062e2a'], glyph: '⌬', ambience: 0.055 },
+
+  { id: 'dna-youth', category: 'dna', freq: 528, mode: 'isochronic', beat: 6,
+    title: 'מעיין הנעורים', sub: '528Hz · פעימות תטא',
+    desc: 'תדר הנס בקצב תטא מרפא — הפרוטוקול המסורתי לחידוש ורעננות. עשרים דקות של אור זהוב לתאים.',
+    tags: ['נעורים', 'חידוש'], colors: ['#faf089', '#4a3505'], glyph: '⚱', ambience: 0.045 },
+
+  /* ------------------------------ כדור הארץ — הרחבות ------------------------------ */
+  { id: 'earth-schumann2', category: 'earth', freq: 136.1, mode: 'binaural', beat: 14.3,
+    title: 'שומאן — הרמוניה שנייה', sub: '14.3Hz · 🎧 · ערנות מוארקת',
+    desc: 'ההרמוניה השנייה של תהודת שומאן — אותה פעימת כדור הארץ, ברגיסטר ערני יותר. הארקה בזמן עבודה.',
+    tags: ['שומאן', 'ערנות'], colors: ['#9ae6b4', '#12301d'], glyph: '⊛', ambience: 0.045 },
+
+  /* ------------------------------ מדיטציה — הרחבות ------------------------------ */
+  { id: 'med-breath6', category: 'meditation', freq: 136.1, mode: 'isochronic', beat: 0.1,
+    title: 'נשימה 6 בדקה', sub: '136.1Hz · גל נשימה איטי',
+    desc: 'הצליל עולה ויורד בקצב 6 נשימות בדקה — הקצב שמאזן את מערכת העצבים (HRV). נשמו עם הגל: עולה=שאיפה, יורד=נשיפה.',
+    tags: ['נשימה', 'HRV', 'קוהרנטיות'], colors: ['#81e6d9', '#0c2e2b'], glyph: '🜄', ambience: 0.05 },
+
+  { id: 'med-mantra108', category: 'meditation', freq: 108, mode: 'pure',
+    title: 'מנטרה 108', sub: '108Hz · המספר המקודש',
+    desc: '108 — מספר החזרות במאלה, מספר האופנישדות. תדר עמוק וטקסי לג\'אפה, מנטרות וספירת חרוזים.',
+    tags: ['מנטרה', 'ג\'אפה', '108'], colors: ['#ed8936', '#2b1403'], glyph: '📿', ambience: 0.055 },
+
+  { id: 'med-eye-storm', category: 'meditation', freq: 963, mode: 'binaural', beat: 4,
+    title: 'עין הסערה', sub: '963Hz + תטא-דלתא 4Hz · 🎧',
+    desc: 'הצירוף הקיצוני: תדר האור הגבוה ביותר על הביט העמוק כמעט ביותר. דממה מוחלטת במרכז, אור מסביב.',
+    tags: ['עומק', 'דממה'], colors: ['#d6bcfa', '#0f0820'], glyph: '◉', ambience: 0.04 },
+
+  /* ------------------------------ אנרגיה — הרחבות ------------------------------ */
+  { id: 'energy-workout', category: 'energy', freq: 250, mode: 'isochronic', beat: 20,
+    title: 'מוטיבציית אימון', sub: '250Hz · פעימות בטא 20Hz',
+    desc: 'בטא גבוה ודוחף — לחימום לפני אימון, ריצה או כל דבר שדורש דופק. עובד מצוין ברמקול בחדר הכושר הביתי.',
+    tags: ['אימון', 'ספורט'], colors: ['#f56565', '#380a0a'], glyph: '🔥', ambience: 0.02 },
+
+  { id: 'energy-spark', category: 'energy', freq: 417, mode: 'isochronic', beat: 12,
+    title: 'ניצוץ יצירה', sub: '417Hz · פעימות 12Hz',
+    desc: 'תדר השינוי בקצב אלפא-בטא ממריץ — הדלקת מנוע היצירה כשמרגישים תקועים. רבע שעה ומתחילים לזוז.',
+    tags: ['השראה', 'התנעה'], colors: ['#f6ad55', '#331703'], glyph: '✨', ambience: 0.03 },
 ];
 
 /* מיפוי עזר */
