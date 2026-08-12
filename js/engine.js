@@ -129,49 +129,73 @@ export class FrequencyEngine {
     const ctx = this.ctx;
     /* סולם פנטטוני ביחסים טהורים, מאוקטבה מתחת עד מעל */
     const RATIOS = [0.5, 0.75, 1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4, 5 / 2, 3];
-    const STEPS = [-2, -1, -1, -1, 0, 1, 1, 1, 2, 2, 3];   // הליכה אקראית עדינה
-    let degree = 2;                          // פתיחה על הטוניקה — התדר עצמו
-    const pace = track.pace || 2.6;          // מרווח ממוצע בין תווים (שניות)
+    const pace = track.pace || 2.4;          // פעימת המוטיב (שניות)
     const sparkle = track.sparkle ?? 0.18;   // הסתברות לנצנוץ אוקטבה למעלה
 
-    const playNote = () => {
-      if (this.voice !== voice) return;
-      const step = STEPS[Math.floor(Math.random() * STEPS.length)];
-      degree = Math.max(0, Math.min(RATIOS.length - 1, degree + step));
-      let ratio = RATIOS[degree];
-      if (Math.random() < sparkle) ratio *= 2;
-      const f = track.freq * ratio;
-      const t0 = ctx.currentTime;
-      const vel = (0.09 + Math.random() * 0.09) * scale;
+    /* פעמון עשיר וחודר: יסוד + שימר detune + פרשלים לא-הרמוניים של פעמון אמיתי */
+    const BELL = [
+      { mult: 1,     gain: 1.0,  tc: 2.8 },   // יסוד — זנב ארוך ועמוק
+      { mult: 1.004, gain: 0.45, tc: 2.6 },   // שימר — פעימה פנימית איטית
+      { mult: 2.01,  gain: 0.24, tc: 1.1 },   // אוקטבה — נוכחות
+      { mult: 2.98,  gain: 0.17, tc: 0.5 },   // פרשל פעמון — הנקישה החודרת
+      { mult: 4.16,  gain: 0.07, tc: 0.3 },   // ברק עליון
+    ];
+    /* גונג עמוק — עוגן ההיפנוזה בתחילת כל מעגל */
+    const GONG = [
+      { mult: 0.5,  gain: 1.0,  tc: 3.8 },
+      { mult: 1,    gain: 0.4,  tc: 2.8 },
+      { mult: 1.5,  gain: 0.12, tc: 1.3 },
+    ];
 
+    const strike = (f, vel, panPos, partials) => {
+      const t0 = ctx.currentTime;
       const pan = ctx.createStereoPanner();
-      pan.pan.value = (Math.random() * 2 - 1) * 0.7;
+      pan.pan.value = panPos;
       pan.connect(dest);
-      const partials = [
-        { mult: 1, gain: vel, tc: 1.5 },          // יסוד — זנב ארוך
-        { mult: 3.01, gain: vel * 0.16, tc: 0.35 } // פרשל — נקישת הפעמון
-      ];
       for (const p of partials) {
         const osc = ctx.createOscillator();
         osc.type = 'sine';
         osc.frequency.value = f * p.mult;
         const g = ctx.createGain();
         g.gain.setValueAtTime(0.0001, t0);
-        g.gain.exponentialRampToValueAtTime(p.gain, t0 + 0.015);
-        g.gain.setTargetAtTime(0.0001, t0 + 0.03, p.tc);
+        g.gain.exponentialRampToValueAtTime(vel * p.gain, t0 + 0.012);
+        g.gain.setTargetAtTime(0.0001, t0 + 0.025, p.tc);
         osc.connect(g).connect(pan);
         osc.start(t0);
-        osc.stop(t0 + 9);
+        osc.stop(t0 + 13);
         osc.onended = () => { try { g.disconnect(); } catch {} };
       }
-      voice.timers.push(setTimeout(() => { try { pan.disconnect(); } catch {} }, 9500));
+      voice.timers.push(setTimeout(() => { try { pan.disconnect(); } catch {} }, 13500));
+    };
 
-      /* מדי פעם — הפסקה ארוכה, כמו נשימה בין משפטים מוזיקליים */
-      const rest = Math.random() < 0.12 ? pace * 2.5 : 0;
-      const next = pace * (0.55 + Math.random() * 0.9) + rest;
+    /* מוטיב היפנוטי: לולאה של 5 תווים שחוזרת — ומוטציה איטית שמחייה אותה.
+       החזרתיות היא מה שמהפנט; המוטציה היא מה ששומר על קסם. */
+    let motif = [2, 5, 4, 7, 3];
+    let pos = 0;
+
+    const playNote = () => {
+      if (this.voice !== voice) return;
+      const degree = Math.max(0, Math.min(RATIOS.length - 1, motif[pos]));
+      let ratio = RATIOS[degree];
+      if (Math.random() < sparkle) ratio *= 2;
+      const vel = (0.13 + Math.random() * 0.08) * scale;
+      strike(track.freq * ratio, vel, Math.sin(pos * 2.1) * 0.65, BELL);
+
+      /* גונג טוניקה בפתיחת כל מעגל — האדמה שאליה חוזרים */
+      if (pos === 0 && Math.random() < 0.75) {
+        strike(track.freq, vel * 0.85, 0, GONG);
+      }
+
+      pos = (pos + 1) % motif.length;
+      if (pos === 0 && Math.random() < 0.35) {
+        motif[Math.floor(Math.random() * motif.length)] = 2 + Math.floor(Math.random() * 6);
+      }
+
+      /* פעימה כמעט קבועה — קצב היפנוטי, לא אקראי */
+      const next = pace * (0.9 + Math.random() * 0.2);
       voice.timers.push(setTimeout(playNote, next * 1000));
     };
-    voice.timers.push(setTimeout(playNote, 700));
+    voice.timers.push(setTimeout(playNote, 600));
   }
 
   async play(track) {
