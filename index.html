@@ -23,7 +23,10 @@
   <div id="app">
     <header class="topbar">
       <h1 class="page-title" id="page-title">בית</h1>
-      <div class="logo">RESONANCE</div>
+      <div class="top-end">
+        <div class="logo">RESONANCE</div>
+        <button class="top-icon" id="btn-about" aria-label="אודות">?</button>
+      </div>
     </header>
 
     <main id="main">
@@ -45,6 +48,15 @@
         <div class="pl-create-wrap">
           <button class="pl-create" id="pl-create">+ פלייליסט חדש</button>
         </div>
+      </section>
+
+      <!-- חיפוש -->
+      <section class="view" id="view-search">
+        <div class="search-wrap">
+          <input id="search-main" class="search" type="search"
+                 placeholder="חיפוש תדר, מטרה, תחושה או מסע…" autocomplete="off" />
+        </div>
+        <div id="search-body"></div>
       </section>
 
       <!-- ספרייה -->
@@ -107,9 +119,9 @@
     <nav class="tabbar">
       <button class="tab active" data-view="home"><span class="t-icon">⌂</span>בית</button>
       <button class="tab" data-view="journeys"><span class="t-icon">✦</span>מסעות</button>
+      <button class="tab" data-view="search"><span class="t-icon">⌕</span>חיפוש</button>
       <button class="tab" data-view="library"><span class="t-icon">♪</span>ספרייה</button>
       <button class="tab" data-view="favorites"><span class="t-icon">♡</span>מועדפים</button>
-      <button class="tab" data-view="about"><span class="t-icon">☯</span>אודות</button>
     </nav>
 
     <!-- נגן מלא -->

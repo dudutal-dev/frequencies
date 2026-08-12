@@ -13,7 +13,10 @@ import { Sequencer } from './sequencer.js';
 const SAVE_KEY = 'resonance_state_v1';
 
 function loadState() {
-  const base = { favorites: [], recents: [], playlists: [], volume: 0.7, timer: 0, instrument: 'auto' };
+  const base = {
+    favorites: [], recents: [], playlists: [], searches: [],
+    volume: 0.7, timer: 0, instrument: 'auto',
+  };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (raw) return { ...base, ...JSON.parse(raw) };
@@ -45,6 +48,7 @@ const $ = id => document.getElementById(id);
 const els = {
   main: $('main'), home: $('view-home'), grid: $('library-grid'), chips: $('chips'),
   search: $('search'), favList: $('fav-list'),
+  searchMain: $('search-main'), searchBody: $('search-body'),
   journeysList: $('journeys-list'), playlistsList: $('playlists-list'), plCreate: $('pl-create'),
   mini: $('mini'), miniArt: $('mini-art'), miniTitle: $('mini-title'),
   miniSub: $('mini-sub'), miniPlay: $('mini-play'), miniNext: $('mini-next'),
@@ -193,6 +197,31 @@ const ICON_BY_CATEGORY = {
   psychedelic: 'spiral', schumann: 'earth',
 };
 
+/* אייקון למסע — חלק מהסמלים הטקסטואליים לא נתמכים בכל הפונטים */
+const JOURNEY_ICON = {
+  'journey-chakras': 'lotus8', 'journey-chakra-express': 'bolt',
+  'journey-sleep': 'moon', 'journey-full-night': 'moon', 'journey-powernap': 'moon',
+  'journey-musical-sleep': 'note', 'journey-morning': 'sun', 'journey-wakeup': 'sun',
+  'journey-solfeggio': 'note', 'journey-solfeggio-down': 'arrowDown',
+  'journey-focus': 'target', 'journey-exam': 'book', 'journey-creativity': 'bolt',
+  'journey-healing': 'helix', 'journey-pain': 'cloud', 'journey-detox': 'drop',
+  'journey-meditation': 'om', 'journey-planets': 'planet',
+  'journey-sos-calm': 'ripple', 'journey-pretraining': 'flame',
+  'journey-lucid': 'cloud', 'journey-love': 'heart', 'journey-couple': 'heart',
+  'journey-grief': 'feather', 'journey-abundance': 'leaf', 'journey-nature': 'leaf',
+  'journey-intuition': 'eye', 'journey-confidence': 'crown', 'journey-gratitude': 'beads',
+  'journey-concert': 'note',
+  'journey-shaman-classic': 'drum', 'journey-shaman-short': 'drum',
+  'journey-psychedelic': 'spiral', 'journey-fire-ceremony': 'flame',
+  'journey-kundalini': 'serpent', 'journey-vision-quest': 'eye',
+  'journey-soundbath': 'bowl', 'journey-monastery': 'om',
+  'journey-throat': 'mountain', 'journey-japa': 'beads',
+  'journey-dissolve': 'star', 'journey-backwards': 'spiral',
+  'journey-schumann-ladder': 'earth', 'journey-earth-pulse': 'earth',
+  'journey-warped-earth': 'spiral',
+};
+const journeyIcon = j => ICONS[JOURNEY_ICON[j.id]] || j.glyph;
+
 /* צבע hex → rgba עם שקיפות */
 function hexA(hex, a) {
   const n = parseInt(hex.slice(1), 16);
@@ -309,6 +338,147 @@ function renderLibrary() {
   markPlaying();
 }
 
+/* ============================================================
+   חיפוש — סורק יצירות ומסעות כאחד
+   ============================================================ */
+const MODE_WORDS = {
+  pure: 'תדר טהור טונים',
+  binaural: 'בינאורלי binaural אוזניות גלי מוח',
+  isochronic: 'איזוכרוני isochronic פעימות רמקולים',
+  melodic: 'מלודיה מלודי מנגינה מוזיקה גנרטיבי',
+};
+const SCALE_WORDS = {
+  penta: 'פנטטוני', shaman: 'שאמאני פריגי', psyche: 'פסיכדלי ספטימלי',
+  warp: 'פסיכדלי מעוות מיקרוטונלי',
+};
+const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
+
+const norm = s => String(s).toLowerCase().replace(/["'׳״]/g, '').replace(/\s+/g, ' ').trim();
+
+/* אינדקס חיפוש — נבנה פעם אחת */
+const TRACK_INDEX = TRACKS.map(t => ({
+  t,
+  hay: norm([
+    t.title, t.sub, t.desc, (t.tags || []).join(' '), CAT_LABEL[t.category],
+    MODE_WORDS[t.mode], SCALE_WORDS[t.scale] || '', SCALE_WORDS[t.melodyScale] || '',
+    t.timbre || '', t.melody ? 'מלודיה' : '',
+  ].join(' ')),
+  nums: [String(t.freq), t.beat ? String(t.beat) : ''].filter(Boolean),
+}));
+
+/* המסע יורש גם את התגיות והקטגוריות של השלבים שלו,
+   כך ש"פסיכדלי" ימצא מסע שבנוי מיצירות פסיכדליות גם בלי המילה בכותרת */
+const JOURNEY_INDEX = JOURNEYS.map(j => {
+  const steps = j.steps.map(s => byId[s.id]).filter(Boolean);
+  return {
+    j,
+    hay: norm([
+      j.title, j.sub, j.desc,
+      steps.map(t => t.title).join(' '),
+      steps.map(t => (t.tags || []).join(' ')).join(' '),
+      [...new Set(steps.map(t => CAT_LABEL[t.category]))].join(' '),
+      [...new Set(steps.map(t => SCALE_WORDS[t.scale] || SCALE_WORDS[t.melodyScale] || ''))].join(' '),
+    ].join(' ')),
+    nums: steps.map(t => String(t.freq)),
+  };
+});
+
+/* גזירה קלה של סופיות עבריות — "צאקרה" ימצא גם "צאקרות" */
+function stems(tok) {
+  const out = [tok];
+  if (tok.length >= 5) {
+    for (const suf of ['ות', 'ים', 'יות']) {
+      if (tok.endsWith(suf)) out.push(tok.slice(0, -suf.length));
+    }
+  }
+  if (tok.length >= 4 && /[התי]$/.test(tok)) out.push(tok.slice(0, -1));
+  return out;
+}
+
+function matches(entry, tokens) {
+  return tokens.every(tok =>
+    (/^[\d.]+$/.test(tok)
+      ? entry.nums.some(n => n.startsWith(tok)) || entry.hay.includes(tok)
+      : stems(tok).some(s => entry.hay.includes(s)))
+  );
+}
+
+function searchAll(q) {
+  const tokens = norm(q).split(' ').filter(Boolean);
+  if (!tokens.length) return { tracks: [], journeys: [] };
+  return {
+    journeys: JOURNEY_INDEX.filter(e => matches(e, tokens)).map(e => e.j),
+    tracks: TRACK_INDEX.filter(e => matches(e, tokens)).map(e => e.t),
+  };
+}
+
+const SUGGESTIONS = [
+  '528', 'שינה', 'צ\'אקרות', 'פסיכדלי', 'שומאן', 'מדיטציה',
+  'ריכוז', 'חרדה', 'מלודיה', 'קערות', 'שאמאני', 'אהבה', '432', 'גמא',
+];
+
+function journeyRowHTML(j) {
+  return `
+    <div class="list-item" data-journey="${j.id}">
+      <div class="pl-art" style="background: linear-gradient(140deg, ${j.colors[0]}, ${j.colors[1]}); color:#fff">${journeyIcon(j)}</div>
+      <div class="li-meta">
+        <div class="li-title">${j.title}</div>
+        <div class="li-sub">${j.sub}</div>
+      </div>
+    </div>`;
+}
+
+function renderSearch() {
+  const q = els.searchMain.value.trim();
+  const body = els.searchBody;
+
+  if (!q) {
+    const recents = (state.searches || []).slice(0, 8);
+    body.innerHTML = `
+      ${recents.length ? `
+        <div class="j-intro"><div class="j-intro-title">חיפושים אחרונים</div></div>
+        <div class="chips wrap">
+          ${recents.map(s => `<button class="chip" data-q="${s}">${s}</button>`).join('')}
+          <button class="chip" data-clear-searches="1">נקה</button>
+        </div>` : ''}
+      <div class="j-intro" style="margin-top:${recents.length ? 18 : 4}px">
+        <div class="j-intro-title">חיפושים פופולריים</div>
+        <div class="j-intro-sub">חפשו לפי תדר (528), מטרה (שינה), תחושה (חרדה) או שם מסע.</div>
+      </div>
+      <div class="chips wrap">${SUGGESTIONS.map(s => `<button class="chip" data-q="${s}">${s}</button>`).join('')}</div>`;
+    return;
+  }
+
+  const { tracks, journeys } = searchAll(q);
+  if (!tracks.length && !journeys.length) {
+    body.innerHTML = `<div class="empty-note">לא נמצאו תוצאות עבור "${q}".<br>נסו תדר (528), מטרה (שינה) או תחושה (רוגע).</div>`;
+    return;
+  }
+  body.innerHTML = `
+    ${journeys.length ? `
+      <div class="section-head" style="padding-top:12px">
+        <div class="section-title"><span class="sec-icon">✦</span>מסעות</div>
+        <span class="section-more">${journeys.length}</span>
+      </div>
+      <div class="list">${journeys.slice(0, 12).map(journeyRowHTML).join('')}</div>` : ''}
+    ${tracks.length ? `
+      <div class="section-head" style="padding-top:14px">
+        <div class="section-title"><span class="sec-icon">♪</span>יצירות</div>
+        <span class="section-more">${tracks.length}</span>
+      </div>
+      <div class="grid">${tracks.slice(0, 60).map(cardHTML).join('')}</div>` : ''}`;
+  markPlaying();
+}
+
+/* שמירת חיפוש מוצלח להיסטוריה */
+let searchSaveTimer = null;
+function rememberSearch(q) {
+  q = q.trim();
+  if (q.length < 2) return;
+  state.searches = [q, ...(state.searches || []).filter(s => s !== q)].slice(0, 10);
+  saveState();
+}
+
 /* ------------------------------ מועדפים ------------------------------ */
 function renderFavorites() {
   const favs = state.favorites.map(id => byId[id]).filter(Boolean);
@@ -346,7 +516,7 @@ function journeyCardHTML(j) {
   return `
     <div class="journey-card ${playing ? 'playing' : ''}" data-journey="${j.id}"
          style="background: linear-gradient(140deg, ${j.colors[0]}, ${j.colors[1]})">
-      <span class="jc-glyph">${j.glyph}</span>
+      <span class="jc-glyph">${journeyIcon(j)}</span>
       <div class="jc-title">${j.title}</div>
       <div class="jc-sub">${playing ? `● מתנגן · שלב ${seq.index + 1}/${j.steps.length}` : `${j.sub} · ♬ עם מלודיה`}</div>
       <div class="jc-desc">${j.desc}</div>
@@ -452,23 +622,36 @@ els.pAdd.addEventListener('click', openSheet);
 
 /* ------------------------------ ניווט ------------------------------ */
 const PAGE_TITLE = {
-  home: 'בית', journeys: 'מסעות', library: 'ספרייה',
+  home: 'בית', journeys: 'מסעות', search: 'חיפוש', library: 'ספרייה',
   favorites: 'מועדפים', about: 'אודות',
 };
 
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    const view = tab.dataset.view;
-    $('page-title').textContent = PAGE_TITLE[view];
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    $(`view-${view}`).classList.add('active');
-    if (view === 'favorites') renderFavorites();
-    if (view === 'library') renderLibrary();
-    if (view === 'journeys') { renderJourneys(); renderPlaylists(); }
-    els.main.scrollTo({ top: 0 });
-  });
+function switchView(view) {
+  document.querySelectorAll('.tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.view === view));
+  $('page-title').textContent = PAGE_TITLE[view];
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $(`view-${view}`).classList.add('active');
+  if (view === 'favorites') renderFavorites();
+  if (view === 'library') renderLibrary();
+  if (view === 'journeys') { renderJourneys(); renderPlaylists(); }
+  if (view === 'search') {
+    renderSearch();
+    setTimeout(() => els.searchMain.focus(), 120);
+  }
+  els.main.scrollTo({ top: 0 });
+}
+
+document.querySelectorAll('.tab').forEach(tab =>
+  tab.addEventListener('click', () => switchView(tab.dataset.view)));
+
+$('btn-about').addEventListener('click', () => switchView('about'));
+
+/* הקלדה בחיפוש — רינדור מיידי, שמירה להיסטוריה אחרי הפוגה */
+els.searchMain.addEventListener('input', () => {
+  renderSearch();
+  if (searchSaveTimer) clearTimeout(searchSaveTimer);
+  searchSaveTimer = setTimeout(() => rememberSearch(els.searchMain.value), 1400);
 });
 
 /* ------------------------------ נגינה ------------------------------ */
@@ -790,8 +973,21 @@ document.addEventListener('click', async e => {
     return;
   }
 
+  /* שבב הצעת חיפוש / חיפוש אחרון */
+  const qChip = e.target.closest('[data-q]');
+  if (qChip) {
+    els.searchMain.value = qChip.dataset.q;
+    renderSearch();
+    rememberSearch(qChip.dataset.q);
+    return;
+  }
+  if (e.target.closest('[data-clear-searches]')) {
+    state.searches = []; saveState(); renderSearch();
+    return;
+  }
+
   const chip = e.target.closest('.chip');
-  if (chip) {
+  if (chip && chip.dataset.chip) {
     activeChip = chip.dataset.chip;
     renderChips(); renderLibrary();
     return;

@@ -616,3 +616,19 @@ input[type='range']::-moz-range-thumb {
   .mini { inset-inline: 0; margin-inline: auto; width: 560px; }
   .player-sheet { max-width: 640px; margin: 0 auto; width: 100%; }
 }
+
+/* ------------------------------ Search ------------------------------ */
+.top-end { display: flex; align-items: center; gap: 10px; }
+.top-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--line);
+  color: var(--text-dim); font-family: inherit; font-size: 13px;
+  font-weight: 700; cursor: pointer; line-height: 1;
+}
+.top-icon:active { background: var(--surface-2); }
+.chips.wrap { flex-wrap: wrap; overflow: visible; }
+.tab .t-icon { font-size: 19px; }
+.tab[data-view="search"] .t-icon { font-size: 22px; font-weight: 700; }
+#view-search .list-item { cursor: pointer; }
+.jc-glyph .icn { width: 26px; height: 26px; }
+.pl-art .icn { width: 22px; height: 22px; }
