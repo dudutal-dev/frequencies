@@ -579,6 +579,40 @@ export const JOURNEYS = [
     ],
   },
 
+  {
+    id: 'journey-ambient-heart',
+    title: 'אלבום הלב',
+    sub: '3 שלבים · 60 דקות',
+    desc: 'שעה חמה ואנושית: שדה הלב עם נבל, בראשית עם הנדפאן, ושחר לסיום. האמביינט הפחות קוסמי והכי קרוב — לכתיבה, לזמן איכות או לערב שקט.',
+    colors: ['#48bb78', '#f6e05e'], glyph: '◌',
+    steps: [
+      { id: 'amb-heartfield', min: 20 }, { id: 'amb-genesis', min: 20 },
+      { id: 'amb-dawn', min: 20 },
+    ],
+  },
+  {
+    id: 'journey-ambient-light',
+    title: 'גוף האור',
+    sub: '4 שלבים · 76 דקות',
+    desc: 'עלייה איטית ברגיסטר: זוהר צפוני ב-741, גוף האור ב-852, מקדש אור ב-963, וקוסמוס לסיום. שעה ורבע של טיפוס בתדרים הגבוהים.',
+    colors: ['#63b3ed', '#d6bcfa'], glyph: '◌',
+    steps: [
+      { id: 'amb-aurora', min: 19 }, { id: 'amb-lightbody', min: 19 },
+      { id: 'amb-temple', min: 19 }, { id: 'amb-cosmos', min: 19 },
+    ],
+  },
+  {
+    id: 'journey-ambient-work',
+    title: 'רקע לעבודה',
+    sub: '4 שלבים · 96 דקות',
+    desc: 'שעה וחצי שנועדה להיעלם מהתודעה: כמעט דממה, נצח, אוקיינוס פנימי ומרחב פנימי. צליל בודד אחת לכמה שניות — מספיק כדי למלא את החדר, לא מספיק כדי להסיח.',
+    colors: ['#a0aec0', '#2b6cb0'], glyph: '◌',
+    steps: [
+      { id: 'amb-silence', min: 24 }, { id: 'amb-eternity', min: 24 },
+      { id: 'amb-ocean', min: 24 }, { id: 'amb-innerspace', min: 24 },
+    ],
+  },
+
   /* ------------------------------ סטים של טכנו — עולים ------------------------------ */
   {
     id: 'journey-techno-rise',

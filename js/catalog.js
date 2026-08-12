@@ -584,6 +584,54 @@ export const TRACKS = [
     desc: 'פאד גרוני על 108 — מספר החזרות במאלה. איטי מספיק כדי שתאבדו את תחושת הזמן, וזו בדיוק המטרה.',
     tags: ['108', 'זמן', 'טקסי'], colors: ['#b7791f', '#1a1002'], glyph: '◌', ambience: 0.055 },
 
+  { id: 'amb-heartfield', category: 'ambient', freq: 639, mode: 'melodic', timbre: 'harp',
+    pad: true, pace: 6.2, sparkle: 0.24, featured: true,
+    title: 'שדה הלב', sub: '639Hz · נבל על פאד חם',
+    desc: 'פאד על תדר החיבור עם פריטות נבל שנופלות אחת לשש שניות. האמביינט הכי אנושי כאן — לזמן איכות, לכתיבה או לשיחה שקטה.',
+    tags: ['לב', 'חם', 'נבל'], colors: ['#48bb78', '#0e2b1c'], glyph: '◌', ambience: 0.05 },
+
+  { id: 'amb-lightbody', category: 'ambient', freq: 852, mode: 'melodic', timbre: 'crystal',
+    pad: true, pace: 7.5, sparkle: 0.28,
+    title: 'גוף האור', sub: '852Hz · אינטואיציה',
+    desc: 'פאד גבוה על תדר העין השלישית, עם קערות קריסטל שנדלקות בפזורה. תחושה של הגוף שנעשה שקוף.',
+    tags: ['אור', 'אינטואיציה'], colors: ['#667eea', '#16173d'], glyph: '◌', ambience: 0.045 },
+
+  { id: 'amb-ocean', category: 'ambient', freq: 174, mode: 'melodic', timbre: 'crystal',
+    pad: true, pace: 9.5, sparkle: 0.14,
+    title: 'אוקיינוס פנימי', sub: '174Hz · גלים איטיים',
+    desc: 'פאד נמוך עם שכבת אווירה עשירה — הגלים מתגלגלים לאט והצליל הבודד מגיע אחת לתשע וחצי שניות. הכי קרוב לצליל של ים.',
+    tags: ['אוקיינוס', 'גלים', 'עמוק'], colors: ['#2b6cb0', '#061422'], glyph: '◌', ambience: 0.075 },
+
+  { id: 'amb-genesis', category: 'ambient', freq: 396, mode: 'melodic', timbre: 'handpan',
+    pad: true, pace: 7.0, sparkle: 0.16,
+    title: 'בראשית', sub: '396Hz · הנדפאן על פאד',
+    desc: 'פאד על תדר השחרור עם נגיעות הנדפאן — הצליל של משהו שמתחיל להיווצר. לתקופות של התחלה מחדש.',
+    tags: ['התחלה', 'שחרור'], colors: ['#e53e3e', '#26090b'], glyph: '◌', ambience: 0.055 },
+
+  { id: 'amb-aurora', category: 'ambient', freq: 741, mode: 'melodic', timbre: 'bell',
+    pad: true, pace: 5.8, sparkle: 0.32,
+    title: 'זוהר צפוני', sub: '741Hz · פעמונים מנצנצים',
+    desc: 'פאד נקי על תדר הניקוי, עם פעמונים שמנצנצים באוקטבות גבוהות ונעים בין הצדדים. אור שנע לאט על פני שמיים כהים.',
+    tags: ['זוהר', 'ניקוי', 'נצנוץ'], colors: ['#63b3ed', '#0b2a45'], glyph: '◌', ambience: 0.05 },
+
+  { id: 'amb-eternity', category: 'ambient', freq: 194.18, mode: 'melodic', timbre: 'throat',
+    pad: true, pace: 9.0, sparkle: 0.1,
+    title: 'נצח', sub: '194.18Hz · תדר היממה',
+    desc: 'פאד על תדר סיבוב כדור הארץ — היממה עצמה כצליל מתמשך. מעוגן ואינסופי בו זמנית.',
+    tags: ['נצח', 'אדמה', 'יממה'], colors: ['#9ae6b4', '#122a1c'], glyph: '◌', ambience: 0.06 },
+
+  { id: 'amb-silence', category: 'ambient', freq: 136.1, mode: 'melodic', timbre: 'crystal',
+    pad: true, pace: 15.0, sparkle: 0.05,
+    title: 'כמעט דממה', sub: 'OM 136.1Hz · צליל אחת ל-15 שניות',
+    desc: 'המינימלי ביותר בספרייה: פאד על תדר ה-OM וצליל קריסטל בודד אחת לחמש-עשרה שניות. נועד להיעלם מהתודעה ולהישאר ברקע שעות.',
+    tags: ['דממה', 'רקע', 'מינימלי'], colors: ['#a0aec0', '#101319'], glyph: '◌', ambience: 0.04 },
+
+  { id: 'amb-temple', category: 'ambient', freq: 963, mode: 'melodic', timbre: 'throat',
+    pad: true, pace: 8.8, sparkle: 0.12,
+    title: 'מקדש אור', sub: '963Hz · פאד גרוני',
+    desc: 'תדר הכתר עם טימבר שירת גרון — סדרת הרמוניות מלאה שנפרשת לאט. הצליל של חלל גבוה עם תקרה שלא רואים.',
+    tags: ['מקדש', 'כתר', 'גרון'], colors: ['#d6bcfa', '#241645'], glyph: '◌', ambience: 0.055 },
+
   /* ------------------------------ שאמאני ופסיכדלי ------------------------------ */
   { id: 'sh-drum', category: 'shaman', freq: 180, mode: 'melodic', scale: 'shaman', pace: 1.3, sparkle: 0.1, featured: true,
     title: 'תוף השאמאן', sub: '180Hz · סולם פריגי · תבנית תוף',

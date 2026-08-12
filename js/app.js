@@ -16,6 +16,7 @@ function loadState() {
   const base = {
     favorites: [], recents: [], playlists: [], searches: [],
     volume: 0.7, timer: 0, instrument: 'auto', speakerMode: false,
+    lastView: 'home', lastTrack: null,
   };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -42,6 +43,7 @@ const vizCanvas = document.getElementById('viz');
 const viz = new MandalaVisualizer(vizCanvas, engine);
 const seq = new Sequencer();
 let activeSeqId = null;   // journey id / playlist id שמתנגן כרגע
+let pendingReload = false;  // עדכון גרסה שממתין לסיום הנגינה
 
 /* ------------------------------ עזרי DOM ------------------------------ */
 const $ = id => document.getElementById(id);
@@ -57,6 +59,7 @@ const els = {
   pMode: $('p-mode'), pTitle: $('p-title'), pSub: $('p-sub'), pDesc: $('p-desc'), pTags: $('p-tags'),
   pPrev: $('p-prev'), pPlay: $('p-play'), pNext: $('p-next'),
   pTimer: $('p-timer'), pInstrument: $('p-instrument'), pSpeakers: $('p-speakers'),
+  pAirplay: $('p-airplay'),
   pVolume: $('p-volume'),
   phonesNote: $('phones-note'),
   sheetBackdrop: $('sheet-backdrop'), sheetList: $('sheet-list'), sheetNew: $('sheet-new'),
@@ -138,6 +141,7 @@ const ICONS = {
   pause: SVG('<rect x="13" y="10" width="5.2" height="20" rx="2.4" fill="currentColor" stroke="none"/><rect x="21.8" y="10" width="5.2" height="20" rx="2.4" fill="currentColor" stroke="none"/>'),
   skipPrev: SVG('<path d="M27.5 11.2v17.6L14.6 20z" fill="currentColor" stroke="none" stroke-width="2.4" stroke-linejoin="round"/><rect x="10.2" y="10.6" width="2.9" height="18.8" rx="1.45" fill="currentColor" stroke="none"/>'),
   skipNext: SVG('<path d="M12.5 11.2v17.6L25.4 20z" fill="currentColor" stroke="none" stroke-width="2.4" stroke-linejoin="round"/><rect x="26.9" y="10.6" width="2.9" height="18.8" rx="1.45" fill="currentColor" stroke="none"/>'),
+  airplay: SVG('<path d="M32 26a3 3 0 0 0 3-3V11a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3"/><path d="M20 22l8 11H12z" fill="currentColor" stroke="none"/>'),
   arrowUp: SVG('<line x1="20" y1="33" x2="20" y2="9"/><path d="M11 18l9-9 9 9"/>'),
   arrowDown: SVG('<line x1="20" y1="7" x2="20" y2="31"/><path d="M11 22l9 9 9-9"/>'),
   anchor: SVG('<circle cx="20" cy="9" r="3"/><line x1="20" y1="12" x2="20" y2="33"/><line x1="13" y1="17" x2="27" y2="17"/><path d="M8 24a12 12 0 0 0 24 0"/>'),
@@ -186,7 +190,9 @@ const ICON_BY_ID = {
   'amb-innerspace': 'ripple', 'amb-cosmos': 'star', 'amb-nebula': 'cloud',
   'amb-dawn': 'sun', 'amb-void': 'ripple', 'amb-drift': 'drop',
   'amb-stars': 'star', 'amb-deepspace': 'delta', 'amb-vision': 'eye',
-  'amb-timeless': 'infinity',
+  'amb-timeless': 'infinity', 'amb-heartfield': 'heart', 'amb-lightbody': 'crystal',
+  'amb-ocean': 'drop', 'amb-genesis': 'bowl', 'amb-aurora': 'star',
+  'amb-eternity': 'earth', 'amb-silence': 'ripple', 'amb-temple': 'crown',
   'mel-bells-528': 'bell', 'mel-harp-432': 'note', 'mel-kalimba-639': 'note',
   'mel-temple-963': 'bell', 'mel-musicbox-396': 'note', 'mel-handpan-174': 'bowl',
   'mel-chimes-om': 'om', 'mel-wind-852': 'feather', 'mel-lullaby-285': 'moon',
@@ -247,7 +253,8 @@ const JOURNEY_ICON = {
   'journey-run': 'flame',
   'journey-vision-hour': 'eye', 'journey-inner-space': 'ripple',
   'journey-deep-ambient': 'cloud', 'journey-ambient-dawn': 'sun',
-  'journey-ambient-night': 'moon',
+  'journey-ambient-night': 'moon', 'journey-ambient-heart': 'heart',
+  'journey-ambient-light': 'crown', 'journey-ambient-work': 'ripple',
 };
 const journeyIcon = j => ICONS[JOURNEY_ICON[j.id]] || j.glyph;
 
@@ -687,6 +694,8 @@ const PAGE_TITLE = {
 };
 
 function switchView(view) {
+  state.lastView = view;
+  saveState();
   document.querySelectorAll('.tab').forEach(t =>
     t.classList.toggle('active', t.dataset.view === view));
   $('page-title').textContent = PAGE_TITLE[view];
@@ -721,6 +730,7 @@ let lastTrack = null;
 async function applyTrack(track) {
   await engine.play(track);
   viz.setColors(track.colors);
+  state.lastTrack = track.id;
   state.recents = [track.id, ...state.recents.filter(id => id !== track.id)].slice(0, 12);
   saveState();
   updateMini(track);
@@ -900,6 +910,25 @@ els.pVolume.addEventListener('input', () => {
   engine.setVolume(v);
   state.volume = v;
 });
+
+/* ------------------------------ שידור למערכת (AirPlay) ------------------------------
+   Safari חושף בורר יעדי AirPlay על אלמנט מדיה. מכיוון שהאודיו כבר
+   מנותב דרך <audio>, אפשר לפתוח אותו מתוך האפליקציה. אם ה-API לא
+   קיים בדפדפן — הכפתור פשוט לא מוצג, ונשארת דרך מרכז הבקרה. */
+(function setupAirplay() {
+  const el = document.getElementById('bg-audio');
+  if (!el || typeof el.webkitShowPlaybackTargetPicker !== 'function') return;
+  els.pAirplay.innerHTML = ICONS.airplay;
+  els.pAirplay.hidden = false;
+  els.pAirplay.addEventListener('click', () => {
+    try { el.webkitShowPlaybackTargetPicker(); }
+    catch { toast('פתחו את מרכז הבקרה כדי לבחור יעד שידור'); }
+  });
+  /* מסמנים כשמנגנים דרך יעד חיצוני */
+  el.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', () => {
+    els.pAirplay.classList.toggle('on', !!el.webkitCurrentPlaybackTargetIsWireless);
+  });
+})();
 
 /* ------------------------------ מצב רמקולים ------------------------------ */
 els.pSpeakers.addEventListener('click', async () => {
@@ -1100,7 +1129,15 @@ document.addEventListener('click', async e => {
 els.search.addEventListener('input', renderLibrary);
 
 /* ------------------------------ מצב מנוע → ממשק ------------------------------ */
-engine.onStateChange = () => { updatePlayButtons(); markPlaying(); };
+engine.onStateChange = () => {
+  updatePlayButtons();
+  markPlaying();
+  /* עדכון גרסה שהמתין — מוחל ברגע שהאוזניים פנויות */
+  if (pendingReload && !engine.isPlaying) {
+    pendingReload = false;
+    setTimeout(() => location.reload(), 400);
+  }
+};
 
 els.plCreate.addEventListener('click', createPlaylist);
 
@@ -1111,19 +1148,24 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   const hadController = !!navigator.serviceWorker.controller;
   let reloading = false;
 
+  /* גרסה חדשה השתלטה. אסור לרענן באמצע האזנה — ריענון הורג את
+     האודיו ומחזיר את האפליקציה למסך הפתיחה, וזה בדיוק מה שקרה
+     בחזרה מהרקע. לכן דוחים את הריענון עד שהנגינה נפסקת. */
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (!hadController || reloading) return;
+    if (engine.isPlaying) { pendingReload = true; return; }
     reloading = true;
-    location.reload();   // גרסה חדשה השתלטה — נטען אותה מיד
+    location.reload();
   });
 
   window.addEventListener('load', async () => {
     try {
       const reg = await navigator.serviceWorker.register('sw.js');
-      reg.update();
-      /* לבדוק עדכון גם כשחוזרים לאפליקציה מהרקע */
+      const checkForUpdate = () => { if (!engine.isPlaying) reg.update().catch(() => {}); };
+      checkForUpdate();
+      /* בודקים עדכון בחזרה מהרקע — אך לא תוך כדי נגינה */
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) reg.update().catch(() => {});
+        if (!document.hidden) checkForUpdate();
       });
     } catch {}
   });
@@ -1147,5 +1189,18 @@ els.pInstrument.classList.toggle('armed', state.instrument !== 'auto');
 renderHome();
 renderChips();
 renderLibrary();
+
+/* שחזור מצב — iOS עשוי לפרוק אפליקציה מותקנת מהזיכרון ולטעון אותה
+   מחדש. במקום לחזור למסך הפתיחה, חוזרים לטאב ולנגן שהיו פתוחים. */
+if (state.lastView && state.lastView !== 'home' && $(`view-${state.lastView}`)) {
+  switchView(state.lastView);
+}
+if (state.lastTrack && byId[state.lastTrack]) {
+  const t = byId[state.lastTrack];
+  lastTrack = t;
+  viz.setColors(t.colors);
+  updateMini(t);
+  updatePlayerView(t);
+}
 renderJourneys();
 renderPlaylists();
