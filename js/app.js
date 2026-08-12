@@ -358,6 +358,12 @@ function renderHome() {
     </div>
     <div class="tiles">${quick.map(tileHTML).join('')}</div>`;
 
+  /* הושמעו לאחרונה — הדבר שחוזרים אליו הכי הרבה */
+  if (recents.length) {
+    html += sectionHTML({ id: 'recents', label: 'הושמעו לאחרונה', icon: '↻' },
+                        recents.slice(0, 14));
+  }
+
   /* מסעות מומלצים — כרטיסים רחבים ישר במסך הבית */
   const picks = [
     'journey-techno-rise', 'journey-chakras', 'journey-psychedelic',
@@ -400,6 +406,7 @@ function renderHome() {
     <div class="section">
       <div class="section-head">
         <div class="section-title"><span class="sec-icon">🔈</span>במערכת סטריאו</div>
+        <button class="section-more" data-stereo-all="1">הכול ←</button>
       </div>
       <div class="section-note">
         גונגים, פאדים ותוכן שיורד עד 38Hz — טווח שרמקול טלפון לא מפיק כלל.
@@ -767,6 +774,9 @@ function switchView(view) {
   $('page-title').textContent = PAGE_TITLE[view];
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   $(`view-${view}`).classList.add('active');
+  /* מסך הבית נבנה מחדש בכל כניסה — אחרת "הושמעו לאחרונה"
+     ואריחי הקיצור נשארים תקועים על המצב שהיה באתחול. */
+  if (view === 'home') { renderHome(); markPlaying(); }
   if (view === 'favorites') renderFavorites();
   if (view === 'library') renderLibrary();
   if (view === 'journeys') { renderJourneys(); renderPlaylists(); }
@@ -1148,6 +1158,12 @@ document.addEventListener('click', async e => {
 
   if (e.target.closest('[data-goto-journeys]')) { switchView('journeys'); return; }
   if (e.target.closest('[data-speakers-on]')) { await setSpeakerMode(true); return; }
+  if (e.target.closest('[data-stereo-all]')) {
+    activeChip = 'speakers';
+    switchView('library');
+    renderChips(); renderLibrary();
+    return;
+  }
 
   /* בדיקות מערכת במסך האודות */
   const test = e.target.closest('[data-test]');
