@@ -230,7 +230,7 @@ const ICON_BY_CATEGORY = {
   earth: 'earth', meditation: 'om', energy: 'sun', melodic: 'note',
   shaman: 'drum', bowls: 'bowl', mantra: 'beads',
   psychedelic: 'spiral', schumann: 'earth', techno: 'bolt', ambient: 'ripple',
-  organic: 'leaf',
+  organic: 'leaf', deephouse: 'ripple',
 };
 
 /* אייקון למסע — חלק מהסמלים הטקסטואליים לא נתמכים בכל הפונטים */
