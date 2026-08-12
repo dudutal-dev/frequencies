@@ -416,6 +416,53 @@ export const JOURNEYS = [
       { id: 'sh-underworld', min: 5 },
     ],
   },
+
+  /* ------------------------------ קערות ומנטרות ------------------------------ */
+  {
+    id: 'journey-soundbath',
+    title: 'אמבט צליל מלא',
+    sub: '5 שלבים · 35 דקות',
+    desc: 'הטיפול המלא כמו בסטודיו: גונג פלנטרי פותח, סט שבע הקערות סורק את הגוף, קערת מים מנקה, הקערה הטיבטית מעגנת — וקערת הכתר סוגרת. שכבו ואל תעשו כלום.',
+    colors: ['#a0aec0', '#d6bcfa'], glyph: '◍',
+    steps: [
+      { id: 'bowl-gong', min: 7 }, { id: 'bowl-set-7', min: 7 },
+      { id: 'bowl-water', min: 7 }, { id: 'bowl-tibetan', min: 7 },
+      { id: 'bowl-crystal-963', min: 7 },
+    ],
+  },
+  {
+    id: 'journey-monastery',
+    title: 'בוקר במנזר',
+    sub: '4 שלבים · 24 דקות',
+    desc: 'שגרת הבוקר הטיבטית: גונג מעיר, OM גרוני פותח את היום, מנטרת גאיטרי לשמש — והקערה הטיבטית סוגרת את התרגול.',
+    colors: ['#b7791f', '#f6e05e'], glyph: 'ॐ',
+    steps: [
+      { id: 'bowl-gong', min: 6 }, { id: 'mantra-om', min: 6 },
+      { id: 'mantra-gayatri', min: 6 }, { id: 'bowl-tibetan', min: 6 },
+    ],
+  },
+  {
+    id: 'journey-throat',
+    title: 'מסע שירת הגרון',
+    sub: '4 שלבים · 26 דקות',
+    desc: 'שלושת סגנונות שירת הגרון של טובה ומונגוליה: קרגירה העמוק, OM המלא, סיגיט השורק — ומקהלת נזירים לסיום. סדרת הרמוניות טהורה מתחילתה ועד סופה.',
+    colors: ['#744210', '#805ad5'], glyph: '𓁿',
+    steps: [
+      { id: 'mantra-kargyraa', min: 7 }, { id: 'mantra-om', min: 7 },
+      { id: 'mantra-sygyt', min: 6 }, { id: 'mantra-monk', min: 6 },
+    ],
+  },
+  {
+    id: 'journey-japa',
+    title: 'תרגול ג\'אפה',
+    sub: '3 שלבים · 21 דקות',
+    desc: 'תרגול המאלה השלם: ג\'אפה 108 בפעימות חרוזים, מנטרת OM להעמקה, וקערת קריסטל הלב לסגירה. שבע דקות לכל שליש של המאלה.',
+    colors: ['#b7791f', '#faf089'], glyph: '📿',
+    steps: [
+      { id: 'mantra-108', min: 7 }, { id: 'mantra-om', min: 7 },
+      { id: 'bowl-crystal-528', min: 7 },
+    ],
+  },
 ];
 
 export const journeyById = Object.fromEntries(JOURNEYS.map(j => [j.id, j]));

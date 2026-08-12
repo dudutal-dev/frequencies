@@ -13,7 +13,7 @@ import { Sequencer } from './sequencer.js';
 const SAVE_KEY = 'resonance_state_v1';
 
 function loadState() {
-  const base = { favorites: [], recents: [], playlists: [], volume: 0.7, timer: 0 };
+  const base = { favorites: [], recents: [], playlists: [], volume: 0.7, timer: 0, instrument: 'auto' };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (raw) return { ...base, ...JSON.parse(raw) };
@@ -52,7 +52,7 @@ const els = {
   pJourney: $('p-journey'), pjName: $('pj-name'), pjStep: $('pj-step'), pjFill: $('pj-fill'),
   pMode: $('p-mode'), pTitle: $('p-title'), pSub: $('p-sub'), pDesc: $('p-desc'), pTags: $('p-tags'),
   pPrev: $('p-prev'), pPlay: $('p-play'), pNext: $('p-next'),
-  pTimer: $('p-timer'), pVolume: $('p-volume'),
+  pTimer: $('p-timer'), pInstrument: $('p-instrument'), pVolume: $('p-volume'),
   phonesNote: $('phones-note'),
   sheetBackdrop: $('sheet-backdrop'), sheetList: $('sheet-list'), sheetNew: $('sheet-new'),
   toast: $('toast'), toastText: $('toast-text'),
@@ -72,6 +72,116 @@ const MODE_LABEL = {
   binaural: 'Binaural 🎧',
   isochronic: 'איזוכרוני · גם ברמקולים',
   melodic: 'מלודיה גנרטיבית · לא חוזרת על עצמה',
+};
+
+/* ============================================================
+   אייקונים וקטוריים — במקום אותיות וסמלים טקסטואליים
+   ============================================================ */
+const SVG = (body, sw = 1.4) =>
+  `<svg class="icn" viewBox="0 0 40 40" fill="none" stroke="currentColor"
+     stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+
+/* לוטוס בעל n עלי כותרת — הסמל המסורתי של הצ'אקרות */
+const lotus = n => SVG(
+  Array.from({ length: n }, (_, i) =>
+    `<ellipse cx="20" cy="12" rx="3.4" ry="8"
+       transform="rotate(${(360 / n) * i} 20 20)" opacity="0.9"/>`).join('') +
+  `<circle cx="20" cy="20" r="3" fill="currentColor" stroke="none"/>`, 1.2);
+
+/* גל סינוס עם n מחזורים — ככל שהתדר גבוה יותר, הגל צפוף יותר */
+const wave = (n, amp = 7) => {
+  let d = `M4 20`;
+  const step = 32 / (n * 2);
+  for (let i = 0; i < n * 2; i++) {
+    d += ` q${step / 2} ${i % 2 ? amp : -amp} ${step} 0`;
+  }
+  return SVG(`<path d="${d}"/>`, 1.8);
+};
+
+const ICONS = {
+  lotus2: lotus(2), lotus4: lotus(4), lotus6: lotus(6), lotus8: lotus(8),
+  lotus10: lotus(10), lotus12: lotus(12), lotus16: lotus(16),
+  delta: wave(1.5, 9), theta: wave(2.5, 8), alpha: wave(4, 6),
+  beta: wave(6, 5), gamma: wave(9, 4),
+  moon: SVG('<path d="M25 8a13 13 0 1 0 7 20A14 14 0 0 1 25 8z"/>'),
+  sun: SVG('<circle cx="20" cy="20" r="7"/>' + Array.from({ length: 8 }, (_, i) =>
+    `<line x1="20" y1="6" x2="20" y2="10" transform="rotate(${i * 45} 20 20)"/>`).join('')),
+  target: SVG('<circle cx="20" cy="20" r="13"/><circle cx="20" cy="20" r="7"/><circle cx="20" cy="20" r="2" fill="currentColor" stroke="none"/>'),
+  helix: SVG('<path d="M14 6c0 8 12 8 12 14S14 26 14 34"/><path d="M26 6c0 8-12 8-12 14s12 8 12 14"/><line x1="15" y1="13" x2="25" y2="13"/><line x1="15" y1="27" x2="25" y2="27"/>'),
+  planet: SVG('<circle cx="20" cy="20" r="8"/><ellipse cx="20" cy="20" rx="16" ry="5" transform="rotate(-20 20 20)" opacity="0.8"/>'),
+  earth: SVG('<circle cx="20" cy="20" r="13"/><ellipse cx="20" cy="20" rx="5.5" ry="13"/><line x1="7" y1="20" x2="33" y2="20"/>'),
+  note: SVG('<circle cx="14" cy="28" r="4.5"/><circle cx="29" cy="24" r="4"/><path d="M18.5 28V12l14.5-4v16"/>'),
+  bell: SVG('<path d="M20 7a9 9 0 0 0-9 9c0 7-3 9-3 11h24c0-2-3-4-3-11a9 9 0 0 0-9-9z"/><path d="M17 31a3 3 0 0 0 6 0"/>'),
+  bowl: SVG('<path d="M7 16a13 11 0 0 0 26 0z"/><ellipse cx="20" cy="16" rx="13" ry="4"/><line x1="20" y1="6" x2="20" y2="11" opacity="0.6"/>'),
+  drum: SVG('<ellipse cx="20" cy="13" rx="12" ry="5"/><path d="M8 13v13a12 5 0 0 0 24 0V13"/><line x1="10" y1="16" x2="30" y2="24" opacity="0.55"/><line x1="30" y1="16" x2="10" y2="24" opacity="0.55"/>'),
+  eye: SVG('<path d="M5 20s6-9 15-9 15 9 15 9-6 9-15 9-15-9-15-9z"/><circle cx="20" cy="20" r="4.5"/>'),
+  flame: SVG('<path d="M20 33c5.5 0 9-3.8 9-8.6 0-6.5-6-8-6-14.4-5 3-9 7.6-9 14.4 0 4.8 3 8.6 6 8.6z"/><path d="M20 33c-2.4 0-4-1.9-4-4.3 0-3 3-4 4-7 1.6 2.4 4 4 4 7 0 2.4-1.6 4.3-4 4.3z" opacity="0.55"/>'),
+  serpent: SVG('<path d="M10 33c0-6 8-5 8-11S8 16 8 10c0-3 3-4 6-3"/><path d="M22 33c0-6 8-5 8-11s-6-6-6-10"/><circle cx="24" cy="9" r="2" fill="currentColor" stroke="none"/>'),
+  spiral: SVG('<path d="M20 20a3 3 0 1 1 3 3 6 6 0 1 1-6-6 9 9 0 1 1 9 9 12 12 0 1 1-12-12"/>'),
+  crown: SVG('<path d="M8 28l-2-15 8 6 6-11 6 11 8-6-2 15z"/><line x1="8" y1="32" x2="32" y2="32"/>'),
+  heart: SVG('<path d="M20 32S7 24 7 16a6.6 6.6 0 0 1 13-2 6.6 6.6 0 0 1 13 2c0 8-13 16-13 16z"/>'),
+  leaf: SVG('<path d="M31 9C17 9 9 15 9 25a6 6 0 0 0 6 6c10 0 16-8 16-22z"/><path d="M13 31c4-8 9-13 16-16" opacity="0.6"/>'),
+  drop: SVG('<path d="M20 6c-5 7-9 11-9 16a9 9 0 0 0 18 0c0-5-4-9-9-16z"/>'),
+  cloud: SVG('<path d="M12 28a6 6 0 0 1 .6-12 8.5 8.5 0 0 1 16 2 5 5 0 0 1-.6 10z"/>'),
+  bolt: SVG('<path d="M22 5L10 22h8l-2 13 14-18h-8z"/>'),
+  crystal: SVG('<path d="M20 5l11 9-11 21L9 14z"/><path d="M9 14h22M20 5v30" opacity="0.55"/>'),
+  beads: SVG('<circle cx="20" cy="20" r="12"/>' + Array.from({ length: 10 }, (_, i) =>
+    `<circle cx="20" cy="8" r="2.4" fill="currentColor" stroke="none" transform="rotate(${i * 36} 20 20)"/>`).join('')),
+  om: SVG('<circle cx="20" cy="20" r="13" opacity="0.35"/><path d="M13 24c0-4 4-6 6-3s-1 6-4 5 0-9 6-9 6 5 9 5"/><circle cx="27" cy="10" r="1.8" fill="currentColor" stroke="none"/>'),
+  arrowUp: SVG('<line x1="20" y1="33" x2="20" y2="9"/><path d="M11 18l9-9 9 9"/>'),
+  arrowDown: SVG('<line x1="20" y1="7" x2="20" y2="31"/><path d="M11 22l9 9 9-9"/>'),
+  anchor: SVG('<circle cx="20" cy="9" r="3"/><line x1="20" y1="12" x2="20" y2="33"/><line x1="13" y1="17" x2="27" y2="17"/><path d="M8 24a12 12 0 0 0 24 0"/>'),
+  book: SVG('<path d="M7 9h11a4 4 0 0 1 4 4v20a4 4 0 0 0-4-3H7z"/><path d="M33 9H22a4 4 0 0 0-4 4v20a4 4 0 0 1 4-3h11z"/>'),
+  feather: SVG('<path d="M31 8c-11 0-19 7-19 17v7l19-19"/><line x1="8" y1="34" x2="20" y2="22"/>'),
+  mountain: SVG('<path d="M4 31l10-16 6 9 5-7 11 14z"/>'),
+  infinity: SVG('<path d="M12 20a5 5 0 1 1 5 5c-3 0-5-5-5-5s2-5 5-5a5 5 0 0 1 0 10"/><path d="M28 20a5 5 0 1 0-5 5c3 0 5-5 5-5s-2-5-5-5a5 5 0 0 0 0 10"/>'),
+  star: SVG('<path d="M20 5l4.5 10.5L35 17l-8 7.5 2 11-9-5.5-9 5.5 2-11L5 17l10.5-1.5z"/>'),
+  ripple: SVG('<circle cx="20" cy="20" r="4"/><path d="M9 12a15 15 0 0 0 0 16M31 12a15 15 0 0 1 0 16" opacity="0.75"/><path d="M4 7a22 22 0 0 0 0 26M36 7a22 22 0 0 1 0 26" opacity="0.4"/>'),
+};
+
+/* מיפוי יצירה → אייקון (מזהה קודם, אחרת קטגוריה) */
+const ICON_BY_ID = {
+  'chakra-root': 'lotus4', 'chakra-sacral': 'lotus6', 'chakra-solar': 'lotus10',
+  'chakra-heart': 'lotus12', 'chakra-throat': 'lotus16', 'chakra-third-eye': 'lotus2',
+  'chakra-crown': 'lotus8',
+  'wave-delta': 'delta', 'wave-delta1': 'delta', 'wave-theta': 'theta',
+  'wave-theta7': 'theta', 'wave-alpha': 'alpha', 'wave-beta': 'beta',
+  'wave-gamma': 'gamma', 'wave-smr': 'beta', 'wave-hypnagogia': 'theta',
+  'relief-anxiety': 'ripple', 'relief-pain': 'cloud',
+  'sleep-deep': 'moon', 'sleep-moon': 'moon', 'sleep-hammock': 'wave',
+  'sleep-ocean': 'drop', 'sleep-rem': 'cloud', 'sleep-powernap': 'moon',
+  'sleep-blanket': 'cloud',
+  'focus-deep': 'target', 'focus-flow': 'infinity', 'focus-memory': 'gamma',
+  'focus-soft': 'feather', 'focus-reading': 'book', 'focus-creative': 'bolt',
+  'focus-code': 'target',
+  'calm-inner-quiet': 'ripple', 'calm-anger': 'flame', 'calm-emotions': 'drop',
+  'calm-grounding': 'anchor', 'calm-soundbath': 'ripple',
+  'love-magnet': 'heart', 'love-self': 'heart', 'love-heartbreak': 'heart',
+  'love-open-heart': 'heart',
+  'dna-528': 'helix', 'dna-285': 'helix', 'dna-temple': 'star',
+  'dna-amplify': 'helix', 'dna-youth': 'crystal',
+  'earth-schumann': 'earth', 'earth-schumann2': 'earth', 'earth-432': 'leaf',
+  'earth-111': 'mountain', 'earth-om': 'om', 'planet-earth-day': 'earth',
+  'planet-sun': 'sun', 'planet-moon': 'moon',
+  'med-om-journey': 'om', 'med-shaman': 'drum', 'med-heart': 'heart',
+  'med-silence': 'ripple', 'med-breath6': 'drop', 'med-mantra108': 'beads',
+  'med-eye-storm': 'eye',
+  'energy-sunrise': 'sun', 'energy-power': 'bolt', 'energy-awaken': 'star',
+  'energy-abundance': 'leaf', 'energy-workout': 'flame', 'energy-spark': 'bolt',
+  'sh-drum': 'drum', 'sh-ayahuasca': 'leaf', 'sh-vision': 'eye',
+  'sh-serpent': 'serpent', 'sh-firecircle': 'flame', 'sh-datura': 'lotus8',
+  'sh-ancestors': 'mountain', 'sh-peyote': 'spiral', 'sh-trance': 'drum',
+  'sh-dmt': 'star', 'sh-underworld': 'arrowDown', 'sh-upperworld': 'arrowUp',
+  'mel-bells-528': 'bell', 'mel-harp-432': 'note', 'mel-kalimba-639': 'note',
+  'mel-temple-963': 'bell', 'mel-musicbox-396': 'note', 'mel-handpan-174': 'bowl',
+  'mel-chimes-om': 'om', 'mel-wind-852': 'feather', 'mel-lullaby-285': 'moon',
+  'mel-creation-417': 'spiral', 'mel-earth-194': 'earth', 'mel-crystal-741': 'crystal',
+};
+const ICON_BY_CATEGORY = {
+  chakra: 'lotus8', brainwave: 'alpha', sleep: 'moon', focus: 'target',
+  calm: 'ripple', love: 'heart', dna: 'helix', planets: 'planet',
+  earth: 'earth', meditation: 'om', energy: 'sun', melodic: 'note',
+  shaman: 'drum', bowls: 'bowl', mantra: 'beads',
 };
 
 /* צבע hex → rgba עם שקיפות */
@@ -99,7 +209,9 @@ function artHTML(t) {
     <div class="art" style="background:${bg}; --ring:${hexA(c0, 0.55)}; --glow:${hexA(c0, 0.4)}">
       <div class="art-core" style="background: radial-gradient(circle, #fff 0%, ${hexA(c0, 0.9)} 45%, transparent 72%)"></div>
       <div class="art-label">
-        <span class="glyph">${t.glyph}</span>
+        ${glyphIsFreq
+          ? `<span class="glyph">${t.glyph}</span>`
+          : ICONS[ICON_BY_ID[t.id] || ICON_BY_CATEGORY[t.category]] || `<span class="glyph">${t.glyph}</span>`}
         ${hz ? `<span class="hz">${hz}</span>` : ''}
       </div>
       ${badge ? `<span class="phones">${badge}</span>` : ''}
@@ -532,6 +644,34 @@ els.pVolume.addEventListener('input', () => {
   state.volume = v;
 });
 
+/* ------------------------------ בחירת כלי נגינה ------------------------------ */
+const INSTRUMENTS = [
+  { id: 'auto',     label: 'אוטומטי' },
+  { id: 'bell',     label: 'פעמונים' },
+  { id: 'kalimba',  label: 'קלימבה' },
+  { id: 'harp',     label: 'נבל' },
+  { id: 'handpan',  label: 'הנדפאן' },
+  { id: 'crystal',  label: 'קערת קריסטל' },
+  { id: 'throat',   label: 'שירת גרון' },
+];
+
+function instrumentLabel() {
+  const i = INSTRUMENTS.find(x => x.id === state.instrument) || INSTRUMENTS[0];
+  return `כלי: ${i.label}`;
+}
+
+els.pInstrument.addEventListener('click', async () => {
+  const i = INSTRUMENTS.findIndex(x => x.id === state.instrument);
+  state.instrument = INSTRUMENTS[(i + 1) % INSTRUMENTS.length].id;
+  engine.instrument = state.instrument;
+  saveState();
+  els.pInstrument.textContent = instrumentLabel();
+  els.pInstrument.classList.toggle('armed', state.instrument !== 'auto');
+  /* מחילים מיד על מה שמתנגן — הרצף ממשיך לספור בלי הפרעה */
+  if (engine.current) await applyTrack(engine.current);
+  toast(instrumentLabel());
+});
+
 /* ------------------------------ טיימר עם fade לשינה ------------------------------ */
 const TIMER_STEPS = [0, 10, 20, 30, 60]; // דקות; 0 = אינסוף
 let timerHandle = null;
@@ -694,6 +834,9 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 els.pVolume.value = state.volume;
 els.pTimer.textContent = timerLabel();
 els.pTimer.classList.toggle('armed', !!state.timer);
+engine.instrument = state.instrument;
+els.pInstrument.textContent = instrumentLabel();
+els.pInstrument.classList.toggle('armed', state.instrument !== 'auto');
 renderHome();
 renderChips();
 renderLibrary();

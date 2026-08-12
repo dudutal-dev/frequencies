@@ -13,6 +13,8 @@ export const CATEGORIES = [
   { id: 'featured',   label: 'נבחרות',              icon: '✦' },
   { id: 'melodic',    label: 'מלודיות מרפאות',      icon: '♬' },
   { id: 'shaman',     label: 'שאמאני ופסיכדלי',     icon: '𓂀' },
+  { id: 'bowls',      label: 'קערות וגונגים',       icon: '◍' },
+  { id: 'mantra',     label: 'מנטרות ושירת גרון',   icon: 'ॐ' },
   { id: 'solfeggio',  label: 'סולפג\'יו',            icon: '♪' },
   { id: 'chakra',     label: 'צ\'אקרות',             icon: '◉' },
   { id: 'brainwave',  label: 'גלי מוח',             icon: '∿' },
@@ -575,6 +577,68 @@ export const TRACKS = [
     title: 'העולם העליון', sub: '852Hz + 7.5Hz · 🎧',
     desc: 'המסע כלפי מעלה: תדר האינטואיציה על סף אלפא-תטא, עם מלודיה מרחפת ומכופפת. פגישה עם המורים שלמעלה.',
     tags: ['שאמאני', 'עלייה', 'חזון'], colors: ['#90cdf4', '#12294a'], glyph: '⬆', ambience: 0.05 },
+
+  /* ------------------------------ קערות קריסטל, טיבטיות וגונגים ------------------------------ */
+  { id: 'bowl-crystal-528', category: 'bowls', freq: 528, mode: 'melodic', timbre: 'crystal', pace: 5.5, sparkle: 0.14, featured: true,
+    title: 'קערת קריסטל — לב', sub: '528Hz · זנב אינסופי',
+    desc: 'קערת קריסטל קוורץ טהורה על תדר הנס: כמעט סינוס מושלם, עם פעימה פנימית איטית וזנב שנמשך חמש שניות. הצליל הנקי ביותר בספרייה.',
+    tags: ['קריסטל', 'קערה', 'טהור'], colors: ['#faf089', '#5c4409'], glyph: '◇', ambience: 0.035 },
+
+  { id: 'bowl-crystal-963', category: 'bowls', freq: 963, mode: 'melodic', timbre: 'crystal', pace: 6.5, sparkle: 0.1,
+    title: 'קערת קריסטל — כתר', sub: '963Hz · גבוה וצלול',
+    desc: 'הקערה הגבוהה של הסט: 963Hz בטוהר קריסטלי, עם מרווחי דממה ארוכים בין הצלילים. לפתיחת הצ\'אקרה השביעית.',
+    tags: ['קריסטל', 'כתר'], colors: ['#d6bcfa', '#3b2a63'], glyph: '◇', ambience: 0.03 },
+
+  { id: 'bowl-tibetan', category: 'bowls', freq: 136.1, mode: 'melodic', timbre: 'handpan', pace: 4.5, sparkle: 0.12, featured: true,
+    title: 'קערה טיבטית', sub: 'OM 136.1Hz · מתכת שבע מתכות',
+    desc: 'הקערה המסורתית מסגסוגת שבע המתכות, מכוונת לתדר ה-OM. צליל עגול וחם עם אוקטבה תחתונה בולטת — הצליל של מנזר.',
+    tags: ['טיבטי', 'OM', 'מנזר'], colors: ['#b7791f', '#291a04'], glyph: '◍', ambience: 0.055 },
+
+  { id: 'bowl-gong', category: 'bowls', freq: 108, mode: 'melodic', timbre: 'handpan', pace: 7.0, sparkle: 0.08,
+    title: 'גונג פלנטרי', sub: '108Hz · חבטות נדירות',
+    desc: 'גונג עמוק שנחבט אחת לשבע שניות בערך, ומשאיר את החלל רוטט בין החבטות. לאמבט צליל אמיתי — שכבו והניחו לו לעבור דרככם.',
+    tags: ['גונג', 'אמבט צליל'], colors: ['#a0aec0', '#14171f'], glyph: '◉', ambience: 0.07 },
+
+  { id: 'bowl-set-7', category: 'bowls', freq: 396, mode: 'melodic', timbre: 'crystal', pace: 4.0, sparkle: 0.22,
+    title: 'סט שבע הקערות', sub: '396Hz · טווח רחב',
+    desc: 'קערות קריסטל בטווח רחב סביב תדר השורש, שנחבטות בסדר משתנה — כמו סאונד-הילר שמסתובב סביבכם עם הסט המלא.',
+    tags: ['קריסטל', 'סט', 'צ\'אקרות'], colors: ['#f56565', '#3d1010'], glyph: '◇', ambience: 0.05 },
+
+  { id: 'bowl-water', category: 'bowls', freq: 285, mode: 'melodic', timbre: 'crystal', pace: 3.2, sparkle: 0.3,
+    title: 'קערת מים', sub: '285Hz · טיפות קריסטל',
+    desc: 'קערות גבוהות ומהירות יותר, כמו טיפות מים על קריסטל — על תדר ההתחדשות. לניקוי החלל ולריענון.',
+    tags: ['מים', 'ניקוי', 'קריסטל'], colors: ['#4fd1c5', '#0d3330'], glyph: '◇', ambience: 0.045 },
+
+  /* ------------------------------ מנטרות ושירת גרון ------------------------------ */
+  { id: 'mantra-om', category: 'mantra', freq: 136.1, mode: 'melodic', timbre: 'throat', pace: 5.0, sparkle: 0.06, featured: true,
+    title: 'OM — שירת גרון', sub: '136.1Hz · סדרת הרמוניות מלאה',
+    desc: 'המנטרה הראשונה, בטימבר שירת גרון: סדרת הרמוניות שלמה עם הדגשת העליונות — הצליל שבו שומעים "שריקה" מעל הדרון. טיבט בסלון.',
+    tags: ['OM', 'שירת גרון', 'טיבט'], colors: ['#ed8936', '#2b1503'], glyph: 'ॐ', ambience: 0.06 },
+
+  { id: 'mantra-kargyraa', category: 'mantra', freq: 90, mode: 'melodic', timbre: 'throat', pace: 6.0, sparkle: 0.04,
+    title: 'קרגירה — הגרון העמוק', sub: '90Hz · הסגנון הנמוך',
+    desc: 'סגנון שירת הגרון הנמוך ביותר של טובה ומונגוליה: תדר עמוק שהחזה מרגיש לפני שהאוזן שומעת. חיבור לאדמה דרך הקול.',
+    tags: ['טובה', 'עמוק', 'גרון'], colors: ['#744210', '#150c02'], glyph: '𓁿', ambience: 0.075 },
+
+  { id: 'mantra-sygyt', category: 'mantra', freq: 396, mode: 'melodic', timbre: 'throat', pace: 3.6, sparkle: 0.24,
+    title: 'סיגיט — השריקה', sub: '396Hz · הרמוניות עליונות',
+    desc: 'הסגנון שבו הזמר מפיק שריקה הרמונית מעל הדרון. כאן ההרמוניות העליונות בולטות ורוקדות מעל תדר השחרור.',
+    tags: ['שריקה', 'הרמוניות'], colors: ['#f6ad55', '#3d2005'], glyph: '≈', ambience: 0.05 },
+
+  { id: 'mantra-108', category: 'mantra', freq: 108, mode: 'isochronic', beat: 1.8, melody: true, timbre: 'throat', pace: 2.2,
+    title: 'ג\'אפה 108', sub: '108Hz · פעימות חזרה',
+    desc: 'תרגול הג\'אפה: פעימה קצובה כמו חרוזי מאלה שעוברים בין האצבעות, עם מנטרה גרונית מעליה. 108 חזרות של נוכחות.',
+    tags: ['מאלה', 'ג\'אפה', '108'], colors: ['#b7791f', '#1f1303'], glyph: '📿', ambience: 0.055 },
+
+  { id: 'mantra-gayatri', category: 'mantra', freq: 432, mode: 'melodic', timbre: 'throat', pace: 4.2, sparkle: 0.16,
+    title: 'גאיטרי', sub: '432Hz · מנטרת השמש',
+    desc: 'המנטרה הוודית לשמש, בכוונון הטבעי 432Hz וטימבר גרוני חם. מסורתית — מנטרת הבהירות והתבונה, לשעות הבוקר.',
+    tags: ['ודי', 'שמש', 'בוקר'], colors: ['#f6e05e', '#4a3607'], glyph: '☉', ambience: 0.045 },
+
+  { id: 'mantra-monk', category: 'mantra', freq: 174, mode: 'melodic', timbre: 'throat', pace: 5.5, sparkle: 0.05,
+    title: 'מקהלת נזירים', sub: '174Hz · דרון עמוק',
+    desc: 'דרון נמוך ואיטי בסגנון מזמור גרגוריאני-טיבטי על תדר שיכוך הכאב — קולות שמצטלבים לאט וממלאים את החלל.',
+    tags: ['מזמור', 'נזירים', 'עמוק'], colors: ['#805ad5', '#160e2b'], glyph: '✝', ambience: 0.07 },
 ];
 
 /* מיפוי עזר */
