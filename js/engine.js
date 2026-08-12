@@ -301,6 +301,98 @@ export class FrequencyEngine {
     voice.timers.push(setTimeout(playNote, 600));
   }
 
+  /* ------------------------------------------------------------
+     מנוע קצב — בס-דראם, היי-האט, קלאפ וסאב-בס על רשת של 16ths.
+     מתוזמן מראש (lookahead) ולא מ-setTimeout, כדי שהגרוב יישאר הדוק.
+     energy 0–1 קובע צפיפות: כמה האטים, האם יש קלאפ, כמה בס.
+     ------------------------------------------------------------ */
+  _startPulse(track, voice, dest) {
+    const ctx = this.ctx;
+    const bpm = track.bpm;
+    const energy = track.energy ?? 0.6;
+    const step16 = 60 / bpm / 4;
+    const subFreq = track.freq / (track.freq > 300 ? 8 : track.freq > 150 ? 4 : 2);
+
+    /* רעש לבן קצר לשימוש חוזר בהאטים ובקלאפ */
+    const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
+    const nd = noiseBuf.getChannelData(0);
+    for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+
+    const kick = t => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(120, t);
+      osc.frequency.exponentialRampToValueAtTime(38, t + 0.1);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.5, t + 0.004);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+      osc.connect(g).connect(dest);
+      osc.start(t); osc.stop(t + 0.35);
+      osc.onended = () => { try { g.disconnect(); } catch {} };
+    };
+
+    const noiseHit = (t, { hp, bp, dur, vol }) => {
+      const src = ctx.createBufferSource();
+      src.buffer = noiseBuf;
+      const f = ctx.createBiquadFilter();
+      if (bp) { f.type = 'bandpass'; f.frequency.value = bp; f.Q.value = 1.4; }
+      else { f.type = 'highpass'; f.frequency.value = hp; }
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(vol, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      src.connect(f).connect(g).connect(dest);
+      src.start(t); src.stop(t + dur + 0.05);
+      src.onended = () => { try { g.disconnect(); f.disconnect(); } catch {} };
+    };
+
+    const bass = (t, mult, dur) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.value = subFreq * mult;
+      const f = ctx.createBiquadFilter();
+      f.type = 'lowpass';
+      f.frequency.setValueAtTime(900, t);
+      f.frequency.exponentialRampToValueAtTime(180, t + dur);
+      f.Q.value = 6;                                   // נשיכה חומצתית
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.11, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      osc.connect(f).connect(g).connect(dest);
+      osc.start(t); osc.stop(t + dur + 0.05);
+      osc.onended = () => { try { g.disconnect(); f.disconnect(); } catch {} };
+    };
+
+    /* תבנית בס — נעה עם האנרגיה */
+    const BASS_STEPS = energy > 0.75 ? [2, 6, 7, 10, 14, 15] : [2, 6, 10, 14];
+    const BASS_MULT = [1, 1, 1.5, 1, 1, 2];
+
+    const scheduleStep = (s, t) => {
+      if (s % 4 === 0) kick(t);
+      if (s % 4 === 2) noiseHit(t, { hp: 7500, dur: 0.045, vol: 0.055 });
+      if (energy > 0.7 && s % 2 === 1) noiseHit(t, { hp: 9000, dur: 0.025, vol: 0.03 });
+      if (energy > 0.45 && (s === 4 || s === 12)) {
+        noiseHit(t, { bp: 1500, dur: 0.13, vol: 0.09 });
+      }
+      const bi = BASS_STEPS.indexOf(s);
+      if (bi >= 0) bass(t, BASS_MULT[bi % BASS_MULT.length], step16 * 1.6);
+    };
+
+    let step = 0;
+    let next = ctx.currentTime + 0.12;
+    const tick = () => {
+      if (this.voice !== voice) return;
+      while (next < ctx.currentTime + 0.18) {
+        scheduleStep(step, next);
+        next += step16;
+        step = (step + 1) % 16;
+      }
+    };
+    tick();
+    voice.intervals.push(setInterval(tick, 35));
+  }
+
   async play(track) {
     this._init();
     if (this.ctx.state === 'suspended') await this.ctx.resume();
@@ -308,7 +400,7 @@ export class FrequencyEngine {
 
     const ctx = this.ctx;
     const now = ctx.currentTime;
-    const voice = { oscillators: [], sources: [], nodes: [], timers: [] };
+    const voice = { oscillators: [], sources: [], nodes: [], timers: [], intervals: [] };
 
     /* שער העוצמה הראשי של היצירה — עליו יושבים ה-fades והפעימות */
     const vg = ctx.createGain();
@@ -373,6 +465,21 @@ export class FrequencyEngine {
       );
     }
 
+    /* שכבת קצב — יוצאת ישירות למאסטר ולא דרך ה-LFO של היצירה,
+       כדי שהבס-דראם יישאר הדוק גם מתחת לפעימות איזוכרוניות */
+    if (track.bpm) {
+      const pg = ctx.createGain();
+      pg.gain.setValueAtTime(0.0001, now);
+      pg.gain.setTargetAtTime(1, now, FADE_IN / 2);
+      pg.connect(this.dry);
+      const send = ctx.createGain();
+      send.gain.value = 0.18;              // רק נגיעה של ריוורב — לא בוץ
+      pg.connect(send).connect(this.reverb);
+      voice.nodes.push(pg, send);
+      voice.pulseGain = pg;
+      this._startPulse(track, voice, pg);
+    }
+
     /* שכבת אווירה — רעש ורוד מסונן, "רוח במקדש" */
     if (track.ambience > 0) {
       const noise = ctx.createBufferSource();
@@ -397,10 +504,16 @@ export class FrequencyEngine {
 
   _teardown(voice, fade) {
     for (const t of voice.timers) clearTimeout(t);
+    for (const i of voice.intervals || []) clearInterval(i);
     voice.timers = [];
+    voice.intervals = [];
     const now = this.ctx.currentTime;
     voice.gain.gain.cancelScheduledValues(now);
     voice.gain.gain.setTargetAtTime(0.0001, now, fade / 4);
+    if (voice.pulseGain) {
+      voice.pulseGain.gain.cancelScheduledValues(now);
+      voice.pulseGain.gain.setTargetAtTime(0.0001, now, fade / 4);
+    }
     setTimeout(() => {
       for (const o of voice.oscillators) { try { o.stop(); } catch {} }
       for (const s of voice.sources) { try { s.stop(); } catch {} }
@@ -434,9 +547,14 @@ export class FrequencyEngine {
   fadeOutAndStop(seconds = 8) {
     if (!this.voice) return;
     for (const t of this.voice.timers) clearTimeout(t);
+    for (const i of this.voice.intervals || []) clearInterval(i);
     this.voice.timers = [];
+    this.voice.intervals = [];
     const now = this.ctx.currentTime;
     this.voice.gain.gain.setTargetAtTime(0.0001, now, seconds / 4);
+    if (this.voice.pulseGain) {
+      this.voice.pulseGain.gain.setTargetAtTime(0.0001, now, seconds / 4);
+    }
     const v = this.voice;
     this.voice = null;
     const t = this.current;

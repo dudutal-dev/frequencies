@@ -183,6 +183,10 @@ const ICON_BY_ID = {
   'ps-kaleido': 'star', 'ps-reverse': 'spiral', 'ps-spiral': 'ripple',
   'ps-mirror': 'crystal', 'ps-liquid': 'drop', 'ps-fractal': 'star',
   'ps-dissolve': 'lotus12', 'ps-alien': 'eye',
+  'tk-warmup': 'alpha', 'tk-groove': 'beta', 'tk-drive': 'bolt',
+  'tk-peak': 'gamma', 'tk-acid': 'bolt', 'tk-hypnotic': 'target',
+  'tk-dark': 'mountain', 'tk-trance': 'star', 'tk-hardpeak': 'flame',
+  'tk-afterhours': 'moon', 'tk-schumann': 'earth',
   'sch-melodic': 'bowl', 'sch-psyche': 'spiral', 'sch-speaker': 'ripple',
   'bowl-crystal-528': 'crystal', 'bowl-crystal-963': 'crystal', 'bowl-water': 'drop',
   'bowl-set-7': 'bowl', 'bowl-gong': 'ripple', 'bowl-tibetan': 'bowl',
@@ -194,7 +198,7 @@ const ICON_BY_CATEGORY = {
   calm: 'ripple', love: 'heart', dna: 'helix', planets: 'planet',
   earth: 'earth', meditation: 'om', energy: 'sun', melodic: 'note',
   shaman: 'drum', bowls: 'bowl', mantra: 'beads',
-  psychedelic: 'spiral', schumann: 'earth',
+  psychedelic: 'spiral', schumann: 'earth', techno: 'bolt',
 };
 
 /* אייקון למסע — חלק מהסמלים הטקסטואליים לא נתמכים בכל הפונטים */
@@ -219,6 +223,9 @@ const JOURNEY_ICON = {
   'journey-dissolve': 'star', 'journey-backwards': 'spiral',
   'journey-schumann-ladder': 'earth', 'journey-earth-pulse': 'earth',
   'journey-warped-earth': 'spiral',
+  'journey-techno-rise': 'bolt', 'journey-techno-peak': 'bolt',
+  'journey-techno-night': 'moon', 'journey-techno-hypnotic': 'target',
+  'journey-techno-workout': 'flame',
 };
 const journeyIcon = j => ICONS[JOURNEY_ICON[j.id]] || j.glyph;
 
@@ -362,8 +369,9 @@ const TRACK_INDEX = TRACKS.map(t => ({
     t.title, t.sub, t.desc, (t.tags || []).join(' '), CAT_LABEL[t.category],
     MODE_WORDS[t.mode], SCALE_WORDS[t.scale] || '', SCALE_WORDS[t.melodyScale] || '',
     t.timbre || '', t.melody ? 'מלודיה' : '',
+    t.bpm ? `${t.bpm} bpm טכנו קצב ריקוד` : '',
   ].join(' ')),
-  nums: [String(t.freq), t.beat ? String(t.beat) : ''].filter(Boolean),
+  nums: [String(t.freq), t.beat ? String(t.beat) : '', t.bpm ? String(t.bpm) : ''].filter(Boolean),
 }));
 
 /* המסע יורש גם את התגיות והקטגוריות של השלבים שלו,
@@ -803,7 +811,9 @@ function closePlayer() {
 
 function updatePlayerView(track) {
   const melodySuffix = track.melody && track.mode !== 'melodic' ? ' · ♬ מלודיה חיה' : '';
-  els.pMode.textContent = `${MODE_LABEL[track.mode]} · ${track.freq}Hz${track.beat ? ` + ביט ${track.beat}Hz` : ''}${melodySuffix}`;
+  const bpmSuffix = track.bpm ? ` · ${track.bpm} BPM` : '';
+  els.pMode.textContent =
+    `${MODE_LABEL[track.mode]} · ${track.freq}Hz${track.beat ? ` + ביט ${track.beat}Hz` : ''}${bpmSuffix}${melodySuffix}`;
   els.pTitle.textContent = track.title;
   els.pSub.textContent = track.sub;
   els.pDesc.textContent = track.desc;
