@@ -372,9 +372,9 @@ function renderHome() {
 
   /* מסעות שנבנו לחדר — תדרים נמוכים, גונגים וקצב שרמקול טלפון לא מסוגל להם */
   const stereoPicks = [
-    'journey-soundbath', 'journey-deep-ambient', 'journey-throat',
-    'journey-intimate-evening', 'journey-monastery', 'journey-tribal-fire',
-    'journey-ambient-work', 'journey-techno-night',
+    'journey-soundbath', 'journey-organic-session', 'journey-deep-ambient',
+    'journey-throat', 'journey-intimate-evening', 'journey-monastery',
+    'journey-tribal-fire', 'journey-ambient-work', 'journey-techno-night',
   ].map(id => journeyById[id]).filter(Boolean);
 
   html += `
@@ -383,7 +383,8 @@ function renderHome() {
         <div class="section-title"><span class="sec-icon">🔈</span>במערכת סטריאו</div>
       </div>
       <div class="section-note">
-        מסעות עם גונגים, פאדים עמוקים וסאב-בס שרמקול טלפון לא מסוגל להפיק —
+        גונגים, פאדים ותוכן שיורד עד 38Hz — טווח שרמקול טלפון לא מפיק כלל.
+        ${TRACKS.filter(t => t.mode !== 'binaural').length} מתוך ${TRACKS.length} היצירות עובדות ברמקולים כמו שהן;
         ${state.speakerMode
           ? 'מצב רמקולים פעיל, הביטים הבינאורליים מוגשים כפעימות.'
           : '<button class="note-btn" data-speakers-on="1">הפעילו מצב רמקולים</button> כדי שהביטים יעבדו גם בלי אוזניות.'}
@@ -413,7 +414,11 @@ function sectionHTML(cat, tracks) {
 let activeChip = 'all';
 
 function renderChips() {
-  const all = [{ id: 'all', label: 'הכול', icon: '' }, ...CATEGORIES.filter(c => c.id !== 'featured')];
+  const all = [
+    { id: 'all', label: 'הכול' },
+    { id: 'speakers', label: '🔈 מתאים לרמקולים' },
+    ...CATEGORIES.filter(c => c.id !== 'featured'),
+  ];
   els.chips.innerHTML = all.map(c =>
     `<button class="chip ${c.id === activeChip ? 'active' : ''}" data-chip="${c.id}">${c.label}</button>`
   ).join('');
@@ -421,7 +426,10 @@ function renderChips() {
 
 function renderLibrary() {
   const q = els.search.value.trim();
-  let tracks = activeChip === 'all' ? TRACKS : byCategory(activeChip);
+  /* 'speakers' — כל מה שלא דורש אוזניות, כלומר עובד כמו שהוא במערכת */
+  let tracks = activeChip === 'all' ? TRACKS
+             : activeChip === 'speakers' ? TRACKS.filter(t => t.mode !== 'binaural')
+             : byCategory(activeChip);
   if (q) {
     tracks = tracks.filter(t =>
       [t.title, t.sub, t.desc, String(t.freq), ...(t.tags || [])].join(' ').includes(q)
