@@ -71,6 +71,7 @@ const MODE_LABEL = {
   pure: 'תדר טהור',
   binaural: 'Binaural · 🎧 אוזניות',
   isochronic: 'איזוכרוני · גם ברמקולים',
+  melodic: 'מלודיה גנרטיבית · לא חוזרת על עצמה',
 };
 
 function artHTML(t) {

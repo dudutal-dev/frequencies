@@ -323,6 +323,29 @@ export const JOURNEYS = [
       { id: 'sleep-moon', min: 6 },
     ],
   },
+  {
+    id: 'journey-concert',
+    title: 'קונצרט הריפוי',
+    sub: '5 שלבים · 25 דקות',
+    desc: 'קונצרט גנרטיבי שלם שמולחן ברגע האמת: הנדפאן עמוק, שיר ערש מרפא, פעמוני הנס, קלימבה ללב — ופינאלה של פעמוני מקדש. אף ביצוע לא יחזור.',
+    colors: ['#f6e05e', '#553c9a'], glyph: '♬',
+    steps: [
+      { id: 'mel-handpan-174', min: 5 }, { id: 'mel-lullaby-285', min: 5 },
+      { id: 'mel-bells-528', min: 5 }, { id: 'mel-kalimba-639', min: 5 },
+      { id: 'mel-temple-963', min: 5 },
+    ],
+  },
+  {
+    id: 'journey-musical-sleep',
+    title: 'ערש מוזיקלי',
+    sub: '3 שלבים · 30 דקות',
+    desc: 'נרדמים עם מוזיקה אמיתית: תיבת נגינה מנחמת, שיר ערש על תדר ההתחדשות — והצלילים מפנים את מקומם לדלתא עמוק וטהור.',
+    colors: ['#4c51bf', '#0f3d38'], glyph: '🎼',
+    steps: [
+      { id: 'mel-musicbox-396', min: 6 }, { id: 'mel-lullaby-285', min: 8 },
+      { id: 'sleep-deep', min: 16 },
+    ],
+  },
 ];
 
 export const journeyById = Object.fromEntries(JOURNEYS.map(j => [j.id, j]));

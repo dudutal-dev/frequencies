@@ -119,6 +119,61 @@ export class FrequencyEngine {
     return nodes;
   }
 
+  /* ------------------------------------------------------------
+     מלחין גנרטיבי — מנגינה אינסופית בכוונון טהור (Just Intonation)
+     כל התווים הם יחסים הרמוניים מדויקים של תדר הריפוי, כך שהתדר
+     נשאר מרכז הכובד הצלילי גם כשמתנגנת מלודיה חיה.
+     טימבר: פעמון/קלימבה — יסוד דועך לאט + פרשל שלישי דועך מהר.
+     ------------------------------------------------------------ */
+  _startMelody(track, voice, dest) {
+    const ctx = this.ctx;
+    /* סולם פנטטוני ביחסים טהורים, מאוקטבה מתחת עד מעל */
+    const RATIOS = [0.5, 0.75, 1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4, 5 / 2, 3];
+    const STEPS = [-2, -1, -1, -1, 0, 1, 1, 1, 2, 2, 3];   // הליכה אקראית עדינה
+    let degree = 2;                          // פתיחה על הטוניקה — התדר עצמו
+    const pace = track.pace || 2.6;          // מרווח ממוצע בין תווים (שניות)
+    const sparkle = track.sparkle ?? 0.18;   // הסתברות לנצנוץ אוקטבה למעלה
+
+    const playNote = () => {
+      if (this.voice !== voice) return;
+      const step = STEPS[Math.floor(Math.random() * STEPS.length)];
+      degree = Math.max(0, Math.min(RATIOS.length - 1, degree + step));
+      let ratio = RATIOS[degree];
+      if (Math.random() < sparkle) ratio *= 2;
+      const f = track.freq * ratio;
+      const t0 = ctx.currentTime;
+      const vel = 0.09 + Math.random() * 0.09;
+
+      const pan = ctx.createStereoPanner();
+      pan.pan.value = (Math.random() * 2 - 1) * 0.7;
+      pan.connect(dest);
+      const partials = [
+        { mult: 1, gain: vel, tc: 1.5 },          // יסוד — זנב ארוך
+        { mult: 3.01, gain: vel * 0.16, tc: 0.35 } // פרשל — נקישת הפעמון
+      ];
+      for (const p of partials) {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = f * p.mult;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(p.gain, t0 + 0.015);
+        g.gain.setTargetAtTime(0.0001, t0 + 0.03, p.tc);
+        osc.connect(g).connect(pan);
+        osc.start(t0);
+        osc.stop(t0 + 9);
+        osc.onended = () => { try { g.disconnect(); } catch {} };
+      }
+      voice.timers.push(setTimeout(() => { try { pan.disconnect(); } catch {} }, 9500));
+
+      /* מדי פעם — הפסקה ארוכה, כמו נשימה בין משפטים מוזיקליים */
+      const rest = Math.random() < 0.12 ? pace * 2.5 : 0;
+      const next = pace * (0.55 + Math.random() * 0.9) + rest;
+      voice.timers.push(setTimeout(playNote, next * 1000));
+    };
+    voice.timers.push(setTimeout(playNote, 700));
+  }
+
   async play(track) {
     this._init();
     if (this.ctx.state === 'suspended') await this.ctx.resume();
@@ -126,7 +181,7 @@ export class FrequencyEngine {
 
     const ctx = this.ctx;
     const now = ctx.currentTime;
-    const voice = { oscillators: [], sources: [], nodes: [] };
+    const voice = { oscillators: [], sources: [], nodes: [], timers: [] };
 
     /* שער העוצמה הראשי של היצירה — עליו יושבים ה-fades והפעימות */
     const vg = ctx.createGain();
@@ -136,7 +191,11 @@ export class FrequencyEngine {
     vg.connect(this.reverb);
     voice.gain = vg;
 
-    if (track.mode === 'binaural') {
+    if (track.mode === 'melodic') {
+      /* דרון שקט של תדר היסוד + מלחין גנרטיבי מעליו */
+      voice.oscillators.push(...this._buildTone(track.freq, vg, 0.38));
+      this._startMelody(track, voice, vg);
+    } else if (track.mode === 'binaural') {
       /* שתי אוזניים, שני תדרים — המוח שומע את ההפרש */
       const L = ctx.createStereoPanner(); L.pan.value = -1;
       const R = ctx.createStereoPanner(); R.pan.value = 1;
@@ -197,6 +256,8 @@ export class FrequencyEngine {
   }
 
   _teardown(voice, fade) {
+    for (const t of voice.timers) clearTimeout(t);
+    voice.timers = [];
     const now = this.ctx.currentTime;
     voice.gain.gain.cancelScheduledValues(now);
     voice.gain.gain.setTargetAtTime(0.0001, now, fade / 4);
@@ -232,6 +293,8 @@ export class FrequencyEngine {
   /* fade-out ארוך לסיום טיימר — יציאה עדינה משינה */
   fadeOutAndStop(seconds = 8) {
     if (!this.voice) return;
+    for (const t of this.voice.timers) clearTimeout(t);
+    this.voice.timers = [];
     const now = this.ctx.currentTime;
     this.voice.gain.gain.setTargetAtTime(0.0001, now, seconds / 4);
     const v = this.voice;
