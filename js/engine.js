@@ -178,7 +178,110 @@ export class FrequencyEngine {
      נשאר מרכז הכובד הצלילי גם כשמתנגנת מלודיה חיה.
      טימבר: פעמון/קלימבה — יסוד דועך לאט + פרשל שלישי דועך מהר.
      ------------------------------------------------------------ */
+  /* ------------------------------------------------------------
+     קול זורם — במקום להקיש תווים נפרדים, קול אחד מתמשך שגולש
+     ביניהם. גלישת גובה, ויברטו עדין, פילטר שנפתח עם הנשימה
+     ותנועה בפנורמה — זה מה שנשמע אורגני ולא מסונתז.
+     ------------------------------------------------------------ */
+  _startFlow(track, voice, dest, scale = 1) {
+    const ctx = this.ctx;
+    const SC = {
+      penta: [0.5, 0.75, 1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4, 5 / 2, 3],
+      shaman: [0.5, 0.6, 2 / 3, 0.8, 1, 16 / 15, 6 / 5, 4 / 3, 3 / 2, 8 / 5, 9 / 5, 2],
+      psyche: [0.5, 2 / 3, 0.75, 1, 7 / 6, 4 / 3, 3 / 2, 7 / 4, 2, 7 / 3, 8 / 3, 3],
+      warp: [0.5, 11 / 16, 0.75, 7 / 8, 1, 9 / 8, 11 / 8, 13 / 8, 7 / 4, 2, 9 / 4, 11 / 4],
+    };
+    const RATIOS = SC[track.scale] || SC.psyche;
+    const pace = track.pace || 3.0;
+
+    const filt = ctx.createBiquadFilter();
+    filt.type = 'lowpass';
+    filt.frequency.value = 900;
+    filt.Q.value = 1.6;
+    const vg = ctx.createGain();
+    vg.gain.value = 0.0001;
+    const pan = ctx.createStereoPanner();
+    filt.connect(vg).connect(pan).connect(dest);
+
+    /* ויברטו — הפרט הקטן שהופך צליל מסונתז לנשימה */
+    const vib = ctx.createOscillator();
+    vib.frequency.value = 5.1;
+    const vibAmt = ctx.createGain();
+    vibAmt.gain.value = 7;                       // סנטים
+    vib.connect(vibAmt);
+    vib.start();
+
+    const PARTIALS = [
+      { mult: 1, gain: 1.0, det: 0 },
+      { mult: 1, gain: 0.5, det: 6 },            // כפיל מפולש — עובי
+      { mult: 2, gain: 0.26, det: -4 },
+      { mult: 3, gain: 0.1, det: 3 },
+      { mult: 4, gain: 0.04, det: 0 },
+    ];
+    const oscs = [];
+    for (const p of PARTIALS) {
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.value = track.freq * p.mult;
+      o.detune.value = p.det;
+      vibAmt.connect(o.detune);
+      const g = ctx.createGain();
+      g.gain.value = p.gain;
+      o.connect(g).connect(filt);
+      o.start();
+      oscs.push({ o, mult: p.mult });
+      voice.oscillators.push(o);
+      voice.nodes.push(g);
+    }
+    voice.oscillators.push(vib);
+    voice.nodes.push(vibAmt, filt, vg, pan);
+
+    const STEPS = [-3, -2, -1, -1, 1, 1, 2, 3, 4];
+    let degree = 3;
+
+    const glideTo = () => {
+      if (this.voice !== voice) return;
+      const s = STEPS[Math.floor(Math.random() * STEPS.length)];
+      degree = Math.max(0, Math.min(RATIOS.length - 1, degree + s));
+      const f = track.freq * RATIOS[degree];
+      const t = ctx.currentTime;
+      const glide = pace * (0.22 + Math.random() * 0.3);
+
+      for (const { o, mult } of oscs) {
+        const cur = Math.max(1, o.frequency.value);
+        o.frequency.cancelScheduledValues(t);
+        o.frequency.setValueAtTime(cur, t);
+        o.frequency.exponentialRampToValueAtTime(f * mult, t + glide);
+      }
+
+      /* נשימה: תפיחה איטית ודעיכה חלקית — התווים חופפים */
+      const peak = (0.16 + Math.random() * 0.07) * scale;
+      const cur = Math.max(0.0001, vg.gain.value);
+      vg.gain.cancelScheduledValues(t);
+      vg.gain.setValueAtTime(cur, t);
+      vg.gain.exponentialRampToValueAtTime(peak, t + pace * 0.44);
+      vg.gain.exponentialRampToValueAtTime(0.025 * scale, t + pace * 0.96);
+
+      /* הפילטר נפתח יחד עם הנשימה — הצליל "מתבהר" ואז נסגר */
+      const fc = Math.max(200, filt.frequency.value);
+      filt.frequency.cancelScheduledValues(t);
+      filt.frequency.setValueAtTime(fc, t);
+      filt.frequency.linearRampToValueAtTime(1000 + Math.random() * 1800, t + pace * 0.46);
+      filt.frequency.linearRampToValueAtTime(750, t + pace * 0.96);
+
+      pan.pan.cancelScheduledValues(t);
+      pan.pan.setValueAtTime(pan.pan.value, t);
+      pan.pan.linearRampToValueAtTime((Math.random() * 2 - 1) * 0.5, t + pace);
+
+      /* תזמון לא מדויק בכוונה — נשימה אנושית ולא רשת */
+      const next = pace * (0.82 + Math.random() * 0.4);
+      voice.timers.push(setTimeout(glideTo, next * 1000));
+    };
+    voice.timers.push(setTimeout(glideTo, 400));
+  }
+
   _startMelody(track, voice, dest, scale = 1) {
+    if (track.flow) return this._startFlow(track, voice, dest, scale);
     const ctx = this.ctx;
     /* סולמות ביחסים טהורים — הטוניקה היא תמיד תדר הריפוי */
     const SCALES = {
@@ -377,7 +480,7 @@ export class FrequencyEngine {
       osc.frequency.exponentialRampToValueAtTime(38, t + 0.1);
       const g = ctx.createGain();
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.5, t + 0.004);
+      g.gain.exponentialRampToValueAtTime(0.5 * pGain, t + 0.004);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
       osc.connect(g).connect(dest);
       osc.start(t); osc.stop(t + 0.35);
@@ -391,7 +494,7 @@ export class FrequencyEngine {
       if (bp) { f.type = 'bandpass'; f.frequency.value = bp; f.Q.value = 1.4; }
       else { f.type = 'highpass'; f.frequency.value = hp; }
       const g = ctx.createGain();
-      g.gain.setValueAtTime(vol, t);
+      g.gain.setValueAtTime(vol * pGain, t);
       g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       src.connect(f).connect(g).connect(dest);
       src.start(t); src.stop(t + dur + 0.05);
@@ -409,7 +512,7 @@ export class FrequencyEngine {
       f.Q.value = 6;                                   // נשיכה חומצתית
       const g = ctx.createGain();
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.11, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.11 * pGain, t + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       osc.connect(f).connect(g).connect(dest);
       osc.start(t); osc.stop(t + dur + 0.05);
@@ -468,8 +571,13 @@ export class FrequencyEngine {
                 tom: [3, 7, 11, 14, 15] },
       down:   { kick: [0, 7], hat: [2, 6, 10, 14], clap: [4, 12],
                 bass: [0, 7, 10], bassMult: [1, 1, 1.5] },
+      /* אורגני — קיק רך על 1 ו-3, שייקר צפוף, בלי קלאפ */
+      organic: { kick: [0, 8], hat: [2, 4, 6, 10, 12, 14], clap: [],
+                bass: [0, 3, 8, 11, 14], bassMult: [1, 1.5, 1, 2, 1],
+                gain: 0.62 },
     };
     const P = PATTERNS[track.pattern] || PATTERNS.four;
+    const pGain = P.gain ?? 1;
     const bassDur = step16 * (P.bassShort ? 0.85 : 1.6);
 
     const scheduleStep = (s, t) => {
@@ -626,6 +734,7 @@ export class FrequencyEngine {
           freq: track.freq, pace: track.pace || 3.2,
           sparkle: track.sparkle ?? 0.15, scale: track.melodyScale || track.scale,
           timbre: track.timbre, orbit: track.orbit, reverse: track.reverse, echo: track.echo,
+          flow: track.flow,
         },
         voice, vg, 0.75
       );

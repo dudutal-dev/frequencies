@@ -660,6 +660,43 @@ export const JOURNEYS = [
     ],
   },
 
+  /* ------------------------------ סשנים אורגניים — קצב בינוני ------------------------------ */
+  {
+    id: 'journey-organic-session',
+    title: 'סשן אורגני',
+    sub: '5 שלבים · 75 דקות',
+    desc: 'שעה ורבע בקצב בינוני עם הקול הזורם: נהר 96, זהב נוזלי 100, העברת חלומות 104, פריחה 106 ויער בלילה 108. הטמפו עולה מעט בכל שלב, הצליל אף פעם לא נחבט. 🎧',
+    colors: ['#4fd1c5', '#48bb78'], glyph: '❋',
+    steps: [
+      { id: 'org-river', min: 15 }, { id: 'org-liquid', min: 15 },
+      { id: 'org-dreams', min: 15 }, { id: 'org-bloom', min: 15 },
+      { id: 'org-forest', min: 15 },
+    ],
+  },
+  {
+    id: 'journey-organic-trip',
+    title: 'טריפ אורגני',
+    sub: '5 שלבים · 80 דקות',
+    desc: 'הצד המתעתע: מיראז\' בסולם מעוות, מתפתל הפריגי על שומאן, טיסת לילה 114, ונחיתה בנהר. פסיכדליה שזורמת במקום להתפוצץ.',
+    colors: ['#ed8936', '#805ad5'], glyph: '❋',
+    steps: [
+      { id: 'org-dreams', min: 16 }, { id: 'org-mirage', min: 16 },
+      { id: 'org-serpentine', min: 16 }, { id: 'org-nightflight', min: 16 },
+      { id: 'org-river', min: 16 },
+    ],
+  },
+  {
+    id: 'journey-organic-drive',
+    title: 'נהיגת לילה',
+    sub: '4 שלבים · 60 דקות',
+    desc: 'שעה לכביש פתוח: טיסת לילה 114, יער בלילה 108, מיראז\' 110 ופריחה לסיום. קצב שמחזיק ערנות בלי למתוח.',
+    colors: ['#d6bcfa', '#68d391'], glyph: '❋',
+    steps: [
+      { id: 'org-nightflight', min: 15 }, { id: 'org-forest', min: 15 },
+      { id: 'org-mirage', min: 15 }, { id: 'org-bloom', min: 15 },
+    ],
+  },
+
   /* ------------------------------ סטים של טכנו — עולים ------------------------------ */
   {
     id: 'journey-techno-rise',

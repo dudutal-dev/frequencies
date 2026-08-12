@@ -203,6 +203,9 @@ const ICON_BY_ID = {
   'ps-kaleido': 'star', 'ps-reverse': 'spiral', 'ps-spiral': 'ripple',
   'ps-mirror': 'crystal', 'ps-liquid': 'drop', 'ps-fractal': 'star',
   'ps-dissolve': 'lotus12', 'ps-alien': 'eye',
+  'org-dreams': 'cloud', 'org-liquid': 'drop', 'org-forest': 'leaf',
+  'org-river': 'ripple', 'org-serpentine': 'serpent', 'org-bloom': 'lotus8',
+  'org-mirage': 'eye', 'org-nightflight': 'star',
   'tk-warmup': 'alpha', 'tk-groove': 'beta', 'tk-drive': 'bolt',
   'tk-peak': 'gamma', 'tk-acid': 'bolt', 'tk-hypnotic': 'target',
   'tk-dark': 'mountain', 'tk-trance': 'star', 'tk-hardpeak': 'flame',
@@ -223,6 +226,7 @@ const ICON_BY_CATEGORY = {
   earth: 'earth', meditation: 'om', energy: 'sun', melodic: 'note',
   shaman: 'drum', bowls: 'bowl', mantra: 'beads',
   psychedelic: 'spiral', schumann: 'earth', techno: 'bolt', ambient: 'ripple',
+  organic: 'leaf',
 };
 
 /* אייקון למסע — חלק מהסמלים הטקסטואליים לא נתמכים בכל הפונטים */
@@ -449,6 +453,7 @@ const PATTERN_WORDS = {
   dub: 'דאב dub מינימל מרחב ברלין',
   tribal: 'שבטי tribal אפרו afro פרקושן תופים',
   down: 'דאון-טמפו downtempo טריפ-הופ trip hop איטי צ\'יל',
+  organic: 'אורגני organic פסיבינט psybient זורם קצב בינוני',
 };
 const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
 
@@ -460,7 +465,7 @@ const TRACK_INDEX = TRACKS.map(t => ({
   hay: norm([
     t.title, t.sub, t.desc, (t.tags || []).join(' '), CAT_LABEL[t.category],
     MODE_WORDS[t.mode], SCALE_WORDS[t.scale] || '', SCALE_WORDS[t.melodyScale] || '',
-    t.timbre || '', t.melody ? 'מלודיה' : '', t.pad ? 'פאד אמביינט ambient מרחב ארוך' : '',
+    t.timbre || '', t.melody ? 'מלודיה' : '', t.pad ? 'פאד אמביינט ambient מרחב ארוך' : '', t.flow ? 'זורם אורגני גולש flow' : '',
     t.bpm ? `${t.bpm} bpm טכנו קצב ריקוד ${PATTERN_WORDS[t.pattern] || ''}` : '',
   ].join(' ')),
   nums: [String(t.freq), t.beat ? String(t.beat) : '', t.bpm ? String(t.bpm) : ''].filter(Boolean),
