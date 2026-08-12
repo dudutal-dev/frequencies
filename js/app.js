@@ -361,6 +361,21 @@ function renderHome() {
     'journey-intimate-evening', 'journey-inner-space',
   ].map(id => journeyById[id]).filter(Boolean);
 
+  /* נוסף לאחרונה — כדי שתוכן חדש לא ייקבר בסוף רשימה של 70 מסעות */
+  const latest = [
+    'journey-organic-session', 'journey-organic-trip', 'journey-organic-drive',
+    'journey-intimate-evening', 'journey-lovers-night', 'journey-vision-hour',
+    'journey-inner-space', 'journey-ambient-work',
+  ].map(id => journeyById[id]).filter(Boolean);
+
+  html += `
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title"><span class="sec-icon">✦</span>נוסף לאחרונה</div>
+      </div>
+      <div class="row">${latest.map(journeyCoverHTML).join('')}</div>
+    </div>`;
+
   html += `
     <div class="section">
       <div class="section-head">
