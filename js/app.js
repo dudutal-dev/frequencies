@@ -187,6 +187,10 @@ const ICON_BY_ID = {
   'tk-peak': 'gamma', 'tk-acid': 'bolt', 'tk-hypnotic': 'target',
   'tk-dark': 'mountain', 'tk-trance': 'star', 'tk-hardpeak': 'flame',
   'tk-afterhours': 'moon', 'tk-schumann': 'earth',
+  'tk-psy': 'spiral', 'tk-goa': 'star', 'tk-fullon': 'flame',
+  'tk-dub': 'ripple', 'tk-dubdeep': 'ripple', 'tk-dnb': 'bolt',
+  'tk-break': 'bolt', 'tk-tribal': 'drum', 'tk-afro': 'drum',
+  'tk-triphop': 'cloud', 'tk-downtempo': 'moon', 'tk-prog': 'crystal',
   'sch-melodic': 'bowl', 'sch-psyche': 'spiral', 'sch-speaker': 'ripple',
   'bowl-crystal-528': 'crystal', 'bowl-crystal-963': 'crystal', 'bowl-water': 'drop',
   'bowl-set-7': 'bowl', 'bowl-gong': 'ripple', 'bowl-tibetan': 'bowl',
@@ -226,6 +230,10 @@ const JOURNEY_ICON = {
   'journey-techno-rise': 'bolt', 'journey-techno-peak': 'bolt',
   'journey-techno-night': 'moon', 'journey-techno-hypnotic': 'target',
   'journey-techno-workout': 'flame',
+  'journey-psytrance': 'spiral', 'journey-dub-session': 'ripple',
+  'journey-tribal-fire': 'drum', 'journey-breaks': 'bolt',
+  'journey-chillout': 'cloud', 'journey-genres': 'infinity',
+  'journey-run': 'flame',
 };
 const journeyIcon = j => ICONS[JOURNEY_ICON[j.id]] || j.glyph;
 
@@ -358,6 +366,14 @@ const SCALE_WORDS = {
   penta: 'פנטטוני', shaman: 'שאמאני פריגי', psyche: 'פסיכדלי ספטימלי',
   warp: 'פסיכדלי מעוות מיקרוטונלי',
 };
+const PATTERN_WORDS = {
+  four: 'טכנו האוס four on the floor',
+  psy: 'פסייטראנס psytrance גואה goa פול-און טראנס',
+  break: 'ברייקביט breakbeat דראם אנד בס dnb שבור',
+  dub: 'דאב dub מינימל מרחב ברלין',
+  tribal: 'שבטי tribal אפרו afro פרקושן תופים',
+  down: 'דאון-טמפו downtempo טריפ-הופ trip hop איטי צ\'יל',
+};
 const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
 
 const norm = s => String(s).toLowerCase().replace(/["'׳״]/g, '').replace(/\s+/g, ' ').trim();
@@ -369,7 +385,7 @@ const TRACK_INDEX = TRACKS.map(t => ({
     t.title, t.sub, t.desc, (t.tags || []).join(' '), CAT_LABEL[t.category],
     MODE_WORDS[t.mode], SCALE_WORDS[t.scale] || '', SCALE_WORDS[t.melodyScale] || '',
     t.timbre || '', t.melody ? 'מלודיה' : '',
-    t.bpm ? `${t.bpm} bpm טכנו קצב ריקוד` : '',
+    t.bpm ? `${t.bpm} bpm טכנו קצב ריקוד ${PATTERN_WORDS[t.pattern] || ''}` : '',
   ].join(' ')),
   nums: [String(t.freq), t.beat ? String(t.beat) : '', t.bpm ? String(t.bpm) : ''].filter(Boolean),
 }));

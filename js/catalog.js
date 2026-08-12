@@ -712,6 +712,84 @@ export const TRACKS = [
     desc: 'הצירוף היחיד מסוגו: גרוב של 124 BPM מעל פעימת שומאן 7.83Hz. הרגליים בקצב, המערכת מוארקת לכדור הארץ.',
     tags: ['שומאן', 'מוארק', 'טכנו'], colors: ['#68d391', '#12301d'], glyph: '◼', ambience: 0.035 },
 
+  /* --- פסייטראנס וגואה — בס מתגלגל על שש-עשרה --- */
+  { id: 'tk-psy', category: 'techno', freq: 432, mode: 'binaural', beat: 30,
+    bpm: 145, energy: 0.85, pattern: 'psy', melody: true, melodyScale: 'psyche', pace: 1.5, featured: true,
+    title: 'פסייטראנס', sub: '145 BPM · בס מתגלגל · 🎧',
+    desc: 'הגרוב שהמציא ז\'אנר שלם: בס שמתגלגל על שלוש השש-עשרה שאחרי כל קיק. כוונון 432 ומלודיה ספטימלית מעל.',
+    tags: ['פסייטראנס', 'גלגול', '145'], colors: ['#9f7aea', '#1b0d33'], glyph: '▲', ambience: 0.02 },
+
+  { id: 'tk-goa', category: 'techno', freq: 528, mode: 'isochronic', beat: 20,
+    bpm: 142, energy: 0.8, pattern: 'psy', melody: true, melodyScale: 'psyche', pace: 1.8,
+    title: 'גואה', sub: '142 BPM · תדר הנס',
+    desc: 'הסגנון המקורי משנות התשעים: 142 BPM, בס מתגלגל ומלודיה מזרחית מעל תדר הנס 528.',
+    tags: ['גואה', 'רטרו', 'מזרחי'], colors: ['#f6ad55', '#3d1f05'], glyph: '▲', ambience: 0.025 },
+
+  { id: 'tk-fullon', category: 'techno', freq: 396, mode: 'binaural', beat: 40,
+    bpm: 148, energy: 1.0, pattern: 'psy', melody: true, melodyScale: 'warp', pace: 1.2,
+    title: 'פול-און', sub: '148 BPM · המהיר ביותר · 🎧',
+    desc: 'הקצה העליון של הספרייה: 148 BPM, בס מתגלגל בצפיפות מלאה, סולם מעוות וגמא 40Hz. אנרגיה בלי בלמים.',
+    tags: ['פול-און', 'קיצוני', '148'], colors: ['#f56565', '#2d0505'], glyph: '▲', ambience: 0.015 },
+
+  /* --- דאב טכנו — סטאבים על העף-ביט --- */
+  { id: 'tk-dub', category: 'techno', freq: 136.1, mode: 'isochronic', beat: 10,
+    bpm: 120, energy: 0.4, pattern: 'dub', melody: true, timbre: 'crystal', pace: 4.2, featured: true,
+    title: 'דאב טכנו', sub: '120 BPM · סטאבים בעף-ביט',
+    desc: 'ברלין בשלוש לפנות בוקר: קיק דליל, אקורדים שנופלים בין הפעימות והרבה מרחב. תדר ה-OM כטוניקה.',
+    tags: ['דאב', 'מרחב', 'מינימל'], colors: ['#4a5568', '#0a0d12'], glyph: '◼', ambience: 0.05 },
+
+  { id: 'tk-dubdeep', category: 'techno', freq: 174, mode: 'isochronic', beat: 8,
+    bpm: 122, energy: 0.35, pattern: 'dub', melody: true, timbre: 'handpan', pace: 4.6,
+    title: 'דאב עמוק', sub: '122 BPM · אלפא 8Hz',
+    desc: 'הגרסה הרכה עוד יותר: תדר שיכוך הכאב, אלפא 8Hz וסטאבים רחוקים. טכנו שאפשר להירדם בתוכו.',
+    tags: ['דאב', 'רגוע', 'עמוק'], colors: ['#7c5cff', '#120c26'], glyph: '◼', ambience: 0.055 },
+
+  /* --- ברייקביט ודראם-אנד-בס --- */
+  { id: 'tk-dnb', category: 'techno', freq: 285, mode: 'binaural', beat: 30,
+    bpm: 174, energy: 0.9, pattern: 'break', melody: true, timbre: 'bell', pace: 1.4, featured: true,
+    title: 'דראם אנד בס', sub: '174 BPM · ברייקביט · 🎧',
+    desc: 'הקיק שבור והסנר על 2 ו-4 — הגרוב שרץ פי שניים מהתחושה. 174 BPM עם תדר ההתחדשות.',
+    tags: ['דראם אנד בס', 'ברייקביט'], colors: ['#48bb78', '#0a2415'], glyph: '▲', ambience: 0.02 },
+
+  { id: 'tk-break', category: 'techno', freq: 741, mode: 'isochronic', beat: 18,
+    bpm: 168, energy: 0.8, pattern: 'break', melody: true, timbre: 'kalimba', pace: 1.6,
+    title: 'ברייקביט', sub: '168 BPM · תדר הניקוי',
+    desc: 'קצב שבור על תדר 741 המנקה — מהיר, קופצני ומדבק. לניקיון הבית או לריצה.',
+    tags: ['ברייקביט', 'קופצני'], colors: ['#4299e1', '#0a1f33'], glyph: '▲', ambience: 0.02 },
+
+  /* --- שבטי ואפרו --- */
+  { id: 'tk-tribal', category: 'techno', freq: 396, mode: 'isochronic', beat: 14,
+    bpm: 122, energy: 0.6, pattern: 'tribal', melody: true, melodyScale: 'shaman', pace: 2.4, featured: true,
+    title: 'טכנו שבטי', sub: '122 BPM · תופים מרכזיים',
+    desc: 'תופי טום שמתגלגלים בין הקיקים וסולם פריגי מעליהם — הגשר בין מעגל האש למועדון.',
+    tags: ['שבטי', 'תופים', 'אפרו'], colors: ['#b7791f', '#241703'], glyph: '◼', ambience: 0.04 },
+
+  { id: 'tk-afro', category: 'techno', freq: 111, mode: 'isochronic', beat: 12,
+    bpm: 128, energy: 0.7, pattern: 'tribal', melody: true, melodyScale: 'shaman', pace: 2.0,
+    title: 'אפרו-הַאוס', sub: '128 BPM · תדר 111',
+    desc: 'פרקושן צפוף על תדר 111 של חללי הקדושה. חם, אנושי ומתגלגל — הגרוב שלא נעצר.',
+    tags: ['אפרו', 'האוס', 'פרקושן'], colors: ['#ed8936', '#2b1503'], glyph: '◼', ambience: 0.035 },
+
+  /* --- דאון-טמפו וטריפ-הופ --- */
+  { id: 'tk-triphop', category: 'techno', freq: 174, mode: 'isochronic', beat: 8,
+    bpm: 90, energy: 0.45, pattern: 'down', melody: true, timbre: 'handpan', pace: 3.6,
+    title: 'טריפ-הופ', sub: '90 BPM · כבד ואיטי',
+    desc: 'קצב שבור ואיטי, קיק כבד וסנר מאוחר — בריסטול של אמצע התשעים על תדר 174. אלפא מרגיע מתחת.',
+    tags: ['טריפ-הופ', 'איטי', 'כבד'], colors: ['#805ad5', '#150d29'], glyph: '◼', ambience: 0.05 },
+
+  { id: 'tk-downtempo', category: 'techno', freq: 285, mode: 'isochronic', beat: 7.83,
+    bpm: 95, energy: 0.4, pattern: 'down', melody: true, timbre: 'crystal', pace: 4.0,
+    title: 'דאון-טמפו', sub: '95 BPM · שומאן 7.83Hz',
+    desc: 'הכי רגוע בפרק: 95 BPM על פעימת שומאן, עם קערות קריסטל שנופלות בין הפעימות. לעבודה או לנסיעה ארוכה.',
+    tags: ['דאון-טמפו', 'רגוע', 'שומאן'], colors: ['#4fd1c5', '#0a2b28'], glyph: '◼', ambience: 0.05 },
+
+  /* --- פרוגרסיב --- */
+  { id: 'tk-prog', category: 'techno', freq: 963, mode: 'binaural', beat: 20,
+    bpm: 124, energy: 0.55, pattern: 'four', melody: true, timbre: 'bell', pace: 3.0,
+    title: 'פרוגרסיב', sub: '124 BPM · 963Hz · 🎧',
+    desc: 'הסבלנות של הפרוגרסיב: 124 BPM שמתפתח לאט על תדר הכתר. שכבות שנפתחות בהדרגה במקום שיא מיידי.',
+    tags: ['פרוגרסיב', 'הדרגתי'], colors: ['#d6bcfa', '#2b1155'], glyph: '◼', ambience: 0.03 },
+
   /* ------------------------------ פסיכדלי קיצוני — אשליות שמע ------------------------------ */
   { id: 'ps-kaleido', category: 'psychedelic', freq: 417, mode: 'melodic', scale: 'warp',
     orbit: true, echo: 3, pace: 2.2, sparkle: 0.3, featured: true,

@@ -580,6 +580,86 @@ export const JOURNEYS = [
       { id: 'tk-afterhours', min: 8 },
     ],
   },
+  {
+    id: 'journey-psytrance',
+    title: 'מסע פסייטראנס',
+    sub: '4 שלבים · 52 דקות',
+    desc: 'הבס המתגלגל מתחיל בגואה 142, עולה לפסייטראנס 145, מתפוצץ בפול-און 148 — ונוחת באפטר-אוורס. הסט השלם של מסיבת יער.',
+    colors: ['#9f7aea', '#f56565'], glyph: '▲',
+    steps: [
+      { id: 'tk-goa', min: 13 }, { id: 'tk-psy', min: 13 },
+      { id: 'tk-fullon', min: 13 }, { id: 'tk-afterhours', min: 13 },
+    ],
+  },
+  {
+    id: 'journey-dub-session',
+    title: 'סשן דאב',
+    sub: '4 שלבים · 48 דקות',
+    desc: 'ברלין בשלוש לפנות בוקר: דאב טכנו, דאב עמוק, פרוגרסיב שנפתח לאט — ונחיתה בדאון-טמפו על פעימת שומאן. שעה של מרחב.',
+    colors: ['#4a5568', '#4fd1c5'], glyph: '◼',
+    steps: [
+      { id: 'tk-dub', min: 12 }, { id: 'tk-dubdeep', min: 12 },
+      { id: 'tk-prog', min: 12 }, { id: 'tk-downtempo', min: 12 },
+    ],
+  },
+  {
+    id: 'journey-tribal-fire',
+    title: 'מעגל שבטי',
+    sub: '4 שלבים · 40 דקות',
+    desc: 'הגשר בין מעגל האש למועדון: תוף שאמאני פותח, טכנו שבטי מכניס את הקיק, אפרו-האוס מצפיף — וטראנס תיפוף סוגר. תופים לאורך כל הדרך.',
+    colors: ['#b7791f', '#ed8936'], glyph: '◼',
+    steps: [
+      { id: 'sh-drum', min: 10 }, { id: 'tk-tribal', min: 10 },
+      { id: 'tk-afro', min: 10 }, { id: 'sh-trance', min: 10 },
+    ],
+  },
+  {
+    id: 'journey-breaks',
+    title: 'ברייקס',
+    sub: '3 שלבים · 33 דקות',
+    desc: 'קצב שבור לאורך כל הדרך: ברייקביט 168, דראם אנד בס 174 — ונחיתה בטריפ-הופ 90 שמוריד את הדופק בחצי.',
+    colors: ['#4299e1', '#805ad5'], glyph: '▲',
+    steps: [
+      { id: 'tk-break', min: 11 }, { id: 'tk-dnb', min: 11 },
+      { id: 'tk-triphop', min: 11 },
+    ],
+  },
+  {
+    id: 'journey-chillout',
+    title: 'צ\'יל-אאוט',
+    sub: '4 שלבים · 44 דקות',
+    desc: 'הקצב האיטי בלבד: דאון-טמפו על שומאן, טריפ-הופ כבד, דאב עמוק — וסיום ללא קצב באמבט קערות. לעבודה, לנסיעה או לערב.',
+    colors: ['#4fd1c5', '#a0aec0'], glyph: '◼',
+    steps: [
+      { id: 'tk-downtempo', min: 11 }, { id: 'tk-triphop', min: 11 },
+      { id: 'tk-dubdeep', min: 11 }, { id: 'bowl-gong', min: 11 },
+    ],
+  },
+  {
+    id: 'journey-genres',
+    title: 'המסע דרך הז\'אנרים',
+    sub: '8 שלבים · 96 דקות',
+    desc: 'המסע הארוך ביותר בספרייה — שעה וחצי שעוברת בכל צורות הקצב: דאון-טמפו, דאב, שבטי, טכנו, פרוגרסיב, פסייטראנס, פול-און — ונחיתה מלאה. הקשת השלמה.',
+    colors: ['#4fd1c5', '#f56565'], glyph: '▲',
+    steps: [
+      { id: 'tk-downtempo', min: 12 }, { id: 'tk-dub', min: 12 },
+      { id: 'tk-tribal', min: 12 }, { id: 'tk-drive', min: 12 },
+      { id: 'tk-prog', min: 12 }, { id: 'tk-psy', min: 12 },
+      { id: 'tk-fullon', min: 12 }, { id: 'tk-afterhours', min: 12 },
+    ],
+  },
+  {
+    id: 'journey-run',
+    title: 'ריצה ארוכה',
+    sub: '5 שלבים · 50 דקות',
+    desc: 'קצב מדורג לריצה: חימום 112, אפרו 128 לקצב יציב, דרייב 128, ברייקביט 168 לספרינט — ושחרור בדאון-טמפו. חמישים דקות בלי לגעת בטלפון.',
+    colors: ['#f6ad55', '#48bb78'], glyph: '▲',
+    steps: [
+      { id: 'tk-warmup', min: 8 }, { id: 'tk-afro', min: 12 },
+      { id: 'tk-drive', min: 12 }, { id: 'tk-break', min: 10 },
+      { id: 'tk-downtempo', min: 8 },
+    ],
+  },
 ];
 
 export const journeyById = Object.fromEntries(JOURNEYS.map(j => [j.id, j]));
