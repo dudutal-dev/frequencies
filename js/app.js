@@ -366,6 +366,27 @@ function renderHome() {
       <div class="row">${picks.map(journeyCoverHTML).join('')}</div>
     </div>`;
 
+  /* מסעות שנבנו לחדר — תדרים נמוכים, גונגים וקצב שרמקול טלפון לא מסוגל להם */
+  const stereoPicks = [
+    'journey-soundbath', 'journey-deep-ambient', 'journey-throat',
+    'journey-intimate-evening', 'journey-monastery', 'journey-tribal-fire',
+    'journey-ambient-work', 'journey-techno-night',
+  ].map(id => journeyById[id]).filter(Boolean);
+
+  html += `
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title"><span class="sec-icon">🔈</span>במערכת סטריאו</div>
+      </div>
+      <div class="section-note">
+        מסעות עם גונגים, פאדים עמוקים וסאב-בס שרמקול טלפון לא מסוגל להפיק —
+        ${state.speakerMode
+          ? 'מצב רמקולים פעיל, הביטים הבינאורליים מוגשים כפעימות.'
+          : '<button class="note-btn" data-speakers-on="1">הפעילו מצב רמקולים</button> כדי שהביטים יעבדו גם בלי אוזניות.'}
+      </div>
+      <div class="row">${stereoPicks.map(journeyCoverHTML).join('')}</div>
+    </div>`;
+
   for (const cat of CATEGORIES) {
     html += sectionHTML(cat, byCategory(cat.id));
   }
@@ -943,16 +964,20 @@ els.pVolume.addEventListener('input', () => {
 })();
 
 /* ------------------------------ מצב רמקולים ------------------------------ */
-els.pSpeakers.addEventListener('click', async () => {
-  state.speakerMode = !state.speakerMode;
-  engine.speakerMode = state.speakerMode;
+async function setSpeakerMode(on) {
+  state.speakerMode = on;
+  engine.speakerMode = on;
   saveState();
   updateSpeakerButton();
+  renderHome();
+  markPlaying();
   if (engine.current) await applyTrack(engine.current);
-  toast(state.speakerMode
+  toast(on
     ? 'מצב רמקולים — ביטים בינאורליים מוגשים כפעימות'
     : 'מצב אוזניות — ביטים בינאורליים מלאים 🎧');
-});
+}
+
+els.pSpeakers.addEventListener('click', () => setSpeakerMode(!state.speakerMode));
 
 function updateSpeakerButton() {
   els.pSpeakers.textContent = state.speakerMode ? '🔈 רמקולים' : '🎧 אוזניות';
@@ -1089,6 +1114,7 @@ document.addEventListener('click', async e => {
   }
 
   if (e.target.closest('[data-goto-journeys]')) { switchView('journeys'); return; }
+  if (e.target.closest('[data-speakers-on]')) { await setSpeakerMode(true); return; }
 
   /* בדיקות מערכת במסך האודות */
   const test = e.target.closest('[data-test]');
