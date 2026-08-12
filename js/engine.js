@@ -19,6 +19,7 @@ export class FrequencyEngine {
     this.voice = null;          // הגרף של היצירה המתנגנת
     this.current = null;        // הטראק הנוכחי
     this.volume = 0.7;
+    this.instrument = 'auto';   // 'auto' = הכלי שהוגדר ליצירה עצמה
     this.onStateChange = null;  // callback לממשק
   }
 
@@ -141,14 +142,62 @@ export class FrequencyEngine {
     const pace = track.pace || 2.4;          // פעימת המוטיב (שניות)
     const sparkle = track.sparkle ?? 0.18;   // הסתברות לנצנוץ אוקטבה למעלה
 
-    /* פעמון עשיר וחודר: יסוד + שימר detune + פרשלים לא-הרמוניים של פעמון אמיתי */
-    const BELL = [
-      { mult: 1,     gain: 1.0,  tc: 2.8 },   // יסוד — זנב ארוך ועמוק
-      { mult: 1.004, gain: 0.45, tc: 2.6 },   // שימר — פעימה פנימית איטית
-      { mult: 2.01,  gain: 0.24, tc: 1.1 },   // אוקטבה — נוכחות
-      { mult: 2.98,  gain: 0.17, tc: 0.5 },   // פרשל פעמון — הנקישה החודרת
-      { mult: 4.16,  gain: 0.07, tc: 0.3 },   // ברק עליון
-    ];
+    /* ------------------------------------------------------------
+       כלי הנגינה — כל אחד הוא סט פרשלים עם זמני דעיכה משלו.
+       mult = כפל תדר · gain = עוצמה יחסית · tc = קבוע זמן דעיכה
+       ------------------------------------------------------------ */
+    const TIMBRES = {
+      /* פעמון — פרשלים לא-הרמוניים, זנב ארוך וחודר */
+      bell: [
+        { mult: 1,     gain: 1.0,  tc: 2.8 },
+        { mult: 1.004, gain: 0.45, tc: 2.6 },   // שימר — פעימה פנימית
+        { mult: 2.01,  gain: 0.24, tc: 1.1 },
+        { mult: 2.98,  gain: 0.17, tc: 0.5 },   // הנקישה החודרת
+        { mult: 4.16,  gain: 0.07, tc: 0.3 },
+      ],
+      /* קלימבה — עץ ומתכת, דעיכה קצרה וחמימה */
+      kalimba: [
+        { mult: 1,    gain: 1.0,  tc: 0.9 },
+        { mult: 2,    gain: 0.3,  tc: 0.35 },
+        { mult: 3,    gain: 0.14, tc: 0.16 },
+        { mult: 5.4,  gain: 0.05, tc: 0.09 },   // נקישת הלשונית
+      ],
+      /* נבל — פריטה נקייה, הרמוניות זוגיות רכות */
+      harp: [
+        { mult: 1,    gain: 1.0,  tc: 1.6 },
+        { mult: 2,    gain: 0.34, tc: 1.0 },
+        { mult: 3,    gain: 0.16, tc: 0.6 },
+        { mult: 4,    gain: 0.08, tc: 0.35 },
+        { mult: 6,    gain: 0.03, tc: 0.2 },
+      ],
+      /* הנדפאן — מתכת עגולה וחמה, אוקטבה תחתונה בולטת */
+      handpan: [
+        { mult: 0.5,  gain: 0.55, tc: 3.2 },
+        { mult: 1,    gain: 1.0,  tc: 2.4 },
+        { mult: 2,    gain: 0.28, tc: 1.2 },
+        { mult: 3.01, gain: 0.09, tc: 0.45 },
+      ],
+      /* קערת קריסטל — כמעט סינוס טהור, זנב אינסופי */
+      crystal: [
+        { mult: 1,     gain: 1.0,  tc: 5.0 },
+        { mult: 1.002, gain: 0.55, tc: 4.6 },   // פעימה איטית מאוד
+        { mult: 4,     gain: 0.05, tc: 1.4 },
+        { mult: 6,     gain: 0.02, tc: 0.9 },
+      ],
+      /* שירת גרון — סדרת הרמוניות מלאה עם הדגשת העליונות */
+      throat: [
+        { mult: 1,  gain: 1.0,  tc: 3.4 },
+        { mult: 2,  gain: 0.4,  tc: 3.0 },
+        { mult: 3,  gain: 0.28, tc: 2.6 },
+        { mult: 4,  gain: 0.22, tc: 2.2 },
+        { mult: 5,  gain: 0.18, tc: 1.8 },   // הפורמנט ששומעים כ"שריקה"
+        { mult: 6,  gain: 0.12, tc: 1.4 },
+      ],
+    };
+    const timbreName = this.instrument !== 'auto'
+      ? this.instrument
+      : (track.timbre || 'bell');
+    const BELL = TIMBRES[timbreName] || TIMBRES.bell;
     /* גונג עמוק — עוגן ההיפנוזה בתחילת כל מעגל */
     const GONG = [
       { mult: 0.5,  gain: 1.0,  tc: 3.8 },
@@ -281,6 +330,7 @@ export class FrequencyEngine {
         {
           freq: track.freq, pace: track.pace || 3.2,
           sparkle: track.sparkle ?? 0.15, scale: track.melodyScale || track.scale,
+          timbre: track.timbre,
         },
         voice, vg, 0.75
       );
