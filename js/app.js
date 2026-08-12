@@ -69,17 +69,40 @@ function toast(msg) {
 
 const MODE_LABEL = {
   pure: 'תדר טהור',
-  binaural: 'Binaural · 🎧 אוזניות',
+  binaural: 'Binaural 🎧',
   isochronic: 'איזוכרוני · גם ברמקולים',
   melodic: 'מלודיה גנרטיבית · לא חוזרת על עצמה',
 };
 
+/* צבע hex → rgba עם שקיפות */
+function hexA(hex, a) {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
+
+/* דיסק מנדלה — טבעות תהודה קונצנטריות סביב ליבה זוהרת, לא עיגול צבע אחיד */
 function artHTML(t) {
+  const [c0, c1] = t.colors;
+  const bg = [
+    `repeating-radial-gradient(circle at 50% 50%, transparent 0 5.5%, ${hexA(c0, 0.22)} 5.5% 6.3%)`,
+    `conic-gradient(from 210deg, ${hexA(c0, 0.26)}, ${hexA(c1, 0.06)} 30%, ${hexA(c0, 0.26)} 55%, ${hexA(c1, 0.06)} 80%, ${hexA(c0, 0.26)})`,
+    `radial-gradient(circle at 50% 50%, ${hexA(c0, 0.5)} 0%, transparent 45%)`,
+    `radial-gradient(circle at 50% 50%, #15151f 0%, #07070d 100%)`,
+  ].join(',');
+  const badge = t.mode === 'binaural' ? '🎧' : t.mode === 'melodic' ? '♬' : '';
+  /* אם הסמל הוא ממילא המספר — לא לחזור עליו פעמיים */
+  const glyphIsFreq = t.glyph === String(t.freq);
+  const hz = glyphIsFreq
+    ? (t.beat ? `+${t.beat}Hz` : '')
+    : `${t.freq}Hz${t.beat ? ` +${t.beat}` : ''}`;
   return `
-    <div class="art" style="background: linear-gradient(140deg, ${t.colors[0]}, ${t.colors[1]})">
-      <span class="glyph">${t.glyph}</span>
-      <span class="hz-badge">${t.freq}Hz${t.beat ? ` + ${t.beat}Hz` : ''}</span>
-      ${t.mode === 'binaural' ? '<span class="phones">🎧</span>' : ''}
+    <div class="art" style="background:${bg}; --ring:${hexA(c0, 0.55)}; --glow:${hexA(c0, 0.4)}">
+      <div class="art-core" style="background: radial-gradient(circle, #fff 0%, ${hexA(c0, 0.9)} 45%, transparent 72%)"></div>
+      <div class="art-label">
+        <span class="glyph">${t.glyph}</span>
+        ${hz ? `<span class="hz">${hz}</span>` : ''}
+      </div>
+      ${badge ? `<span class="phones">${badge}</span>` : ''}
       <div class="eq"><span></span><span></span><span></span><span></span></div>
     </div>`;
 }
