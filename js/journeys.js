@@ -697,6 +697,54 @@ export const JOURNEYS = [
     ],
   },
 
+  /* ------------------------------ אירוטי עדין — קצב איטי עד בינוני ------------------------------ */
+  {
+    id: 'journey-sensual-slow',
+    title: 'לאט מאוד',
+    sub: '4 שלבים · 72 דקות',
+    desc: 'שעה וחצי בקצב הנמוך ביותר: פעימה בחבטה כפולה של 88, נשימה אחת ב-90, לאט ב-92 ולחישות ב-98. הקצב נוכח אבל אף פעם לא מוביל.',
+    colors: ['#fc8181', '#9ae6b4'], glyph: '♀',
+    steps: [
+      { id: 'sn-heartbeat', min: 18 }, { id: 'sn-onebreath', min: 18 },
+      { id: 'sn-slow', min: 18 }, { id: 'sn-whispers', min: 18 },
+    ],
+  },
+  {
+    id: 'journey-sensual-rise',
+    title: 'ערב שמתחמם',
+    sub: '5 שלבים · 90 דקות',
+    desc: 'שעה וחצי שעולה בעדינות: לאט 92, קרוב 96, אור נר 100, קטיפה 102 וחום הגוף 106. ארבע נקודות טמפו לאורך המסע כולו — עלייה שכמעט לא מרגישים.',
+    colors: ['#f687b3', '#68d391'], glyph: '♀',
+    steps: [
+      { id: 'sn-slow', min: 18 }, { id: 'sn-skinclose', min: 18 },
+      { id: 'sn-candlelight', min: 18 }, { id: 'sn-velvet', min: 18 },
+      { id: 'sn-warmth', min: 18 },
+    ],
+  },
+  {
+    id: 'journey-sensual-blue',
+    title: 'שעה כחולה',
+    sub: '4 שלבים · 76 דקות',
+    desc: 'מהשקיעה אל הלילה: שעה כחולה, קטיפה על שומאן, מגע ארוך ב-112 — ונחיתה בנשימה אחת. הצד המסתורי יותר של הפרק.',
+    colors: ['#4fd1c5', '#805ad5'], glyph: '♀',
+    steps: [
+      { id: 'sn-bluehour', min: 19 }, { id: 'sn-velvet', min: 19 },
+      { id: 'sn-longtouch', min: 19 }, { id: 'sn-onebreath', min: 19 },
+    ],
+  },
+  {
+    id: 'journey-sensual-night',
+    title: 'לילה ארוך ורך',
+    sub: '6 שלבים · 108 דקות',
+    desc: 'המסע החושני המלא, שעה ושלושת רבעי: פעימה, לאט, קרוב, אור נר, חום הגוף — וסיום ב"אחרי" ללא קצב בכלל. הקצב נכנס בהדרגה ויוצא בהדרגה.',
+    colors: ['#d53f8c', '#4fd1c5'], glyph: '♀',
+    steps: [
+      { id: 'sn-heartbeat', min: 18 }, { id: 'sn-slow', min: 18 },
+      { id: 'sn-skinclose', min: 18 }, { id: 'sn-candlelight', min: 18 },
+      { id: 'sn-warmth', min: 18 }, { id: 'love-afterglow', min: 18 },
+    ],
+  },
+
   /* ------------------------------ סטים של דיפ האוס אורגני ------------------------------ */
   {
     id: 'journey-organic-house',

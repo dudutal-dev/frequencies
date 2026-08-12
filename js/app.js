@@ -174,6 +174,10 @@ const ICON_BY_ID = {
   'love-touch': 'heart', 'love-skin': 'drop', 'love-breath': 'ripple',
   'love-venus-night': 'planet', 'love-tantra': 'infinity', 'love-longnight': 'moon',
   'love-afterglow': 'cloud', 'love-whisper': 'feather',
+  'sn-slow': 'ripple', 'sn-skinclose': 'planet', 'sn-heartbeat': 'heart',
+  'sn-candlelight': 'flame', 'sn-bluehour': 'moon', 'sn-warmth': 'heart',
+  'sn-whispers': 'feather', 'sn-onebreath': 'drop', 'sn-velvet': 'crystal',
+  'sn-longtouch': 'infinity',
   'love-open-heart': 'heart',
   'dna-528': 'helix', 'dna-285': 'helix', 'dna-temple': 'star',
   'dna-amplify': 'helix', 'dna-youth': 'crystal',
@@ -230,7 +234,7 @@ const ICON_BY_CATEGORY = {
   earth: 'earth', meditation: 'om', energy: 'sun', melodic: 'note',
   shaman: 'drum', bowls: 'bowl', mantra: 'beads',
   psychedelic: 'spiral', schumann: 'earth', techno: 'bolt', ambient: 'ripple',
-  organic: 'leaf', deephouse: 'ripple',
+  organic: 'leaf', deephouse: 'ripple', sensual: 'heart',
 };
 
 /* אייקון למסע — חלק מהסמלים הטקסטואליים לא נתמכים בכל הפונטים */
@@ -373,9 +377,9 @@ function renderHome() {
 
   /* נוסף לאחרונה — כדי שתוכן חדש לא ייקבר בסוף רשימה של 70 מסעות */
   const latest = [
-    'journey-organic-house', 'journey-house-afterdark', 'journey-house-sunset',
-    'journey-house-grounded', 'journey-organic-session', 'journey-organic-trip',
-    'journey-intimate-evening', 'journey-vision-hour',
+    'journey-sensual-rise', 'journey-sensual-slow', 'journey-sensual-night',
+    'journey-sensual-blue', 'journey-organic-house', 'journey-house-afterdark',
+    'journey-organic-session', 'journey-intimate-evening',
   ].map(id => journeyById[id]).filter(Boolean);
 
   html += `
@@ -498,6 +502,8 @@ const PATTERN_WORDS = {
   down: 'דאון-טמפו downtempo טריפ-הופ trip hop איטי צ\'יל',
   organic: 'אורגני organic פסיבינט psybient זורם קצב בינוני',
   house: 'דיפ האוס deep house אורגני organic פסיכדלי מתגלגל קונגות',
+  sensual: 'אירוטי חושני עדין רומנטי זוגי איטי',
+  heartbeat: 'פעימת לב אירוטי חושני עדין איטי',
 };
 const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
 

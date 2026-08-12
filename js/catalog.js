@@ -28,6 +28,7 @@ export const CATEGORIES = [
   { id: 'focus',      label: 'ריכוז ולמידה',        icon: '◎' },
   { id: 'calm',       label: 'רוגע ואיזון רגשי',    icon: '༄' },
   { id: 'love',       label: 'אהבה וזוגיות',        icon: '♥' },
+  { id: 'sensual',    label: 'אירוטי עדין',         icon: '♀' },
   { id: 'dna',        label: 'תיקון DNA ותאים',     icon: '⧬' },
   { id: 'planets',    label: 'תדרים פלנטריים',      icon: '☉' },
   { id: 'earth',      label: 'תדרי כדור הארץ',      icon: '⊕' },
@@ -571,6 +572,79 @@ export const TRACKS = [
     title: 'גבישי קול', sub: '741Hz · צלילים מזוקקים',
     desc: 'תווים חדים ונקיים כגביש על תדר הניקוי — כל צליל שוטף שכבה. מוזיקת דיטוקס אנרגטי.',
     tags: ['גביש', 'ניקוי'], colors: ['#63b3ed', '#173753'], glyph: '◇', ambience: 0.03 },
+
+  /* ------------------------------ אירוטי עדין · 88–112 BPM ------------------------------
+     קצב נוכח אך לא מוביל: קיק על 1 ו-3, שייקר רך ובס חמים.
+     מעליו הקול הזורם — גולש בין התווים במקום להיחבט. */
+  { id: 'sn-slow', category: 'sensual', freq: 341.3, mode: 'isochronic', beat: 8,
+    bpm: 92, energy: 0.4, pattern: 'sensual', pad: 0.9,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'harp', pace: 4.4, featured: true,
+    title: 'לאט', sub: '92 BPM · תדר הלב ההרמוני',
+    desc: 'הכי איטי בפרק: קיק רך על 1 ו-3, בס חמים שנמשך, והקול גולש מעליו בגלישות ארוכות. אין שום דבר שממהר.',
+    tags: ['איטי', 'עדין', 'חושני'], colors: ['#f687b3', '#3d1226'], glyph: '♀', ambience: 0.06 },
+
+  { id: 'sn-skinclose', category: 'sensual', freq: 221.23, mode: 'isochronic', beat: 9,
+    bpm: 96, energy: 0.45, pattern: 'sensual', pad: 0.85,
+    melody: true, flow: true, melodyScale: 'psyche', timbre: 'crystal', pace: 4.0, featured: true,
+    title: 'קרוב', sub: '96 BPM · ונוס 221.23Hz',
+    desc: 'תדר האהבה הפלנטרי עם גרוב מינימלי וקריסטל רחוק. הסולם הספטימלי נותן לצליל נטייה עדינה שלא מתיישבת — וזה בדיוק העניין.',
+    tags: ['ונוס', 'קרוב', 'חושני'], colors: ['#d53f8c', '#2d0a1e'], glyph: '♀', ambience: 0.055 },
+
+  { id: 'sn-heartbeat', category: 'sensual', freq: 136.1, mode: 'isochronic', beat: 8,
+    bpm: 88, energy: 0.35, pattern: 'heartbeat', pad: 0.95,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'handpan', pace: 5.0,
+    title: 'פעימה', sub: '88 BPM · חבטה כפולה',
+    desc: 'הקצב הוא פעימת לב ממש — חבטה כפולה רכה, ולא ארבעה על הרצפה. תדר ה-OM כבסיס והנדפאן חם מעליו. הגוף מסתנכרן בלי לשים לב.',
+    tags: ['פעימת לב', 'איטי', 'רך'], colors: ['#fc8181', '#2b0f1e'], glyph: '♀', ambience: 0.065 },
+
+  { id: 'sn-candlelight', category: 'sensual', freq: 528, mode: 'isochronic', beat: 9,
+    bpm: 100, energy: 0.45, pattern: 'sensual', pad: 0.85,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'harp', pace: 3.8,
+    title: 'אור נר', sub: '100 BPM · תדר הנס',
+    desc: 'זהוב וחמים: תדר הנס עם נבל שגולש ובס עגול. הטראק הכי "ערב ארוך" בפרק — עובד גם כרקע לארוחה.',
+    tags: ['חמים', 'ערב', 'זהוב'], colors: ['#f6e05e', '#3d2405'], glyph: '♀', ambience: 0.055 },
+
+  { id: 'sn-bluehour', category: 'sensual', freq: 285, mode: 'isochronic', beat: 8,
+    bpm: 104, energy: 0.5, pattern: 'sensual', pad: 0.8,
+    melody: true, flow: true, melodyScale: 'psyche', timbre: 'crystal', pace: 3.4,
+    title: 'שעה כחולה', sub: '104 BPM · התחדשות',
+    desc: 'הרגע שבין השקיעה ללילה: גרוב מתון שכבר זז, קריסטל שמרחף וסולם ספטימלי שנותן לזה מסתורין.',
+    tags: ['ערב', 'מסתורי'], colors: ['#4fd1c5', '#0c2b28'], glyph: '♀', ambience: 0.055 },
+
+  { id: 'sn-warmth', category: 'sensual', freq: 639, mode: 'isochronic', beat: 10,
+    bpm: 106, energy: 0.5, pattern: 'sensual', pad: 0.8,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'harp', pace: 3.2,
+    title: 'חום הגוף', sub: '106 BPM · תדר החיבור',
+    desc: 'תדר הלב על גרוב שכבר מרגישים בו: בס שמתגלגל בעדינות וקול שנפתח בכל תו. הכי חי בפרק בלי לאבד את הרוך.',
+    tags: ['חם', 'לב', 'חושני'], colors: ['#68d391', '#12301d'], glyph: '♀', ambience: 0.05 },
+
+  { id: 'sn-whispers', category: 'sensual', freq: 432, mode: 'isochronic', beat: 9,
+    bpm: 98, energy: 0.42, pattern: 'sensual', pad: 0.85,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'crystal', pace: 4.2,
+    title: 'לחישות', sub: '98 BPM · כוונון הטבע',
+    desc: 'כוונון 432 עם קריסטל רך וגרוב שכמעט לא נשמע. השקט שבין המשפטים חשוב כאן בדיוק כמו הצלילים.',
+    tags: ['רך', '432', 'שקט'], colors: ['#9ae6b4', '#12301f'], glyph: '♀', ambience: 0.06 },
+
+  { id: 'sn-onebreath', category: 'sensual', freq: 174, mode: 'isochronic', beat: 8,
+    bpm: 90, energy: 0.38, pattern: 'heartbeat', pad: 0.95,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'handpan', pace: 4.8,
+    title: 'נשימה אחת', sub: '90 BPM · 174Hz עמוק',
+    desc: 'תדר שיכוך הכאב עם פעימה כפולה עמוקה ופאד רחב. איטי מספיק כדי ששתי נשימות יסתנכרנו לאותו קצב.',
+    tags: ['נשימה', 'עמוק', 'סנכרון'], colors: ['#805ad5', '#150c26'], glyph: '♀', ambience: 0.07 },
+
+  { id: 'sn-velvet', category: 'sensual', freq: 111, mode: 'isochronic', beat: 7.83,
+    bpm: 102, energy: 0.48, pattern: 'sensual', pad: 0.85,
+    melody: true, flow: true, melodyScale: 'shaman', timbre: 'handpan', pace: 3.6,
+    title: 'קטיפה', sub: '102 BPM · שומאן 7.83Hz',
+    desc: 'הצד האפל והעשיר של הפרק: סולם פריגי על תדר 111 ופעימת שומאן מתחת. חם, כהה ומעט מסתורי.',
+    tags: ['אפל', 'עשיר', 'שומאן'], colors: ['#b7791f', '#241703'], glyph: '♀', ambience: 0.06 },
+
+  { id: 'sn-longtouch', category: 'sensual', freq: 963, mode: 'isochronic', beat: 10,
+    bpm: 112, energy: 0.55, pattern: 'sensual', pad: 0.75,
+    melody: true, flow: true, melodyScale: 'psyche', timbre: 'crystal', pace: 2.9,
+    title: 'מגע ארוך', sub: '112 BPM · תדר הכתר',
+    desc: 'המהיר בפרק — עדיין קצב בינוני: תדר הכתר גבוה ומרחף, גרוב שזז והקול גולש בטווח רחב. לשעות שכבר לא סופרים בהן.',
+    tags: ['בינוני', 'מרחף', 'כתר'], colors: ['#d6bcfa', '#241645'], glyph: '♀', ambience: 0.05 },
 
   /* ------------------------------ מרחב פנימי — אמביינט ארוך-נשימה ------------------------------
      פאד מתפתח משבע שכבות שלעולם לא מסתנכרנות, עם צלילים בודדים מעליו.
