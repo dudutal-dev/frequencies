@@ -47,7 +47,7 @@ const els = {
   search: $('search'), favList: $('fav-list'),
   journeysList: $('journeys-list'), playlistsList: $('playlists-list'), plCreate: $('pl-create'),
   mini: $('mini'), miniArt: $('mini-art'), miniTitle: $('mini-title'),
-  miniSub: $('mini-sub'), miniPlay: $('mini-play'),
+  miniSub: $('mini-sub'), miniPlay: $('mini-play'), miniNext: $('mini-next'),
   player: $('player'), pClose: $('p-close'), pAdd: $('p-add'), pFav: $('p-fav'),
   pJourney: $('p-journey'), pjName: $('pj-name'), pjStep: $('pj-step'), pjFill: $('pj-fill'),
   pMode: $('p-mode'), pTitle: $('p-title'), pSub: $('p-sub'), pDesc: $('p-desc'), pTags: $('p-tags'),
@@ -107,19 +107,35 @@ function artHTML(t) {
     </div>`;
 }
 
+/* הדיסק כבר מציג את התדר — אין טעם לחזור עליו בכותרת הכרטיס */
+const shortTitle = t => t.title.replace(/\s*—\s*[\d.]+Hz\s*$/, '');
+
 function cardHTML(t) {
   return `
     <div class="card" data-id="${t.id}">
       ${artHTML(t)}
-      <div class="card-title">${t.title}</div>
+      <div class="card-title">${shortTitle(t)}</div>
       <div class="card-sub">${t.sub}</div>
     </div>`;
 }
 
 /* ------------------------------ בית ------------------------------ */
+function tileHTML(t) {
+  return `
+    <div class="tile" data-id="${t.id}">
+      ${artHTML(t)}
+      <div class="tile-meta">
+        <div class="tile-title">${shortTitle(t)}</div>
+        <div class="tile-sub">${t.sub}</div>
+      </div>
+    </div>`;
+}
+
 function renderHome() {
   const hero = byId['dna-528'] || TRACKS[0];
   const recents = state.recents.map(id => byId[id]).filter(Boolean);
+  /* אריחי קיצור — אחרונים, ומושלם בנבחרות אם אין מספיק */
+  const quick = [...recents, ...byCategory('featured').filter(t => !recents.includes(t))].slice(0, 6);
 
   let html = `
     <div class="hero" data-id="${hero.id}">
@@ -127,11 +143,9 @@ function renderHome() {
       <div class="hero-title">${hero.title}</div>
       <div class="hero-sub">${hero.desc}</div>
       <button class="hero-btn">▶ &nbsp;התחל האזנה</button>
-    </div>`;
+    </div>
+    <div class="tiles">${quick.map(tileHTML).join('')}</div>`;
 
-  if (recents.length) {
-    html += sectionHTML({ id: 'recents', label: 'הושמעו לאחרונה', icon: '↻' }, recents.slice(0, 10));
-  }
   for (const cat of CATEGORIES) {
     html += sectionHTML(cat, byCategory(cat.id));
   }
@@ -316,11 +330,17 @@ els.sheetNew.addEventListener('click', () => {
 els.pAdd.addEventListener('click', openSheet);
 
 /* ------------------------------ ניווט ------------------------------ */
+const PAGE_TITLE = {
+  home: 'בית', journeys: 'מסעות', library: 'ספרייה',
+  favorites: 'מועדפים', about: 'אודות',
+};
+
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     const view = tab.dataset.view;
+    $('page-title').textContent = PAGE_TITLE[view];
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     $(`view-${view}`).classList.add('active');
     if (view === 'favorites') renderFavorites();
@@ -368,7 +388,7 @@ function updatePlayButtons() {
 
 function markPlaying() {
   const id = engine.current?.id;
-  document.querySelectorAll('.card, .list-item[data-id]').forEach(el =>
+  document.querySelectorAll('.card, .tile, .list-item[data-id]').forEach(el =>
     el.classList.toggle('playing', el.dataset.id === id)
   );
 }
@@ -452,13 +472,15 @@ function updateMini(track) {
   els.miniArt = newArt;
   els.miniTitle.textContent = track.title;
   els.miniSub.textContent = seq.active ? `${seq.name} · שלב ${seq.index + 1}/${seq.total}` : track.sub;
+  els.miniNext.hidden = !seq.active;
   updatePlayButtons();
 }
 
 els.mini.addEventListener('click', e => {
-  if (e.target.closest('#mini-play')) return;
+  if (e.target.closest('#mini-play') || e.target.closest('#mini-next')) return;
   if (lastTrack) openPlayer();
 });
+els.miniNext.addEventListener('click', () => seq.next());
 els.miniPlay.addEventListener('click', async () => {
   if (engine.isPlaying) stopPlayback();
   else if (lastTrack) await playTrack(lastTrack);
@@ -626,7 +648,7 @@ document.addEventListener('click', async e => {
     return;
   }
 
-  const cardEl = e.target.closest('.card, .list-item[data-id], .hero');
+  const cardEl = e.target.closest('.card, .tile, .list-item[data-id], .hero');
   if (cardEl?.dataset.id) {
     const track = byId[cardEl.dataset.id];
     if (!track) return;

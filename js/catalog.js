@@ -12,6 +12,7 @@
 export const CATEGORIES = [
   { id: 'featured',   label: 'נבחרות',              icon: '✦' },
   { id: 'melodic',    label: 'מלודיות מרפאות',      icon: '♬' },
+  { id: 'shaman',     label: 'שאמאני ופסיכדלי',     icon: '𓂀' },
   { id: 'solfeggio',  label: 'סולפג\'יו',            icon: '♪' },
   { id: 'chakra',     label: 'צ\'אקרות',             icon: '◉' },
   { id: 'brainwave',  label: 'גלי מוח',             icon: '∿' },
@@ -513,6 +514,67 @@ export const TRACKS = [
     title: 'גבישי קול', sub: '741Hz · צלילים מזוקקים',
     desc: 'תווים חדים ונקיים כגביש על תדר הניקוי — כל צליל שוטף שכבה. מוזיקת דיטוקס אנרגטי.',
     tags: ['גביש', 'ניקוי'], colors: ['#63b3ed', '#173753'], glyph: '◇', ambience: 0.03 },
+
+  /* ------------------------------ שאמאני ופסיכדלי ------------------------------ */
+  { id: 'sh-drum', category: 'shaman', freq: 180, mode: 'melodic', scale: 'shaman', pace: 1.3, sparkle: 0.1, featured: true,
+    title: 'תוף השאמאן', sub: '180Hz · סולם פריגי · תבנית תוף',
+    desc: 'מוטיב בן ארבעה תווים בסולם פריגי אפל, חוזר בעיקשות כמו תוף טקסי. הדופק שפותח את שער המסע השאמאני.',
+    tags: ['שאמאני', 'תוף', 'טקס'], colors: ['#b7791f', '#1a1002'], glyph: '𓂀', ambience: 0.06 },
+
+  { id: 'sh-ayahuasca', category: 'shaman', freq: 111, mode: 'melodic', scale: 'psyche', pace: 2.6, sparkle: 0.3, featured: true,
+    title: 'איקארו', sub: '111Hz · סולם ספטימלי · פסיכדלי',
+    desc: 'שיר הריפוי של יערות הגשם, בסולם ספטימלי שהתווים בו "מכופפים" — כל צליל מתעוות לאט כמו סרט מגנטי. תדר 111 של חללי הקדושה.',
+    tags: ['פסיכדלי', 'איקארו', '111'], colors: ['#9f7aea', '#1b0d33'], glyph: '༄', ambience: 0.055 },
+
+  { id: 'sh-vision', category: 'shaman', freq: 136.1, mode: 'melodic', scale: 'psyche', pace: 2.2, sparkle: 0.34,
+    title: 'מסע החזיונות', sub: 'OM 136.1Hz · תווים מתפתלים',
+    desc: 'מוטיב בן שבעה תווים שמתפתל ולא חוזר לאותה נקודה — על תדר ה-OM. הצליל של תודעה שמשילה את גבולותיה.',
+    tags: ['חזיונות', 'פסיכדלי', 'OM'], colors: ['#ed64a6', '#2a0a2a'], glyph: '◉', ambience: 0.05 },
+
+  { id: 'sh-serpent', category: 'shaman', freq: 174, mode: 'melodic', scale: 'shaman', pace: 1.8, sparkle: 0.16,
+    title: 'הנחש הקדמון', sub: '174Hz · פריגי עמוק',
+    desc: 'צלילים כבדים ומתפתלים בסולם אפל על תדר היסוד — האנרגיה הקדומה שמטפסת מבסיס עמוד השדרה. קונדליני בצליל.',
+    tags: ['קונדליני', 'שאמאני'], colors: ['#48bb78', '#0a2415'], glyph: '𓆙', ambience: 0.06 },
+
+  { id: 'sh-firecircle', category: 'shaman', freq: 396, mode: 'melodic', scale: 'shaman', pace: 1.5, sparkle: 0.2,
+    title: 'מעגל האש', sub: '396Hz · קצב טקסי',
+    desc: 'מוטיב מהיר ועיקש על תדר שחרור הפחד — הצליל של מעגל סביב מדורה. גופים זזים, פחדים נשרפים.',
+    tags: ['אש', 'טקס', 'שחרור'], colors: ['#f56565', '#3d0f0a'], glyph: '🜂', ambience: 0.055 },
+
+  { id: 'sh-datura', category: 'shaman', freq: 285, mode: 'melodic', scale: 'psyche', pace: 3.2, sparkle: 0.26,
+    title: 'פריחת הלילה', sub: '285Hz · ספטימלי איטי',
+    desc: 'צלילים מכופפים ואיטיים על תדר ההתחדשות — מסע פסיכדלי רך שנפתח כמו פרח לילה. לחלימה בעיניים פקוחות.',
+    tags: ['פסיכדלי', 'רך', 'חלימה'], colors: ['#4fd1c5', '#0a2b28'], glyph: '❀', ambience: 0.06 },
+
+  { id: 'sh-ancestors', category: 'shaman', freq: 108, mode: 'melodic', scale: 'shaman', pace: 2.8, sparkle: 0.12,
+    title: 'קול האבות', sub: '108Hz · נמוך וטקסי',
+    desc: 'התדר העמוק ביותר בפרק, בסולם פריגי איטי — כמו שירת גרון מתוך מערה. חיבור לשורשים שלפני המילים.',
+    tags: ['אבות', 'עמוק', '108'], colors: ['#a0aec0', '#12151c'], glyph: '𓁿', ambience: 0.07 },
+
+  { id: 'sh-peyote', category: 'shaman', freq: 417, mode: 'melodic', scale: 'psyche', pace: 2.0, sparkle: 0.32,
+    title: 'מדבר הצבעים', sub: '417Hz · ספטימלי תוסס',
+    desc: 'תווים שמתכופפים ומנצנצים על תדר השינוי — הצליל של מדבר שמתחיל לנשום צבעים. אנרגטי, לא מרגיע.',
+    tags: ['פסיכדלי', 'צבעים'], colors: ['#ed8936', '#331303'], glyph: '✺', ambience: 0.045 },
+
+  { id: 'sh-trance', category: 'shaman', freq: 200, mode: 'isochronic', beat: 4.5, melody: true, melodyScale: 'shaman', pace: 1.4,
+    title: 'טראנס תיפוף', sub: '4.5Hz · פעימות + מלודיה שאמאנית',
+    desc: 'קצב התוף השאמאני המסורתי (4.5 פעימות בשנייה) עם מלודיה פריגית מעליו — השילוב שמעביר את התודעה לעולם התחתון.',
+    tags: ['טראנס', 'תוף', 'תטא'], colors: ['#d69e2e', '#241703'], glyph: '◍', ambience: 0.06 },
+
+  { id: 'sh-dmt', category: 'shaman', freq: 963, mode: 'binaural', beat: 40, melody: true, melodyScale: 'psyche', pace: 1.6,
+    title: 'שער האור', sub: '963Hz + גמא 40Hz · 🎧 · פסיכדלי',
+    desc: 'הצירוף העז ביותר בספרייה: תדר הכתר, ביט גמא 40Hz ומלודיה ספטימלית מתפתלת. גיאומטריה קדושה בצליל.',
+    tags: ['גמא', 'פסיכדלי', 'כתר'], colors: ['#d6bcfa', '#2d1155'], glyph: '✧', ambience: 0.04 },
+
+  { id: 'sh-underworld', category: 'shaman', freq: 90, mode: 'binaural', beat: 4, melody: true, melodyScale: 'shaman', pace: 3.0,
+    title: 'העולם התחתון', sub: '90Hz + תטא 4Hz · 🎧',
+    desc: 'ירידה עמוקה: נשא נמוך במיוחד, ביט תטא-דלתא ומלודיה אפלה ומרוחקת. המסע השאמאני הקלאסי כלפי מטה.',
+    tags: ['שאמאני', 'עומק', 'מסע'], colors: ['#4a5568', '#08090d'], glyph: '⬇', ambience: 0.075 },
+
+  { id: 'sh-upperworld', category: 'shaman', freq: 852, mode: 'binaural', beat: 7.5, melody: true, melodyScale: 'psyche', pace: 2.0,
+    title: 'העולם העליון', sub: '852Hz + 7.5Hz · 🎧',
+    desc: 'המסע כלפי מעלה: תדר האינטואיציה על סף אלפא-תטא, עם מלודיה מרחפת ומכופפת. פגישה עם המורים שלמעלה.',
+    tags: ['שאמאני', 'עלייה', 'חזון'], colors: ['#90cdf4', '#12294a'], glyph: '⬆', ambience: 0.05 },
 ];
 
 /* מיפוי עזר */

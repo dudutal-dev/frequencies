@@ -346,6 +346,76 @@ export const JOURNEYS = [
       { id: 'sleep-deep', min: 16 },
     ],
   },
+
+  /* ------------------------------ פרק שאמאני ופסיכדלי ------------------------------ */
+  {
+    id: 'journey-shaman-classic',
+    title: 'המסע השאמאני הקלאסי',
+    sub: '5 שלבים · 40 דקות',
+    desc: 'המבנה המסורתי במלואו: תוף פותח את השער, ירידה לעולם התחתון, פגישה עם בעל הכוח, עלייה לעולם העליון — וחזרה מוארקת. מלודיה פריגית אפלה לאורך כל הדרך.',
+    colors: ['#b7791f', '#08090d'], glyph: '𓂀',
+    steps: [
+      { id: 'sh-drum', min: 6 }, { id: 'sh-underworld', min: 10 },
+      { id: 'sh-serpent', min: 8 }, { id: 'sh-upperworld', min: 10 },
+      { id: 'earth-schumann', min: 6 },
+    ],
+  },
+  {
+    id: 'journey-psychedelic',
+    title: 'מסע פסיכדלי',
+    sub: '5 שלבים · 45 דקות',
+    desc: 'רצף בסולם ספטימלי שהתווים בו מתכופפים כמו סרט מגנטי: איקארו פותח, חזיונות מתפתלים, מדבר צבעים תוסס, ושער האור בגמא 40 לשיא. נחיתה רכה בפריחת הלילה.',
+    colors: ['#9f7aea', '#ed64a6'], glyph: '✺',
+    steps: [
+      { id: 'sh-ayahuasca', min: 9 }, { id: 'sh-vision', min: 9 },
+      { id: 'sh-peyote', min: 9 }, { id: 'sh-dmt', min: 9 },
+      { id: 'sh-datura', min: 9 },
+    ],
+  },
+  {
+    id: 'journey-fire-ceremony',
+    title: 'טקס האש',
+    sub: '4 שלבים · 24 דקות',
+    desc: 'מעגל סביב המדורה: תוף פותח, מעגל האש שורף פחדים, טראנס תיפוף מעמיק — וקול האבות סוגר בשקט. טקס שחרור מלא.',
+    colors: ['#f56565', '#b7791f'], glyph: '🜂',
+    steps: [
+      { id: 'sh-drum', min: 6 }, { id: 'sh-firecircle', min: 6 },
+      { id: 'sh-trance', min: 6 }, { id: 'sh-ancestors', min: 6 },
+    ],
+  },
+  {
+    id: 'journey-kundalini',
+    title: 'עליית הנחש',
+    sub: '4 שלבים · 28 דקות',
+    desc: 'קונדליני בצליל: הנחש הקדמון מתעורר בבסיס, מעגל האש מדליק את מקלעת השמש, שער האור פותח את הכתר — ופעימת האדמה מעגנת בחזרה.',
+    colors: ['#48bb78', '#d6bcfa'], glyph: '𓆙',
+    steps: [
+      { id: 'sh-serpent', min: 7 }, { id: 'sh-firecircle', min: 7 },
+      { id: 'sh-dmt', min: 7 }, { id: 'earth-schumann', min: 7 },
+    ],
+  },
+  {
+    id: 'journey-vision-quest',
+    title: 'מסע החזון',
+    sub: '4 שלבים · 36 דקות',
+    desc: 'חיפוש חזון בן שלושים ושש דקות: איקארו מכין, העולם העליון פותח, מסע החזיונות מעמיק, ופריחת הלילה מלווה בחזרה. לחדר חשוך, בעיניים עצומות.',
+    colors: ['#90cdf4', '#1b0d33'], glyph: '◉',
+    steps: [
+      { id: 'sh-ayahuasca', min: 9 }, { id: 'sh-upperworld', min: 9 },
+      { id: 'sh-vision', min: 9 }, { id: 'sh-datura', min: 9 },
+    ],
+  },
+  {
+    id: 'journey-shaman-short',
+    title: 'שער מהיר לטראנס',
+    sub: '3 שלבים · 15 דקות',
+    desc: 'גרסה קצרה למי שיודע לאן הוא הולך: תוף, טראנס תיפוף בקצב 4.5Hz, וירידה לעולם התחתון. רבע שעה והתודעה בצד השני.',
+    colors: ['#d69e2e', '#4a5568'], glyph: '◍',
+    steps: [
+      { id: 'sh-drum', min: 5 }, { id: 'sh-trance', min: 5 },
+      { id: 'sh-underworld', min: 5 },
+    ],
+  },
 ];
 
 export const journeyById = Object.fromEntries(JOURNEYS.map(j => [j.id, j]));
