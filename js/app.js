@@ -502,6 +502,9 @@ const PATTERN_WORDS = {
 const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
 
 const norm = s => String(s).toLowerCase().replace(/["'׳״]/g, '').replace(/\s+/g, ' ').trim();
+/* כתיב מלא מול חסר — "החשיכה" ו"החשכה" הן אותה מילה.
+   השמטת אימות הקריאה י/ו מאחדת את שתי הצורות. */
+const loose = s => s.replace(/[יו]/g, '');
 
 /* אינדקס חיפוש — נבנה פעם אחת */
 const TRACK_INDEX = TRACKS.map(t => ({
@@ -513,7 +516,7 @@ const TRACK_INDEX = TRACKS.map(t => ({
     t.bpm ? `${t.bpm} bpm טכנו קצב ריקוד ${PATTERN_WORDS[t.pattern] || ''}` : '',
   ].join(' ')),
   nums: [String(t.freq), t.beat ? String(t.beat) : '', t.bpm ? String(t.bpm) : ''].filter(Boolean),
-}));
+})).map(e => ({ ...e, loose: loose(e.hay) }));
 
 /* המסע יורש גם את התגיות והקטגוריות של השלבים שלו,
    כך ש"פסיכדלי" ימצא מסע שבנוי מיצירות פסיכדליות גם בלי המילה בכותרת */
@@ -530,7 +533,7 @@ const JOURNEY_INDEX = JOURNEYS.map(j => {
     ].join(' ')),
     nums: steps.map(t => String(t.freq)),
   };
-});
+}).map(e => ({ ...e, loose: loose(e.hay) }));
 
 /* גזירה קלה של סופיות עבריות — "צאקרה" ימצא גם "צאקרות" */
 function stems(tok) {
@@ -545,11 +548,15 @@ function stems(tok) {
 }
 
 function matches(entry, tokens) {
-  return tokens.every(tok =>
-    (/^[\d.]+$/.test(tok)
-      ? entry.nums.some(n => n.startsWith(tok)) || entry.hay.includes(tok)
-      : stems(tok).some(s => entry.hay.includes(s)))
-  );
+  return tokens.every(tok => {
+    if (/^[\d.]+$/.test(tok)) {
+      return entry.nums.some(n => n.startsWith(tok)) || entry.hay.includes(tok);
+    }
+    if (stems(tok).some(s => entry.hay.includes(s))) return true;
+    /* נפילה אחרונה: התאמה בכתיב מאוחד */
+    const l = loose(tok);
+    return l.length >= 3 && entry.loose.includes(l);
+  });
 }
 
 function searchAll(q) {
