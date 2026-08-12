@@ -760,6 +760,69 @@ input[type='range']::-moz-range-thumb {
 }
 .sys-btn:active { background: rgba(232, 192, 130, 0.15); }
 .sys-note { font-size: 11.5px; color: var(--text-faint); line-height: 1.5; flex: 1; min-width: 150px; }
+
+/* ------------------------------ Credits (About) ------------------------------
+   כרטיס האודות — מסגרת גרדיאנט אמיתית דרך mask-composite, כדי שהקו
+   עצמו יהיה זהב-סגול ולא רק הרקע שמתחתיו. */
+.credits {
+  position: relative; margin-top: 6px; padding: 26px 20px 22px;
+  border-radius: var(--radius); overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(232, 192, 130, 0.1), transparent 60%),
+    var(--surface);
+}
+.credits::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  padding: 1px; background: var(--accent-grad);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+}
+.credits-mark { text-align: center; }
+.credits-logo {
+  display: block; font-size: 27px; font-weight: 900; letter-spacing: 0.3em;
+  padding-inline-start: 0.3em;                    /* מאזן את המרווח של האות האחרונה */
+  background: var(--accent-grad); -webkit-background-clip: text;
+  background-clip: text; color: transparent;
+}
+.credits-tag {
+  display: block; margin-top: 4px;
+  font-size: 11.5px; color: var(--text-faint); letter-spacing: 0.04em;
+}
+.credits-by {
+  margin: 20px auto 4px; text-align: center; padding: 16px 0;
+  border-block: 1px solid var(--line);
+}
+.credits-role {
+  display: block; font-size: 11px; color: var(--text-faint);
+  letter-spacing: 0.1em; margin-bottom: 7px;
+}
+.credits-name {
+  display: block; font-size: 23px; font-weight: 800; color: var(--text);
+  letter-spacing: 0.01em;
+}
+.credits-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin: 18px 0 6px;
+}
+.credits-stat {
+  text-align: center; padding: 12px 4px; border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+.credits-num {
+  display: block; font-size: 21px; font-weight: 900; color: var(--gold);
+  font-variant-numeric: tabular-nums; line-height: 1.15;
+}
+.credits-lbl { display: block; margin-top: 3px; font-size: 10.5px; color: var(--text-faint); }
+.credits-text { margin: 14px 0 0; font-size: 13.5px; line-height: 1.8; }
+.credits-tech {
+  display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px;
+}
+.credits-tech span {
+  font-size: 10.5px; color: var(--text-dim); padding: 5px 11px;
+  border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line);
+  white-space: nowrap;
+}
 .p-icon .icn { width: 17px; height: 17px; }
 .p-icon#p-airplay { display: flex; align-items: center; justify-content: center; }
 .p-icon#p-airplay[hidden] { display: none; }

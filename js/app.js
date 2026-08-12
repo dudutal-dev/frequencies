@@ -1318,6 +1318,22 @@ renderHome();
 renderChips();
 renderLibrary();
 
+/* מספרי האודות נספרים מהקטלוג עצמו, כדי שלא יתיישנו כשמוסיפים תוכן */
+{
+  const hours = JOURNEYS.reduce((s, j) => s + j.steps.reduce((a, b) => a + b.min, 0), 0) / 60;
+  const stats = [
+    [TRACKS.length, 'יצירות תדר'],
+    [JOURNEYS.length, 'מסעות מודרכים'],
+    [CATEGORIES.length - 1, 'קטגוריות'],      // ללא "נבחרות", שהיא תצוגה ולא סיווג
+    [`${Math.round(hours)}`, 'שעות תוכן אוצר'],
+    [new Set(TRACKS.map(t => t.freq)).size, 'תדרי יסוד'],
+    [0, 'קבצי אודיו'],
+  ];
+  $('about-stats').innerHTML = stats
+    .map(([n, l]) => `<div class="credits-stat"><span class="credits-num">${n}</span><span class="credits-lbl">${l}</span></div>`)
+    .join('');
+}
+
 /* שחזור מצב — iOS עשוי לפרוק אפליקציה מותקנת מהזיכרון ולטעון אותה
    מחדש. במקום לחזור למסך הפתיחה, חוזרים לטאב ולנגן שהיו פתוחים. */
 if (state.lastView && state.lastView !== 'home' && $(`view-${state.lastView}`)) {
