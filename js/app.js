@@ -397,15 +397,24 @@ function renderHome() {
 
   /* מסעות שנבנו לחדר — תדרים נמוכים, גונגים וקצב שרמקול טלפון לא מסוגל להם */
   const stereoPicks = [
-    'journey-soundbath', 'journey-organic-session', 'journey-deep-ambient',
-    'journey-throat', 'journey-intimate-evening', 'journey-monastery',
-    'journey-tribal-fire', 'journey-ambient-work', 'journey-techno-night',
+    /* דיפ האוס אורגני — כולו איזוכרוני, בס מתגלגל וקונגות */
+    'journey-organic-house', 'journey-house-afterdark', 'journey-house-sunset',
+    'journey-house-grounded', 'journey-organic-session', 'journey-organic-trip',
+    /* קערות, גונגים ושירת גרון — ממלאים חדר */
+    'journey-soundbath', 'journey-monastery', 'journey-throat', 'journey-japa',
+    /* פאדים ותדרים עמוקים */
+    'journey-deep-ambient', 'journey-ambient-work', 'journey-inner-space',
+    'journey-earth-pulse',
+    /* תופים, קצב וערב בזוג */
+    'journey-tribal-fire', 'journey-techno-night', 'journey-intimate-evening',
+    'journey-lovers-night',
   ].map(id => journeyById[id]).filter(Boolean);
 
   html += `
     <div class="section">
       <div class="section-head">
-        <div class="section-title"><span class="sec-icon">🔈</span>במערכת סטריאו</div>
+        <div class="section-title"><span class="sec-icon">🔈</span>במערכת סטריאו
+          <span class="sec-count">${stereoPicks.length}</span></div>
         <button class="section-more" data-stereo-all="1">הכול ←</button>
       </div>
       <div class="section-note">
