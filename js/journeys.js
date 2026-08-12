@@ -189,6 +189,140 @@ export const JOURNEYS = [
       { id: 'love-self', min: 5 }, { id: 'love-magnet', min: 5 },
     ],
   },
+  {
+    id: 'journey-chakra-express',
+    title: 'צ\'אקרות אקספרס',
+    sub: '7 שלבים · 10.5 דקות',
+    desc: 'הגרסה המהירה של מסע הצ\'אקרות: דקה וחצי בכל מרכז, מהשורש לכתר. כוונון בוקר יומי לפני שהיום מתחיל.',
+    colors: ['#fc8181', '#d6bcfa'], glyph: '⚡',
+    steps: [
+      { id: 'chakra-root', min: 1.5 }, { id: 'chakra-sacral', min: 1.5 },
+      { id: 'chakra-solar', min: 1.5 }, { id: 'chakra-heart', min: 1.5 },
+      { id: 'chakra-throat', min: 1.5 }, { id: 'chakra-third-eye', min: 1.5 },
+      { id: 'chakra-crown', min: 1.5 },
+    ],
+  },
+  {
+    id: 'journey-wakeup',
+    title: 'יקיצה מודרגת',
+    sub: '4 שלבים · 16 דקות',
+    desc: 'ההפך מצלילה לשינה: טיפוס מדורג מדלתא דרך תטא ואלפא עד גמא ערני. לבוקר קשה או ג\'ט-לג — קימה בלי הלם.',
+    colors: ['#2c5282', '#f6ad55'], glyph: '🌅',
+    steps: [
+      { id: 'wave-delta', min: 3 }, { id: 'wave-theta', min: 4 },
+      { id: 'wave-alpha', min: 4 }, { id: 'energy-awaken', min: 5 },
+    ],
+  },
+  {
+    id: 'journey-abundance',
+    title: 'שערי השפע',
+    sub: '4 שלבים · 20 דקות',
+    desc: 'מסע השפע השלם: צדק פותח את השערים, תדר השפע מכוון קבלה, תדר הנס הופך כוונה לתדר — והשמש חותמת בחיות זהובה.',
+    colors: ['#f6ad55', '#f6e05e'], glyph: '♃',
+    steps: [
+      { id: 'planet-jupiter', min: 5 }, { id: 'energy-abundance', min: 5 },
+      { id: 'sol-528', min: 5 }, { id: 'planet-sun', min: 5 },
+    ],
+  },
+  {
+    id: 'journey-intuition',
+    title: 'פקיחת העין השלישית',
+    sub: '4 שלבים · 22 דקות',
+    desc: 'פיתוח אינטואיציה שיטתי: 852Hz מעורר, העין השלישית בתטא מעמיקה, חלימה צלולה מדייקת — ועין הסערה חושפת את הידיעה השקטה.',
+    colors: ['#667eea', '#0f0820'], glyph: '𓁿',
+    steps: [
+      { id: 'sol-852', min: 5 }, { id: 'chakra-third-eye', min: 6 },
+      { id: 'wave-theta7', min: 6 }, { id: 'med-eye-storm', min: 5 },
+    ],
+  },
+  {
+    id: 'journey-grief',
+    title: 'עיבוד פרידה ואובדן',
+    sub: '4 שלבים · 24 דקות',
+    desc: 'ליווי עדין דרך הכאב: ריפוי הלב השבור, מרחב תטא לרגשות, שחרור האשמה ב-396 — וחזרה הביתה אל אהבה עצמית.',
+    colors: ['#feb2b2', '#3d1515'], glyph: '🕊',
+    steps: [
+      { id: 'love-heartbreak', min: 6 }, { id: 'calm-emotions', min: 6 },
+      { id: 'sol-396', min: 6 }, { id: 'love-self', min: 6 },
+    ],
+  },
+  {
+    id: 'journey-exam',
+    title: 'מרתון בחינות',
+    sub: '4 שלבים · 45 דקות',
+    desc: 'פרוטוקול למידה מלא: כניסה בקריאה רגועה, שינון בגמא איזוכרוני, שיא מיקוד בגמא בינאורלי — וסיום בהטמעה רכה באלפא.',
+    colors: ['#4299e1', '#d69e2e'], glyph: '🎓',
+    steps: [
+      { id: 'focus-reading', min: 10 }, { id: 'focus-memory', min: 15 },
+      { id: 'wave-gamma', min: 10 }, { id: 'focus-soft', min: 10 },
+    ],
+  },
+  {
+    id: 'journey-pain',
+    title: 'הקלה על כאב',
+    sub: '4 שלבים · 26 דקות',
+    desc: 'הפרוטוקול המסורתי המלא לכאב כרוני ומתח שרירי: 174Hz בשני עיבודים, התחדשות רקמות ב-285 — ולסיום אמבט צליל עוטף.',
+    colors: ['#805ad5', '#150d29'], glyph: '☁',
+    steps: [
+      { id: 'relief-pain', min: 7 }, { id: 'sol-174', min: 6 },
+      { id: 'sol-285', min: 7 }, { id: 'calm-soundbath', min: 6 },
+    ],
+  },
+  {
+    id: 'journey-creativity',
+    title: 'זרם היצירה',
+    sub: '4 שלבים · 24 דקות',
+    desc: 'ממחסום יצירתי לזרימה: תטא פרוע לרעיונות, צ\'אקרת הסקרל פותחת את מרכז היצירה, ניצוץ מתניע — וזרימת אלפא לביצוע.',
+    colors: ['#ed64a6', '#319795'], glyph: '✏',
+    steps: [
+      { id: 'focus-creative', min: 6 }, { id: 'chakra-sacral', min: 6 },
+      { id: 'energy-spark', min: 6 }, { id: 'focus-flow', min: 6 },
+    ],
+  },
+  {
+    id: 'journey-couple',
+    title: 'ערב זוגי',
+    sub: '4 שלבים · 24 דקות',
+    desc: 'פס קול לאינטימיות: ונוס פותחת את הערב, 341Hz מרכך את הלב, מדיטציית לב פתוח מסנכרנת — ומגנט האהבה סוגר את המעגל. ברמקולים, יחד.',
+    colors: ['#f687b3', '#44102b'], glyph: '♀',
+    steps: [
+      { id: 'planet-venus', min: 6 }, { id: 'love-open-heart', min: 6 },
+      { id: 'med-heart', min: 6 }, { id: 'love-magnet', min: 6 },
+    ],
+  },
+  {
+    id: 'journey-nature',
+    title: 'חיבור לאדמה',
+    sub: '4 שלבים · 24 דקות',
+    desc: 'גרסת הבית של יחפות על דשא: OM קוסמי, פעימת שומאן, תדר היממה של כדור הארץ — וכוונון 432 הרמוני. הארקה עמוקה בלי לצאת מהסלון.',
+    colors: ['#48bb78', '#0a1f12'], glyph: '🌿',
+    steps: [
+      { id: 'earth-om', min: 6 }, { id: 'earth-schumann', min: 6 },
+      { id: 'planet-earth-day', min: 6 }, { id: 'earth-432', min: 6 },
+    ],
+  },
+  {
+    id: 'journey-confidence',
+    title: 'ביטחון במה',
+    sub: '4 שלבים · 16 דקות',
+    desc: 'לפני ראיון, הרצאה או הופעה: קרקוע מהיר, מקלעת השמש לכוח אישי, מאדים לאומץ — ובטא ערני לדריכות מדויקת. תעלו לבמה כמו בעלי הבית.',
+    colors: ['#faf089', '#4d1010'], glyph: '👑',
+    steps: [
+      { id: 'calm-grounding', min: 4 }, { id: 'chakra-solar', min: 4 },
+      { id: 'planet-mars', min: 4 }, { id: 'wave-beta', min: 4 },
+    ],
+  },
+  {
+    id: 'journey-gratitude',
+    title: 'הכרת תודה לפני שינה',
+    sub: '3 שלבים · 18 דקות',
+    desc: 'סגירת יום מתוקה: תדר החיבור נזכר במי שיש, מדיטציית לב מודה — וליל ירח מלא מרדים ברוך. הדרך היפה ביותר להגיד תודה ליום.',
+    colors: ['#9ae6b4', '#0a0a1f'], glyph: '🙏',
+    steps: [
+      { id: 'sol-639', min: 6 }, { id: 'med-heart', min: 6 },
+      { id: 'sleep-moon', min: 6 },
+    ],
+  },
 ];
 
 export const journeyById = Object.fromEntries(JOURNEYS.map(j => [j.id, j]));
