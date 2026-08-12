@@ -136,9 +136,16 @@ export class FrequencyEngine {
       shaman: [0.5, 0.6, 2 / 3, 0.8, 1, 16 / 15, 6 / 5, 4 / 3, 3 / 2, 8 / 5, 9 / 5, 2, 12 / 5],
       /* ספטימלי — רבעי הטון של 7/6 ו-7/4 נשמעים "מכופפים", פסיכדלי אמיתי */
       psyche: [0.5, 2 / 3, 0.75, 1, 7 / 6, 4 / 3, 3 / 2, 7 / 4, 2, 7 / 3, 8 / 3, 3, 7 / 2],
+      /* אונדצימלי-טרידצימלי — 11/8 ו-13/8 לא קיימים בשום סולם מערבי.
+         האוזן לא מצליחה למקם אותם, וזה בדיוק האפקט. */
+      warp: [0.5, 11 / 16, 0.75, 7 / 8, 1, 9 / 8, 11 / 8, 13 / 8, 7 / 4, 2, 9 / 4, 11 / 4, 13 / 4],
     };
     const RATIOS = SCALES[track.scale] || SCALES.penta;
-    const psychedelic = track.scale === 'psyche';
+    const psychedelic = track.scale === 'psyche' || track.scale === 'warp';
+    /* אפקטים פסיכדליים אופציונליים */
+    const orbit = !!track.orbit;       // התו מקיף את הראש
+    const reverse = !!track.reverse;   // מעטפת הפוכה — הצליל נשאב פנימה
+    const echoes = track.echo || 0;    // הדים בספירלה מתכווצת
     const pace = track.pace || 2.4;          // פעימת המוטיב (שניות)
     const sparkle = track.sparkle ?? 0.18;   // הסתברות לנצנוץ אוקטבה למעלה
 
@@ -205,10 +212,17 @@ export class FrequencyEngine {
       { mult: 1.5,  gain: 0.12, tc: 1.3 },
     ];
 
-    const strike = (f, vel, panPos, partials) => {
-      const t0 = ctx.currentTime;
+    const strike = (f, vel, panPos, partials, when) => {
+      const t0 = when ?? ctx.currentTime;
       const pan = ctx.createStereoPanner();
-      pan.pan.value = panPos;
+      if (orbit) {
+        /* התו מקיף את הראש לאורך הדעיכה */
+        pan.pan.setValueAtTime(panPos, t0);
+        pan.pan.linearRampToValueAtTime(-panPos, t0 + 3.5);
+        pan.pan.linearRampToValueAtTime(panPos, t0 + 7);
+      } else {
+        pan.pan.value = panPos;
+      }
       pan.connect(dest);
       for (const p of partials) {
         const osc = ctx.createOscillator();
@@ -216,8 +230,15 @@ export class FrequencyEngine {
         osc.frequency.value = f * p.mult;
         const g = ctx.createGain();
         g.gain.setValueAtTime(0.0001, t0);
-        g.gain.exponentialRampToValueAtTime(vel * p.gain, t0 + 0.012);
-        g.gain.setTargetAtTime(0.0001, t0 + 0.025, p.tc);
+        if (reverse) {
+          /* מעטפת הפוכה — הצליל נשאב פנימה ואז נחתך. המוח לא מצליח
+             להצמיד אותו לרגע התחלה, וזו התחושה ה"אחורה" הקלאסית. */
+          g.gain.exponentialRampToValueAtTime(vel * p.gain, t0 + 1.9);
+          g.gain.setTargetAtTime(0.0001, t0 + 1.95, p.tc * 0.35);
+        } else {
+          g.gain.exponentialRampToValueAtTime(vel * p.gain, t0 + 0.012);
+          g.gain.setTargetAtTime(0.0001, t0 + 0.025, p.tc);
+        }
         /* כיפוף גובה איטי — "וארפ" של סרט מגנטי, החתימה הפסיכדלית */
         if (psychedelic) {
           const bend = (Math.random() * 2 - 1) * 30;
@@ -229,12 +250,28 @@ export class FrequencyEngine {
         osc.stop(t0 + 13);
         osc.onended = () => { try { g.disconnect(); } catch {} };
       }
-      voice.timers.push(setTimeout(() => { try { pan.disconnect(); } catch {} }, 13500));
+      const life = (t0 - ctx.currentTime) * 1000 + 13500;
+      voice.timers.push(setTimeout(() => { try { pan.disconnect(); } catch {} }, life));
     };
+
+    /* הד בספירלה מתכווצת — המרווחים מתקצרים והצדדים מתחלפים,
+       כך שהאוזן שומעת את התו "נופל" לתוך עצמו */
+    const strikeWithEchoes = (f, vel, panPos, partials) => {
+      strike(f, vel, panPos, partials);
+      let delay = 0.42, v = vel * 0.55, side = -panPos;
+      for (let i = 0; i < echoes; i++) {
+        strike(f, v, side, partials, ctx.currentTime + delay);
+        delay += 0.42 * Math.pow(0.68, i + 1);
+        v *= 0.6;
+        side = -side;
+      }
+    };
+    const hit = echoes ? strikeWithEchoes : strike;
 
     /* מוטיב היפנוטי: לולאה של 5 תווים שחוזרת — ומוטציה איטית שמחייה אותה.
        החזרתיות היא מה שמהפנט; המוטציה היא מה ששומר על קסם. */
     let motif = track.scale === 'shaman' ? [4, 6, 4, 8]       // תבנית תוף — קצרה ועיקשת
+              : track.scale === 'warp'   ? [4, 7, 5, 9, 6, 11, 3, 8]  // ארוכה מאוד — לא נתפסת כלולאה
               : psychedelic              ? [3, 6, 4, 9, 5, 7, 2]  // ארוכה ומתפתלת
               :                            [2, 5, 4, 7, 3];
     let pos = 0;
@@ -245,7 +282,7 @@ export class FrequencyEngine {
       let ratio = RATIOS[degree];
       if (Math.random() < sparkle) ratio *= 2;
       const vel = (0.13 + Math.random() * 0.08) * scale;
-      strike(track.freq * ratio, vel, Math.sin(pos * 2.1) * 0.65, BELL);
+      hit(track.freq * ratio, vel, Math.sin(pos * 2.1) * 0.65, BELL);
 
       /* גונג טוניקה בפתיחת כל מעגל — האדמה שאליה חוזרים */
       if (pos === 0 && Math.random() < 0.75) {
@@ -330,7 +367,7 @@ export class FrequencyEngine {
         {
           freq: track.freq, pace: track.pace || 3.2,
           sparkle: track.sparkle ?? 0.15, scale: track.melodyScale || track.scale,
-          timbre: track.timbre,
+          timbre: track.timbre, orbit: track.orbit, reverse: track.reverse, echo: track.echo,
         },
         voice, vg, 0.75
       );
