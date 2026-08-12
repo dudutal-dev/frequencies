@@ -521,6 +521,65 @@ export const JOURNEYS = [
       { id: 'ps-liquid', min: 8 }, { id: 'sch-melodic', min: 8 },
     ],
   },
+
+  /* ------------------------------ סטים של טכנו — עולים ------------------------------ */
+  {
+    id: 'journey-techno-rise',
+    title: 'סט טכנו — עלייה',
+    sub: '4 שלבים · 48 דקות',
+    desc: 'הסט הקלאסי שעולה: 112 BPM לחימום, 122 לגרוב, 128 לדרייב — ו-132 עם גמא 40Hz בשיא. כל שלב מוסיף האטים, בס ואנרגיה. גלי המוח עולים איתו מאלפא לגמא.',
+    colors: ['#4fd1c5', '#ecc94b'], glyph: '▲',
+    steps: [
+      { id: 'tk-warmup', min: 10 }, { id: 'tk-groove', min: 12 },
+      { id: 'tk-drive', min: 12 }, { id: 'tk-peak', min: 14 },
+    ],
+  },
+  {
+    id: 'journey-techno-peak',
+    title: 'עלייה לשיא',
+    sub: '4 שלבים · 40 דקות',
+    desc: 'ישר לעניין: דרייב 128, אסיד 134 בסולם מעוות, טראנס מרומם 138 — ושיא קשה 142 עם האטים על כל שש-עשרה. הגבוה ביותר בספרייה. 🎧',
+    colors: ['#e53e3e', '#d6bcfa'], glyph: '▲',
+    steps: [
+      { id: 'tk-drive', min: 10 }, { id: 'tk-acid', min: 10 },
+      { id: 'tk-trance', min: 10 }, { id: 'tk-hardpeak', min: 10 },
+    ],
+  },
+  {
+    id: 'journey-techno-night',
+    title: 'לילה שלם במועדון',
+    sub: '6 שלבים · 74 דקות',
+    desc: 'הקשת המלאה: חימום, גרוב, טכנו אפל, שיא גמא, טראנס מרומם — ואפטר-אוורס שמנחית בעדינות. שעה וחצי של סט מלא מתחילתו ועד הבוקר.',
+    colors: ['#4a5568', '#63b3ed'], glyph: '◼',
+    steps: [
+      { id: 'tk-warmup', min: 10 }, { id: 'tk-groove', min: 12 },
+      { id: 'tk-dark', min: 12 }, { id: 'tk-peak', min: 14 },
+      { id: 'tk-trance', min: 14 }, { id: 'tk-afterhours', min: 12 },
+    ],
+  },
+  {
+    id: 'journey-techno-hypnotic',
+    title: 'טכנו מדיטטיבי',
+    sub: '4 שלבים · 44 דקות',
+    desc: 'לריקוד עם עיניים עצומות: טכנו מוארק על פעימת שומאן, היפנוטי מינימלי, אפל וטקסי — וחזרה להארקה. עולה באנרגיה בלי לאבד את הקרקע.',
+    colors: ['#68d391', '#805ad5'], glyph: '◼',
+    steps: [
+      { id: 'tk-schumann', min: 11 }, { id: 'tk-hypnotic', min: 11 },
+      { id: 'tk-dark', min: 11 }, { id: 'tk-schumann', min: 11 },
+    ],
+  },
+  {
+    id: 'journey-techno-workout',
+    title: 'אימון בקצב',
+    sub: '5 שלבים · 40 דקות',
+    desc: 'סט אימון מתוזמן: חימום ב-112, העלאת דופק ל-128, שני שיאים ב-138 ו-142 — ושחרור באפטר-אוורס. הטמפו מוביל את הגוף בלי לחשוב.',
+    colors: ['#f56565', '#ecc94b'], glyph: '▲',
+    steps: [
+      { id: 'tk-warmup', min: 6 }, { id: 'tk-drive', min: 8 },
+      { id: 'tk-trance', min: 10 }, { id: 'tk-hardpeak', min: 8 },
+      { id: 'tk-afterhours', min: 8 },
+    ],
+  },
 ];
 
 export const journeyById = Object.fromEntries(JOURNEYS.map(j => [j.id, j]));

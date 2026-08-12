@@ -13,6 +13,7 @@ export const CATEGORIES = [
   { id: 'featured',   label: 'נבחרות',              icon: '✦' },
   { id: 'melodic',    label: 'מלודיות מרפאות',      icon: '♬' },
   { id: 'shaman',     label: 'שאמאני ופסיכדלי',     icon: '𓂀' },
+  { id: 'techno',     label: 'טכנו וטראנס',         icon: '◼' },
   { id: 'psychedelic', label: 'פסיכדלי קיצוני',      icon: '✺' },
   { id: 'schumann',   label: 'תהודת שומאן',         icon: '⊕' },
   { id: 'bowls',      label: 'קערות וגונגים',       icon: '◍' },
@@ -641,6 +642,75 @@ export const TRACKS = [
     title: 'מקהלת נזירים', sub: '174Hz · דרון עמוק',
     desc: 'דרון נמוך ואיטי בסגנון מזמור גרגוריאני-טיבטי על תדר שיכוך הכאב — קולות שמצטלבים לאט וממלאים את החלל.',
     tags: ['מזמור', 'נזירים', 'עמוק'], colors: ['#805ad5', '#160e2b'], glyph: '✝', ambience: 0.07 },
+
+  /* ------------------------------ טכנו וטראנס — קצב שעולה ------------------------------
+     bpm = טמפו הקצב · energy 0–1 = צפיפות (האטים, קלאפ, בס)
+     הביט האיזוכרוני/בינאורלי ממשיך לעבוד על גלי המוח מתחת לגרוב. */
+  { id: 'tk-warmup', category: 'techno', freq: 417, mode: 'isochronic', beat: 10,
+    bpm: 112, energy: 0.35, melody: true, timbre: 'kalimba', pace: 3.2,
+    title: 'חימום', sub: '112 BPM · אלפא 10Hz',
+    desc: 'הפתיחה של הסט: קיק איטי, בס מינימלי ואלפא מרגיע מתחת. הגוף מתחיל לזוז לפני שהראש מבין.',
+    tags: ['טכנו', 'חימום', 'אלפא'], colors: ['#4fd1c5', '#0b2422'], glyph: '◼', ambience: 0.03 },
+
+  { id: 'tk-groove', category: 'techno', freq: 528, mode: 'isochronic', beat: 14,
+    bpm: 122, energy: 0.55, melody: true, timbre: 'kalimba', pace: 2.6,
+    title: 'גרוב', sub: '122 BPM · בטא 14Hz',
+    desc: 'הקלאפ נכנס והבס מתהדק. תדר הנס 528 כטוניקה, ובטא נמוך שמעלה את הערנות בלי למהר.',
+    tags: ['טכנו', 'גרוב'], colors: ['#f6e05e', '#4a3607'], glyph: '◼', ambience: 0.03 },
+
+  { id: 'tk-drive', category: 'techno', freq: 396, mode: 'isochronic', beat: 18,
+    bpm: 128, energy: 0.7, melody: true, timbre: 'bell', pace: 2.2, featured: true,
+    title: 'דרייב', sub: '128 BPM · בטא 18Hz',
+    desc: 'הטמפו הקלאסי של הטכנו — 128. האטים מתחילים לרוץ על שמיניות והבס נושך. מכאן זה רק עולה.',
+    tags: ['טכנו', '128', 'דרייב'], colors: ['#e53e3e', '#2d0a0a'], glyph: '◼', ambience: 0.025 },
+
+  { id: 'tk-peak', category: 'techno', freq: 200, mode: 'binaural', beat: 40,
+    bpm: 132, energy: 0.85, melody: true, timbre: 'bell', pace: 1.8, featured: true,
+    title: 'שיא', sub: '132 BPM · גמא 40Hz · 🎧',
+    desc: 'נקודת השיא: 132 BPM עם ביט גמא 40Hz — התדר של מיקוד-על. הגוף בתנועה מלאה והמוח בחדות מקסימלית.',
+    tags: ['טכנו', 'שיא', 'גמא'], colors: ['#ecc94b', '#3d2a02'], glyph: '▲', ambience: 0.02 },
+
+  { id: 'tk-acid', category: 'techno', freq: 174, mode: 'isochronic', beat: 16,
+    bpm: 134, energy: 0.9, melody: true, melodyScale: 'warp', pace: 1.6,
+    title: 'אסיד', sub: '134 BPM · סולם מעוות',
+    desc: 'בס חומצתי עם פילטר נושך, ומעליו מלודיה בסולם שלא קיים במוזיקה מערבית. 134 BPM של עיוות מבוקר.',
+    tags: ['אסיד', 'מעוות', 'קיצוני'], colors: ['#48bb78', '#0d2b18'], glyph: '▲', ambience: 0.02 },
+
+  { id: 'tk-hypnotic', category: 'techno', freq: 136.1, mode: 'isochronic', beat: 12,
+    bpm: 126, energy: 0.5, melody: true, timbre: 'handpan', pace: 3.6,
+    title: 'טכנו היפנוטי', sub: '126 BPM · OM 136.1Hz',
+    desc: 'מינימליזם: קיק, בס ומוטיב אחד שחוזר על תדר ה-OM. הגרסה המדיטטיבית של הרחבה — לריקוד עם עיניים עצומות.',
+    tags: ['היפנוטי', 'מינימל', 'OM'], colors: ['#805ad5', '#150d29'], glyph: '◼', ambience: 0.035 },
+
+  { id: 'tk-dark', category: 'techno', freq: 111, mode: 'isochronic', beat: 14,
+    bpm: 130, energy: 0.75, melody: true, melodyScale: 'shaman', pace: 2.0,
+    title: 'טכנו אפל', sub: '130 BPM · סולם פריגי',
+    desc: 'הצד האפל של המועדון: תדר 111 של חללי הקדושה, סולם פריגי מינורי וקיק כבד. תעשייתי וטקסי בו זמנית.',
+    tags: ['אפל', 'תעשייתי'], colors: ['#4a5568', '#08090d'], glyph: '◼', ambience: 0.03 },
+
+  { id: 'tk-trance', category: 'techno', freq: 963, mode: 'binaural', beat: 30,
+    bpm: 138, energy: 0.9, melody: true, melodyScale: 'psyche', pace: 1.5, featured: true,
+    title: 'טראנס מרומם', sub: '138 BPM · 963Hz · 🎧',
+    desc: 'טראנס אמיתי: 138 BPM, תדר הכתר 963Hz ומלודיה ספטימלית שמטפסת. הרגע שבו הידיים עולות מעצמן.',
+    tags: ['טראנס', 'מרומם', '138'], colors: ['#d6bcfa', '#2d1155'], glyph: '▲', ambience: 0.02 },
+
+  { id: 'tk-hardpeak', category: 'techno', freq: 396, mode: 'binaural', beat: 40,
+    bpm: 142, energy: 1.0, melody: true, melodyScale: 'warp', pace: 1.3,
+    title: 'שיא קשה', sub: '142 BPM · גמא 40Hz · 🎧',
+    desc: 'הכי מהיר וצפוף בספרייה: 142 BPM, האטים על כל שש-עשרה, בס מלא וגמא 40Hz. לא לפני שינה.',
+    tags: ['קיצוני', 'מהיר', 'גמא'], colors: ['#fc8181', '#3d0a0a'], glyph: '▲', ambience: 0.015 },
+
+  { id: 'tk-afterhours', category: 'techno', freq: 285, mode: 'isochronic', beat: 8,
+    bpm: 118, energy: 0.4, melody: true, timbre: 'crystal', pace: 3.8,
+    title: 'אפטר-אוורס', sub: '118 BPM · אלפא 8Hz',
+    desc: 'הירידה: הקצב מאט, הקערות נכנסות ואלפא מחזיר את מערכת העצבים. הצליל של שש בבוקר.',
+    tags: ['ירידה', 'רגוע', 'בוקר'], colors: ['#63b3ed', '#0d2440'], glyph: '◼', ambience: 0.045 },
+
+  { id: 'tk-schumann', category: 'techno', freq: 136.1, mode: 'isochronic', beat: 7.83,
+    bpm: 124, energy: 0.6, melody: true, timbre: 'handpan', pace: 2.8,
+    title: 'טכנו מוארק', sub: '124 BPM · שומאן 7.83Hz',
+    desc: 'הצירוף היחיד מסוגו: גרוב של 124 BPM מעל פעימת שומאן 7.83Hz. הרגליים בקצב, המערכת מוארקת לכדור הארץ.',
+    tags: ['שומאן', 'מוארק', 'טכנו'], colors: ['#68d391', '#12301d'], glyph: '◼', ambience: 0.035 },
 
   /* ------------------------------ פסיכדלי קיצוני — אשליות שמע ------------------------------ */
   { id: 'ps-kaleido', category: 'psychedelic', freq: 417, mode: 'melodic', scale: 'warp',
