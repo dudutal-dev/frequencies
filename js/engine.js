@@ -127,8 +127,17 @@ export class FrequencyEngine {
      ------------------------------------------------------------ */
   _startMelody(track, voice, dest, scale = 1) {
     const ctx = this.ctx;
-    /* סולם פנטטוני ביחסים טהורים, מאוקטבה מתחת עד מעל */
-    const RATIOS = [0.5, 0.75, 1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4, 5 / 2, 3];
+    /* סולמות ביחסים טהורים — הטוניקה היא תמיד תדר הריפוי */
+    const SCALES = {
+      /* פנטטוני מז'ורי — רגוע, מרפא, "מערבי" */
+      penta: [0.5, 0.75, 1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4, 5 / 2, 3],
+      /* פריגי מינורי — אפל, טקסי, שאמאני */
+      shaman: [0.5, 0.6, 2 / 3, 0.8, 1, 16 / 15, 6 / 5, 4 / 3, 3 / 2, 8 / 5, 9 / 5, 2, 12 / 5],
+      /* ספטימלי — רבעי הטון של 7/6 ו-7/4 נשמעים "מכופפים", פסיכדלי אמיתי */
+      psyche: [0.5, 2 / 3, 0.75, 1, 7 / 6, 4 / 3, 3 / 2, 7 / 4, 2, 7 / 3, 8 / 3, 3, 7 / 2],
+    };
+    const RATIOS = SCALES[track.scale] || SCALES.penta;
+    const psychedelic = track.scale === 'psyche';
     const pace = track.pace || 2.4;          // פעימת המוטיב (שניות)
     const sparkle = track.sparkle ?? 0.18;   // הסתברות לנצנוץ אוקטבה למעלה
 
@@ -160,6 +169,12 @@ export class FrequencyEngine {
         g.gain.setValueAtTime(0.0001, t0);
         g.gain.exponentialRampToValueAtTime(vel * p.gain, t0 + 0.012);
         g.gain.setTargetAtTime(0.0001, t0 + 0.025, p.tc);
+        /* כיפוף גובה איטי — "וארפ" של סרט מגנטי, החתימה הפסיכדלית */
+        if (psychedelic) {
+          const bend = (Math.random() * 2 - 1) * 30;
+          osc.detune.setValueAtTime(-bend, t0);
+          osc.detune.linearRampToValueAtTime(bend, t0 + 4);
+        }
         osc.connect(g).connect(pan);
         osc.start(t0);
         osc.stop(t0 + 13);
@@ -170,7 +185,9 @@ export class FrequencyEngine {
 
     /* מוטיב היפנוטי: לולאה של 5 תווים שחוזרת — ומוטציה איטית שמחייה אותה.
        החזרתיות היא מה שמהפנט; המוטציה היא מה ששומר על קסם. */
-    let motif = [2, 5, 4, 7, 3];
+    let motif = track.scale === 'shaman' ? [4, 6, 4, 8]       // תבנית תוף — קצרה ועיקשת
+              : psychedelic              ? [3, 6, 4, 9, 5, 7, 2]  // ארוכה ומתפתלת
+              :                            [2, 5, 4, 7, 3];
     let pos = 0;
 
     const playNote = () => {
@@ -261,7 +278,10 @@ export class FrequencyEngine {
        והפעמונים מתנגנים מעליו באותו תדר יסוד (למסעות מוזיקליים) */
     if (track.melody && track.mode !== 'melodic') {
       this._startMelody(
-        { freq: track.freq, pace: track.pace || 3.2, sparkle: track.sparkle ?? 0.15 },
+        {
+          freq: track.freq, pace: track.pace || 3.2,
+          sparkle: track.sparkle ?? 0.15, scale: track.melodyScale || track.scale,
+        },
         voice, vg, 0.75
       );
     }
