@@ -125,7 +125,7 @@ export class FrequencyEngine {
      נשאר מרכז הכובד הצלילי גם כשמתנגנת מלודיה חיה.
      טימבר: פעמון/קלימבה — יסוד דועך לאט + פרשל שלישי דועך מהר.
      ------------------------------------------------------------ */
-  _startMelody(track, voice, dest) {
+  _startMelody(track, voice, dest, scale = 1) {
     const ctx = this.ctx;
     /* סולם פנטטוני ביחסים טהורים, מאוקטבה מתחת עד מעל */
     const RATIOS = [0.5, 0.75, 1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4, 5 / 2, 3];
@@ -142,7 +142,7 @@ export class FrequencyEngine {
       if (Math.random() < sparkle) ratio *= 2;
       const f = track.freq * ratio;
       const t0 = ctx.currentTime;
-      const vel = 0.09 + Math.random() * 0.09;
+      const vel = (0.09 + Math.random() * 0.09) * scale;
 
       const pan = ctx.createStereoPanner();
       pan.pan.value = (Math.random() * 2 - 1) * 0.7;
@@ -231,6 +231,15 @@ export class FrequencyEngine {
       breath.start();
       voice.oscillators.push(breath);
       voice.nodes.push(breathGain);
+    }
+
+    /* שכבת מלודיה אופציונלית מעל כל מצב — הביט ממשיך לעבוד,
+       והפעמונים מתנגנים מעליו באותו תדר יסוד (למסעות מוזיקליים) */
+    if (track.melody && track.mode !== 'melodic') {
+      this._startMelody(
+        { freq: track.freq, pace: track.pace || 3.2, sparkle: track.sparkle ?? 0.15 },
+        voice, vg, 0.75
+      );
     }
 
     /* שכבת אווירה — רעש ורוד מסונן, "רוח במקדש" */
