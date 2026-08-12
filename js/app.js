@@ -133,6 +133,11 @@ const ICONS = {
   beads: SVG('<circle cx="20" cy="20" r="12"/>' + Array.from({ length: 10 }, (_, i) =>
     `<circle cx="20" cy="8" r="2.4" fill="currentColor" stroke="none" transform="rotate(${i * 36} 20 20)"/>`).join('')),
   om: SVG('<circle cx="20" cy="20" r="13" opacity="0.35"/><path d="M13 24c0-4 4-6 6-3s-1 6-4 5 0-9 6-9 6 5 9 5"/><circle cx="27" cy="10" r="1.8" fill="currentColor" stroke="none"/>'),
+  /* טרנספורט — מלאים ולא קווים, כדי שייקראו נקי בגודל קטן */
+  play: SVG('<path d="M14.5 9.8v20.4L31 20z" fill="currentColor" stroke="none" stroke-linejoin="round" stroke-width="2.6" stroke-linecap="round"/>'),
+  pause: SVG('<rect x="13" y="10" width="5.2" height="20" rx="2.4" fill="currentColor" stroke="none"/><rect x="21.8" y="10" width="5.2" height="20" rx="2.4" fill="currentColor" stroke="none"/>'),
+  skipPrev: SVG('<path d="M27.5 11.2v17.6L14.6 20z" fill="currentColor" stroke="none" stroke-width="2.4" stroke-linejoin="round"/><rect x="10.2" y="10.6" width="2.9" height="18.8" rx="1.45" fill="currentColor" stroke="none"/>'),
+  skipNext: SVG('<path d="M12.5 11.2v17.6L25.4 20z" fill="currentColor" stroke="none" stroke-width="2.4" stroke-linejoin="round"/><rect x="26.9" y="10.6" width="2.9" height="18.8" rx="1.45" fill="currentColor" stroke="none"/>'),
   arrowUp: SVG('<line x1="20" y1="33" x2="20" y2="9"/><path d="M11 18l9-9 9 9"/>'),
   arrowDown: SVG('<line x1="20" y1="7" x2="20" y2="31"/><path d="M11 22l9 9 9-9"/>'),
   anchor: SVG('<circle cx="20" cy="9" r="3"/><line x1="20" y1="12" x2="20" y2="33"/><line x1="13" y1="17" x2="27" y2="17"/><path d="M8 24a12 12 0 0 0 24 0"/>'),
@@ -740,9 +745,9 @@ function stopPlayback() {
 }
 
 function updatePlayButtons() {
-  const icon = engine.isPlaying ? '❚❚' : '▶';
-  els.pPlay.textContent = icon;
-  els.miniPlay.textContent = icon;
+  const icon = engine.isPlaying ? ICONS.pause : ICONS.play;
+  els.pPlay.innerHTML = icon;
+  els.miniPlay.innerHTML = icon;
 }
 
 function markPlaying() {
@@ -1128,6 +1133,12 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 els.pVolume.value = state.volume;
 els.pTimer.textContent = timerLabel();
 els.pTimer.classList.toggle('armed', !!state.timer);
+/* אייקוני הטרנספורט — מוזרקים פעם אחת באתחול */
+els.pPrev.innerHTML = ICONS.skipPrev;
+els.pNext.innerHTML = ICONS.skipNext;
+els.miniNext.innerHTML = ICONS.skipNext;
+updatePlayButtons();
+
 engine.instrument = state.instrument;
 engine.speakerMode = state.speakerMode;
 updateSpeakerButton();
