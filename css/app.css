@@ -763,3 +763,14 @@ input[type='range']::-moz-range-thumb {
 .p-icon .icn { width: 17px; height: 17px; }
 .p-icon#p-airplay { display: flex; align-items: center; justify-content: center; }
 .p-icon#p-airplay[hidden] { display: none; }
+
+/* הערת סקשן — הסבר קצר מתחת לכותרת */
+.section-note {
+  padding: 0 18px 12px; margin-top: -4px;
+  font-size: 11.5px; line-height: 1.65; color: var(--text-faint); max-width: 52ch;
+}
+.note-btn {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font-family: inherit; font-size: inherit; font-weight: 800;
+  color: var(--gold); text-decoration: underline; text-underline-offset: 3px;
+}
