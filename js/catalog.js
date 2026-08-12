@@ -15,6 +15,7 @@ export const CATEGORIES = [
   { id: 'melodic',    label: 'מלודיות מרפאות',      icon: '♬' },
   { id: 'shaman',     label: 'שאמאני ופסיכדלי',     icon: '𓂀' },
   { id: 'techno',     label: 'טכנו וטראנס',         icon: '◼' },
+  { id: 'organic',    label: 'פסיכדלי אורגני',      icon: '❋' },
   { id: 'psychedelic', label: 'פסיכדלי קיצוני',      icon: '✺' },
   { id: 'schumann',   label: 'תהודת שומאן',         icon: '⊕' },
   { id: 'bowls',      label: 'קערות וגונגים',       icon: '◍' },
@@ -968,6 +969,65 @@ export const TRACKS = [
     title: 'פרוגרסיב', sub: '124 BPM · 963Hz · 🎧',
     desc: 'הסבלנות של הפרוגרסיב: 124 BPM שמתפתח לאט על תדר הכתר. שכבות שנפתחות בהדרגה במקום שיא מיידי.',
     tags: ['פרוגרסיב', 'הדרגתי'], colors: ['#d6bcfa', '#2b1155'], glyph: '◼', ambience: 0.03 },
+
+  /* ------------------------------ פסיכדלי אורגני — קול זורם בקצב בינוני ------------------------------
+     flow: קול מתמשך שגולש בין התווים במקום להקיש אותם, עם ויברטו,
+     פילטר נושם ותזמון לא-מדויק בכוונה. pattern organic = גרוב עדין. */
+  { id: 'org-dreams', category: 'organic', freq: 136.1, mode: 'isochronic', beat: 8,
+    bpm: 104, energy: 0.5, pattern: 'organic', pad: 0.8,
+    melody: true, flow: true, melodyScale: 'psyche', pace: 3.4, featured: true,
+    title: 'העברת חלומות', sub: '104 BPM · OM 136.1Hz · קול זורם',
+    desc: 'הקול לא נחבט — הוא גולש מתו לתו עם ויברטו ופילטר שנפתח ונסגר כמו נשימה. פאד מתחת, גרוב עדין של 104, ותדר ה-OM כטוניקה. הצליל של חלום שממשיך להשתנות.',
+    tags: ['אורגני', 'זורם', 'חלומי'], colors: ['#4299e1', '#f6ad55'], glyph: '❋', ambience: 0.05 },
+
+  { id: 'org-liquid', category: 'organic', freq: 528, mode: 'isochronic', beat: 10,
+    bpm: 100, energy: 0.45, pattern: 'organic', pad: 0.85,
+    melody: true, flow: true, melodyScale: 'psyche', pace: 3.8, featured: true,
+    title: 'זהב נוזלי', sub: '100 BPM · תדר הנס',
+    desc: 'תדר הנס בגרסה נוזלית: הקול נמתח בין התווים באיטיות, הפאד זהוב והקצב כמעט לא מורגש. הכי חם ורך בפרק.',
+    tags: ['נוזלי', 'חם', '528'], colors: ['#f6e05e', '#7b4d05'], glyph: '❋', ambience: 0.05 },
+
+  { id: 'org-forest', category: 'organic', freq: 432, mode: 'isochronic', beat: 9,
+    bpm: 108, energy: 0.55, pattern: 'organic', pad: 0.7,
+    melody: true, flow: true, melodyScale: 'penta', pace: 2.9,
+    title: 'יער בלילה', sub: '108 BPM · כוונון 432',
+    desc: 'סולם פנטטוני בכוונון הטבע, עם קול שגולש כמו ציפור. שייקר צפוף וקיק רך — הצליל של הליכה ביער אחרי חשכה.',
+    tags: ['יער', 'טבע', '432'], colors: ['#48bb78', '#0d2b18'], glyph: '❋', ambience: 0.055 },
+
+  { id: 'org-river', category: 'organic', freq: 285, mode: 'isochronic', beat: 8,
+    bpm: 96, energy: 0.4, pattern: 'organic', pad: 0.9,
+    melody: true, flow: true, melodyScale: 'psyche', pace: 4.2,
+    title: 'נהר', sub: '96 BPM · תדר ההתחדשות',
+    desc: 'הקצב האיטי בפרק — 96 BPM שכמעט נעלם מתחת לקול הזורם. הגלישות ארוכות והפילטר פותח ונסגר לאט. זרימה מתמדת בלי התחלה או סוף.',
+    tags: ['נהר', 'איטי', 'זרימה'], colors: ['#4fd1c5', '#0a2b28'], glyph: '❋', ambience: 0.06 },
+
+  { id: 'org-serpentine', category: 'organic', freq: 111, mode: 'isochronic', beat: 7.83,
+    bpm: 112, energy: 0.6, pattern: 'organic', pad: 0.7,
+    melody: true, flow: true, melodyScale: 'shaman', pace: 2.6,
+    title: 'מתפתל', sub: '112 BPM · שומאן 7.83Hz',
+    desc: 'סולם פריגי אפל על פעימת שומאן, עם קול שמתפתל בין התווים. הצד האפל של הפרק — אורגני אבל לא רגוע.',
+    tags: ['אפל', 'מתפתל', 'שומאן'], colors: ['#805ad5', '#150c26'], glyph: '❋', ambience: 0.05 },
+
+  { id: 'org-bloom', category: 'organic', freq: 639, mode: 'isochronic', beat: 10,
+    bpm: 106, energy: 0.5, pattern: 'organic', pad: 0.8,
+    melody: true, flow: true, melodyScale: 'penta', pace: 3.2,
+    title: 'פריחה', sub: '106 BPM · תדר החיבור',
+    desc: 'פנטטוני חם על תדר הלב, עם קול שנפתח כמו עלה כותרת בכל תו. האופטימי בפרק — לבקרים ולנסיעות ארוכות.',
+    tags: ['פריחה', 'לב', 'חם'], colors: ['#68d391', '#12301d'], glyph: '❋', ambience: 0.05 },
+
+  { id: 'org-mirage', category: 'organic', freq: 417, mode: 'isochronic', beat: 9,
+    bpm: 110, energy: 0.55, pattern: 'organic', pad: 0.75,
+    melody: true, flow: true, melodyScale: 'warp', pace: 3.0,
+    title: 'מיראז\'', sub: '110 BPM · סולם מעוות',
+    desc: 'הקול הזורם פוגש את הסולם המעוות: גלישות בין מרווחים שלא קיימים במוזיקה מערבית. מתעתע ונעים בו זמנית.',
+    tags: ['מעוות', 'מתעתע'], colors: ['#ed8936', '#331303'], glyph: '❋', ambience: 0.05 },
+
+  { id: 'org-nightflight', category: 'organic', freq: 963, mode: 'isochronic', beat: 12,
+    bpm: 114, energy: 0.65, pattern: 'organic', pad: 0.6,
+    melody: true, flow: true, melodyScale: 'psyche', pace: 2.4,
+    title: 'טיסת לילה', sub: '114 BPM · תדר הכתר',
+    desc: 'הקצבי והגבוה בפרק: 114 BPM עם קול שגולש בטווח רחב על תדר הכתר. תחושת תנועה קדימה — לנהיגת לילה ארוכה.',
+    tags: ['תנועה', 'לילה', 'כתר'], colors: ['#d6bcfa', '#241645'], glyph: '❋', ambience: 0.045 },
 
   /* ------------------------------ פסיכדלי קיצוני — אשליות שמע ------------------------------ */
   { id: 'ps-kaleido', category: 'psychedelic', freq: 417, mode: 'melodic', scale: 'warp',
