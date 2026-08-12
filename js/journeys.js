@@ -463,6 +463,64 @@ export const JOURNEYS = [
       { id: 'bowl-crystal-528', min: 7 },
     ],
   },
+
+  /* ------------------------------ פסיכדלי קיצוני ושומאן ------------------------------ */
+  {
+    id: 'journey-dissolve',
+    title: 'התמוססות מוחלטת',
+    sub: '5 שלבים · 45 דקות',
+    desc: 'המסע הקיצוני ביותר בספרייה: שפה זרה פותחת בסולם מעוות, קליידוסקופ מסחרר, ספירלה אינסופית מפילה, פרקטל מפרק — והתמוססות מאחדת את שלושת האפקטים. 🎧 חובה אוזניות.',
+    colors: ['#ed64a6', '#faf089'], glyph: '❋',
+    steps: [
+      { id: 'ps-alien', min: 9 }, { id: 'ps-kaleido', min: 9 },
+      { id: 'ps-spiral', min: 9 }, { id: 'ps-fractal', min: 9 },
+      { id: 'ps-dissolve', min: 9 },
+    ],
+  },
+  {
+    id: 'journey-backwards',
+    title: 'העולם ההפוך',
+    sub: '3 שלבים · 24 דקות',
+    desc: 'שלושה שלבים של מעטפת הפוכה וסיבוב: זרימה לאחור, נוזלי, ואולם המראות. המוח מפסיק לדעת מתי צליל מתחיל ומאיפה הוא בא.',
+    colors: ['#4fd1c5', '#63b3ed'], glyph: '↺',
+    steps: [
+      { id: 'ps-reverse', min: 8 }, { id: 'ps-liquid', min: 8 },
+      { id: 'ps-mirror', min: 8 },
+    ],
+  },
+  {
+    id: 'journey-schumann-ladder',
+    title: 'סולם שומאן',
+    sub: '5 שלבים · 25 דקות',
+    desc: 'טיפוס בכל חמש ההרמוניות של תהודת שומאן — 7.83, 14.3, 20.8, 27.3 ו-33.8Hz. מהארקה עמוקה ועד סף הגמא, על אותה פעימה פלנטרית.',
+    colors: ['#48bb78', '#81e6d9'], glyph: '⊕',
+    steps: [
+      { id: 'sch-1', min: 5 }, { id: 'sch-2', min: 5 }, { id: 'sch-3', min: 5 },
+      { id: 'sch-4', min: 5 }, { id: 'sch-5', min: 5 },
+    ],
+  },
+  {
+    id: 'journey-earth-pulse',
+    title: 'פעימת האדמה',
+    sub: '4 שלבים · 32 דקות',
+    desc: 'שהייה ארוכה בתדר היסוד של הפלנטה: שומאן טהור, גרסה מלודית בהנדפאן, תדר היממה של כדור הארץ — וכוונון 432 לסיום. הארקה של חצי שעה.',
+    colors: ['#48bb78', '#b7791f'], glyph: '◍',
+    steps: [
+      { id: 'sch-1', min: 8 }, { id: 'sch-melodic', min: 8 },
+      { id: 'planet-earth-day', min: 8 }, { id: 'earth-432', min: 8 },
+    ],
+  },
+  {
+    id: 'journey-warped-earth',
+    title: 'אדמה מעוותת',
+    sub: '4 שלבים · 32 דקות',
+    desc: 'העוגן והסחרור יחד: פעימת שומאן נשארת יציבה לאורך כל המסע, בזמן שהמלודיה מעליה הולכת ומתעוותת — עד כדור הארץ המעוות ובחזרה לשומאן טהור.',
+    colors: ['#68d391', '#9f7aea'], glyph: '✺',
+    steps: [
+      { id: 'sch-1', min: 8 }, { id: 'sch-psyche', min: 8 },
+      { id: 'ps-liquid', min: 8 }, { id: 'sch-melodic', min: 8 },
+    ],
+  },
 ];
 
 export const journeyById = Object.fromEntries(JOURNEYS.map(j => [j.id, j]));

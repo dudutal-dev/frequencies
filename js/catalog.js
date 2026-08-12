@@ -13,6 +13,8 @@ export const CATEGORIES = [
   { id: 'featured',   label: 'נבחרות',              icon: '✦' },
   { id: 'melodic',    label: 'מלודיות מרפאות',      icon: '♬' },
   { id: 'shaman',     label: 'שאמאני ופסיכדלי',     icon: '𓂀' },
+  { id: 'psychedelic', label: 'פסיכדלי קיצוני',      icon: '✺' },
+  { id: 'schumann',   label: 'תהודת שומאן',         icon: '⊕' },
   { id: 'bowls',      label: 'קערות וגונגים',       icon: '◍' },
   { id: 'mantra',     label: 'מנטרות ושירת גרון',   icon: 'ॐ' },
   { id: 'solfeggio',  label: 'סולפג\'יו',            icon: '♪' },
@@ -639,6 +641,98 @@ export const TRACKS = [
     title: 'מקהלת נזירים', sub: '174Hz · דרון עמוק',
     desc: 'דרון נמוך ואיטי בסגנון מזמור גרגוריאני-טיבטי על תדר שיכוך הכאב — קולות שמצטלבים לאט וממלאים את החלל.',
     tags: ['מזמור', 'נזירים', 'עמוק'], colors: ['#805ad5', '#160e2b'], glyph: '✝', ambience: 0.07 },
+
+  /* ------------------------------ פסיכדלי קיצוני — אשליות שמע ------------------------------ */
+  { id: 'ps-kaleido', category: 'psychedelic', freq: 417, mode: 'melodic', scale: 'warp',
+    orbit: true, echo: 3, pace: 2.2, sparkle: 0.3, featured: true,
+    title: 'קליידוסקופ', sub: '417Hz · סולם מעוות · הדים מסתובבים',
+    desc: 'כל תו מקיף את הראש ומשאיר אחריו שלושה הדים שנופלים לתוך עצמם — בסולם שהאוזן לא מצליחה למקם. 🎧 חובה אוזניות.',
+    tags: ['אשליה', 'סחרור', 'הדים'], colors: ['#ed64a6', '#2a0838'], glyph: '✺', ambience: 0.05 },
+
+  { id: 'ps-reverse', category: 'psychedelic', freq: 285, mode: 'melodic', scale: 'psyche',
+    reverse: true, pace: 3.0, sparkle: 0.24,
+    title: 'זרימה לאחור', sub: '285Hz · מעטפת הפוכה',
+    desc: 'הצלילים נשאבים פנימה במקום להיחבט — המוח לא מצליח למצוא את רגע ההתחלה שלהם. התחושה היא של סרט שרץ אחורה.',
+    tags: ['הפוך', 'אשליה'], colors: ['#4fd1c5', '#0a2b28'], glyph: '↺', ambience: 0.055 },
+
+  { id: 'ps-spiral', category: 'psychedelic', freq: 111, mode: 'melodic', scale: 'warp',
+    echo: 4, pace: 3.4, sparkle: 0.2, featured: true,
+    title: 'ספירלה אינסופית', sub: '111Hz · הדים מתכווצים',
+    desc: 'ארבעה הדים שהמרווח ביניהם מתקצר בכל פעם וצדדי הסטריאו מתחלפים — הצליל נשמע כאילו הוא נופל לתוך עצמו בלי סוף.',
+    tags: ['ספירלה', 'נפילה'], colors: ['#9f7aea', '#180c2e'], glyph: '◉', ambience: 0.06 },
+
+  { id: 'ps-mirror', category: 'psychedelic', freq: 741, mode: 'melodic', scale: 'warp',
+    orbit: true, pace: 1.7, sparkle: 0.34,
+    title: 'אולם המראות', sub: '741Hz · סיבוב מהיר',
+    desc: 'תווים מהירים שכל אחד מהם מקיף את הראש בכיוון אחר — במקביל. אחרי דקה מפסיקים לדעת מאיפה מגיע הצליל.',
+    tags: ['סחרור', 'מראות'], colors: ['#63b3ed', '#0d2440'], glyph: '◇', ambience: 0.04 },
+
+  { id: 'ps-liquid', category: 'psychedelic', freq: 174, mode: 'melodic', scale: 'psyche',
+    orbit: true, reverse: true, pace: 4.0, sparkle: 0.16,
+    title: 'נוזלי', sub: '174Hz · הפוך ומסתובב',
+    desc: 'שילוב של מעטפת הפוכה וסיבוב סטריאו על תדר נמוך — הצליל מתנהג כמו נוזל סמיך שזורם סביבכם. איטי ומהפנט.',
+    tags: ['נוזלי', 'איטי', 'עמוק'], colors: ['#7c5cff', '#150c2e'], glyph: '≋', ambience: 0.065 },
+
+  { id: 'ps-fractal', category: 'psychedelic', freq: 963, mode: 'melodic', scale: 'warp',
+    echo: 5, pace: 2.6, sparkle: 0.4,
+    title: 'פרקטל', sub: '963Hz · חמישה הדים',
+    desc: 'חמישה הדים לכל תו, כל אחד קטן ומהיר מקודמו — תבנית שחוזרת על עצמה בקנה מידה קטן יותר עד שהיא נעלמת. גיאומטריה בצליל.',
+    tags: ['פרקטל', 'גיאומטריה'], colors: ['#d6bcfa', '#2b1155'], glyph: '✧', ambience: 0.04 },
+
+  { id: 'ps-dissolve', category: 'psychedelic', freq: 528, mode: 'melodic', scale: 'warp',
+    orbit: true, reverse: true, echo: 3, pace: 3.6, sparkle: 0.28, featured: true,
+    title: 'התמוססות', sub: '528Hz · שלושת האפקטים יחד',
+    desc: 'הכי קיצוני בספרייה: מעטפת הפוכה, סיבוב סטריאו והדים מתכווצים — הכול על תדר הנס בסולם מעוות. גבולות התפיסה נמסים.',
+    tags: ['קיצוני', 'התמוססות'], colors: ['#faf089', '#3d1a5c'], glyph: '❋', ambience: 0.055 },
+
+  { id: 'ps-alien', category: 'psychedelic', freq: 396, mode: 'melodic', scale: 'warp',
+    pace: 2.8, sparkle: 0.22,
+    title: 'שפה זרה', sub: '396Hz · 11/8 ו-13/8 טהורים',
+    desc: 'הסולם המעוות לבדו, בלי אפקטים: יחסים של 11/8 ו-13/8 שלא קיימים בשום מוזיקה מערבית. נשמע כמו שפה שאתם כמעט מבינים.',
+    tags: ['מיקרוטונלי', 'זר'], colors: ['#48bb78', '#0d2b18'], glyph: '⟁', ambience: 0.045 },
+
+  /* ------------------------------ תהודת שומאן — הסדרה ההרמונית המלאה ------------------------------ */
+  { id: 'sch-1', category: 'schumann', freq: 136.1, mode: 'binaural', beat: 7.83, featured: true,
+    title: 'שומאן 1 — 7.83Hz', sub: 'היסוד · פעימת כדור הארץ · 🎧',
+    desc: 'התהודה הבסיסית של חלל האטמוספרה בין פני כדור הארץ ליונוספרה, שנחזתה על ידי וינפריד שומאן ב-1952. נשא OM 136.1Hz.',
+    tags: ['שומאן', 'הארקה', 'יסוד'], colors: ['#48bb78', '#0a1f12'], glyph: '⊕', ambience: 0.06 },
+
+  { id: 'sch-2', category: 'schumann', freq: 180, mode: 'binaural', beat: 14.3,
+    title: 'שומאן 2 — 14.3Hz', sub: 'הרמוניה שנייה · בטא נמוך · 🎧',
+    desc: 'ההרמוניה השנייה של תהודת שומאן, שנופלת בטווח הבטא הנמוך — אותה פעימה פלנטרית, ברגיסטר ערני ומרוכז.',
+    tags: ['שומאן', 'ערנות'], colors: ['#68d391', '#12301d'], glyph: '⊕', ambience: 0.05 },
+
+  { id: 'sch-3', category: 'schumann', freq: 200, mode: 'binaural', beat: 20.8,
+    title: 'שומאן 3 — 20.8Hz', sub: 'הרמוניה שלישית · בטא · 🎧',
+    desc: 'ההרמוניה השלישית בטווח הבטא המלא. מסורתית — ערנות מוארקת: חדות מחשבה בלי הניתוק מהגוף.',
+    tags: ['שומאן', 'בטא'], colors: ['#9ae6b4', '#1a3d2a'], glyph: '⊕', ambience: 0.04 },
+
+  { id: 'sch-4', category: 'schumann', freq: 220, mode: 'binaural', beat: 27.3,
+    title: 'שומאן 4 — 27.3Hz', sub: 'הרמוניה רביעית · בטא גבוה · 🎧',
+    desc: 'ההרמוניה הרביעית, בטא גבוה — הרגיסטר הכי אנרגטי של הסדרה. לעבודה אינטנסיבית עם עוגן טבעי.',
+    tags: ['שומאן', 'אנרגיה'], colors: ['#4fd1c5', '#0d3330'], glyph: '⊕', ambience: 0.035 },
+
+  { id: 'sch-5', category: 'schumann', freq: 240, mode: 'binaural', beat: 33.8,
+    title: 'שומאן 5 — 33.8Hz', sub: 'הרמוניה חמישית · סף גמא · 🎧',
+    desc: 'ההרמוניה החמישית והגבוהה בסדרה, כבר על סף הגמא. הפעימה של כדור הארץ במהירות של קוגניציה גבוהה.',
+    tags: ['שומאן', 'גמא'], colors: ['#81e6d9', '#0f3d38'], glyph: '⊕', ambience: 0.03 },
+
+  { id: 'sch-speaker', category: 'schumann', freq: 111, mode: 'isochronic', beat: 7.83,
+    title: 'שומאן ברמקול', sub: '7.83Hz · איזוכרוני · בלי אוזניות',
+    desc: 'גרסת הרמקולים של תהודת שומאן: פעימות איזוכרוניות על תדר 111 — להשמעה בחלל, כשרוצים למלא חדר שלם בפעימת כדור הארץ.',
+    tags: ['שומאן', 'רמקול', 'חלל'], colors: ['#a0aec0', '#141a20'], glyph: '⊕', ambience: 0.06 },
+
+  { id: 'sch-melodic', category: 'schumann', freq: 136.1, mode: 'isochronic', beat: 7.83,
+    melody: true, timbre: 'handpan', pace: 3.4, featured: true,
+    title: 'שומאן מלודי', sub: '7.83Hz · הנדפאן על פעימת האדמה',
+    desc: 'הפעימה הפלנטרית כקצב, והנדפאן חם שמנגן מעליה מנגינה שלא חוזרת. הגרסה המוזיקלית של הארקה.',
+    tags: ['שומאן', 'הנדפאן', 'מלודי'], colors: ['#b7791f', '#0f2418'], glyph: '◍', ambience: 0.055 },
+
+  { id: 'sch-psyche', category: 'schumann', freq: 136.1, mode: 'isochronic', beat: 7.83,
+    melody: true, melodyScale: 'warp', orbit: true, echo: 3, pace: 2.8,
+    title: 'כדור הארץ המעוות', sub: '7.83Hz · מלודיה פסיכדלית · 🎧',
+    desc: 'פעימת שומאן היציבה מתחת, ומעליה מלודיה בסולם מעוות שמסתובבת סביב הראש עם הדים. האדמה נשארת — התפיסה נעה.',
+    tags: ['שומאן', 'פסיכדלי'], colors: ['#68d391', '#2a0838'], glyph: '✺', ambience: 0.055 },
 ];
 
 /* מיפוי עזר */

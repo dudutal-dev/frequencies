@@ -176,12 +176,21 @@ const ICON_BY_ID = {
   'mel-temple-963': 'bell', 'mel-musicbox-396': 'note', 'mel-handpan-174': 'bowl',
   'mel-chimes-om': 'om', 'mel-wind-852': 'feather', 'mel-lullaby-285': 'moon',
   'mel-creation-417': 'spiral', 'mel-earth-194': 'earth', 'mel-crystal-741': 'crystal',
+  'ps-kaleido': 'star', 'ps-reverse': 'spiral', 'ps-spiral': 'ripple',
+  'ps-mirror': 'crystal', 'ps-liquid': 'drop', 'ps-fractal': 'star',
+  'ps-dissolve': 'lotus12', 'ps-alien': 'eye',
+  'sch-melodic': 'bowl', 'sch-psyche': 'spiral', 'sch-speaker': 'ripple',
+  'bowl-crystal-528': 'crystal', 'bowl-crystal-963': 'crystal', 'bowl-water': 'drop',
+  'bowl-set-7': 'bowl', 'bowl-gong': 'ripple', 'bowl-tibetan': 'bowl',
+  'mantra-om': 'om', 'mantra-kargyraa': 'mountain', 'mantra-sygyt': 'feather',
+  'mantra-108': 'beads', 'mantra-gayatri': 'sun', 'mantra-monk': 'book',
 };
 const ICON_BY_CATEGORY = {
   chakra: 'lotus8', brainwave: 'alpha', sleep: 'moon', focus: 'target',
   calm: 'ripple', love: 'heart', dna: 'helix', planets: 'planet',
   earth: 'earth', meditation: 'om', energy: 'sun', melodic: 'note',
   shaman: 'drum', bowls: 'bowl', mantra: 'beads',
+  psychedelic: 'spiral', schumann: 'earth',
 };
 
 /* צבע hex → rgba עם שקיפות */
