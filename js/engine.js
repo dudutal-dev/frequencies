@@ -55,9 +55,57 @@ export class FrequencyEngine {
 
     this.dry.connect(this.compressor);
     this.reverb.connect(this.reverbGain).connect(this.compressor);
-    this.compressor.connect(this.master).connect(this.analyser).connect(ctx.destination);
+    this.compressor.connect(this.master).connect(this.analyser);
 
     this.ctx = ctx;
+    this._routeOutput();
+
+    /* חוזרים לאפליקציה — לוודא שההקשר לא נשאר מושהה */
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && this.ctx?.state === 'suspended') {
+        this.ctx.resume().catch(() => {});
+        this.audioEl?.play().catch(() => {});
+      }
+    });
+  }
+
+  /* ------------------------------------------------------------
+     ניתוב היציאה — iOS משעה AudioContext כשעוברים אפליקציה, אבל
+     ממשיך לנגן אלמנט מדיה. לכן מנתבים את הגרף ל-MediaStream
+     ומשמיעים אותו דרך <audio>. אם זה לא נתמך או לא מתחיל לנגן,
+     נופלים חזרה ליציאה הרגילה.
+     ------------------------------------------------------------ */
+  _routeOutput() {
+    const ctx = this.ctx;
+    const el = document.getElementById('bg-audio');
+    const fallback = () => {
+      if (this.usingStream === false) return;
+      this.usingStream = false;
+      try { el?.pause(); } catch {}
+      try { this.analyser.disconnect(this.streamDest); } catch {}
+      this.analyser.connect(ctx.destination);
+    };
+
+    if (!el || !('srcObject' in el) || !ctx.createMediaStreamDestination) {
+      this.usingStream = false;
+      this.analyser.connect(ctx.destination);
+      return;
+    }
+
+    try {
+      this.streamDest = ctx.createMediaStreamDestination();
+      this.analyser.connect(this.streamDest);
+      this.audioEl = el;
+      el.srcObject = this.streamDest.stream;
+      this.usingStream = true;
+      el.play().catch(fallback);
+      /* שומר: אם הנגן לא באמת התקדם — חוזרים ליציאה הרגילה */
+      setTimeout(() => {
+        if (this.usingStream && (el.paused || el.currentTime === 0)) fallback();
+      }, 2500);
+    } catch {
+      fallback();
+    }
   }
 
   /* Impulse Response גנרטיבי — "קתדרלה" מרעש לבן בדעיכה אקספוננציאלית */
@@ -452,6 +500,7 @@ export class FrequencyEngine {
   async play(track) {
     this._init();
     if (this.ctx.state === 'suspended') await this.ctx.resume();
+    if (this.usingStream) this.audioEl?.play().catch(() => {});
     if (this.voice) this._teardown(this.voice, FADE_OUT);
 
     const ctx = this.ctx;

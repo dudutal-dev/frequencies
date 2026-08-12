@@ -365,7 +365,7 @@ nav.tabbar {
 .player.open { transform: none; }
 
 /* ההדמיה תופסת את החלק העליון בלבד — הטקסט לעולם לא יושב עליה */
-.player-stage { position: relative; flex: 1 1 auto; min-height: 160px; }
+.player-stage { position: relative; flex: 1 1 auto; min-height: 130px; }
 #viz { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .stage-fade {
   position: absolute; inset: 0; pointer-events: none;
@@ -384,20 +384,29 @@ nav.tabbar {
 }
 .p-icon.on { color: var(--gold); border-color: rgba(232, 192, 130, 0.5); }
 
-/* גיליון התוכן — רקע אטום, מרכז את הכול */
+/* גיליון התוכן — רקע אטום, מרכז את הכול.
+   הטקסט מתכווץ וגולל בעת הצורך; פס הבקרה תמיד נשאר גלוי. */
 .player-sheet {
-  position: relative; z-index: 2; flex-shrink: 0;
+  position: relative; z-index: 2;
+  flex: 0 1 auto; min-height: 0;
+  display: flex; flex-direction: column;
   background: var(--bg); text-align: center;
-  padding: 4px 26px calc(env(safe-area-inset-bottom, 0px) + 22px);
+  padding: 4px 22px calc(env(safe-area-inset-bottom, 0px) + 14px);
 }
-.p-title { font-size: 25px; font-weight: 900; line-height: 1.18; }
+.player-info {
+  flex: 0 1 auto; min-height: 0; overflow-y: auto;
+  scrollbar-width: none;
+}
+.player-info::-webkit-scrollbar { display: none; }
+.player-controls { flex-shrink: 0; }
+.p-title { font-size: 23px; font-weight: 900; line-height: 1.18; }
 .p-sub { font-size: 13.5px; color: var(--text-dim); margin-top: 5px; }
 .p-mode {
   font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; color: var(--gold);
   text-transform: uppercase; margin-top: 10px; line-height: 1.6;
 }
 .p-desc {
-  font-size: 12.5px; color: var(--text-dim); line-height: 1.6; margin: 10px auto 0;
+  font-size: 12px; color: var(--text-dim); line-height: 1.6; margin: 10px auto 0;
   max-width: 46ch; opacity: 0.8;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
@@ -409,7 +418,7 @@ nav.tabbar {
 
 /* טרנספורט ממורכז — פליי קטן וממוקד */
 .p-transport {
-  display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 14px;
 }
 .p-play {
   width: 58px; height: 58px; flex-shrink: 0; border-radius: 50%; border: 0; cursor: pointer;
@@ -421,7 +430,8 @@ nav.tabbar {
 .p-play:active { transform: scale(0.9); }
 
 .p-utility {
-  display: flex; align-items: center; gap: 14px; margin-top: 18px;
+  display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap;
+  justify-content: center;
 }
 .p-timer {
   flex-shrink: 0; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line);
@@ -632,3 +642,35 @@ input[type='range']::-moz-range-thumb {
 #view-search .list-item { cursor: pointer; }
 .jc-glyph .icn { width: 26px; height: 26px; }
 .pl-art .icn { width: 22px; height: 22px; }
+
+/* מסכים נמוכים / מצב אפליקציה — מצמצמים טקסט כדי שהבקרה תישאר גלויה */
+@media (max-height: 760px) {
+  .p-desc, .p-tags { display: none; }
+  .p-title { font-size: 21px; }
+  .p-play { width: 52px; height: 52px; font-size: 17px; }
+}
+@media (max-height: 640px) {
+  .p-sub, .phones-note { display: none; }
+}
+
+/* ------------------------------ Journey mini cards (home row) ------------------------------ */
+.jcard-mini {
+  flex: 0 0 168px; width: 168px; scroll-snap-align: start; cursor: pointer;
+  border-radius: 14px; padding: 14px; position: relative; overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s var(--ease);
+}
+.jcard-mini:active { transform: scale(0.95); }
+.jcard-mini::before {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(rgba(5, 5, 10, 0.28), rgba(5, 5, 10, 0.62));
+}
+.jcard-mini > * { position: relative; z-index: 1; }
+.jm-icon { display: block; color: #fff; opacity: 0.9; margin-bottom: 26px; }
+.jm-icon .icn { width: 24px; height: 24px; }
+.jm-title {
+  font-size: 13.5px; font-weight: 800; color: #fff; line-height: 1.25;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.jm-sub { font-size: 10.5px; color: rgba(255, 255, 255, 0.75); margin-top: 3px; font-weight: 600; }
