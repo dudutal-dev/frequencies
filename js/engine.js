@@ -501,6 +501,61 @@ export class FrequencyEngine {
     voice.intervals.push(setInterval(tick, 35));
   }
 
+  /* ------------------------------------------------------------
+     פאד אמביינטי — הצליל של אלבומי הריפוי הארוכים.
+     שבע שכבות הרמוניות, כל אחת עם LFO עוצמה ופילטר בקצב שונה
+     ובמספרים שאינם כפולות זה של זה — ולכן הן לעולם לא מסתנכרנות
+     והמרקם ממשיך להתפתח בלי לחזור על עצמו.
+     ------------------------------------------------------------ */
+  _startPad(track, voice, dest) {
+    const ctx = this.ctx;
+    const depth = track.pad === true ? 1 : track.pad;   // 0–1
+    const LAYERS = [
+      { mult: 0.5, gain: 0.17, lfo: 0.021, det: -4 },
+      { mult: 1,   gain: 0.20, lfo: 0.017, det: 3 },
+      { mult: 1.5, gain: 0.12, lfo: 0.013, det: -6 },
+      { mult: 2,   gain: 0.09, lfo: 0.011, det: 5 },
+      { mult: 3,   gain: 0.05, lfo: 0.0088, det: -3 },
+      { mult: 4,   gain: 0.028, lfo: 0.0071, det: 7 },
+      { mult: 5,   gain: 0.016, lfo: 0.0059, det: -8 },
+    ];
+    for (const L of LAYERS) {
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.value = track.freq * L.mult;
+      osc.detune.value = L.det;
+
+      const filt = ctx.createBiquadFilter();
+      filt.type = 'lowpass';
+      filt.frequency.value = 700 + L.mult * 320;
+      filt.Q.value = 0.7;
+      /* סוויפ פילטר איטי מאוד — המרקם נפתח ונסגר לאורך דקות */
+      const fLfo = ctx.createOscillator();
+      fLfo.frequency.value = L.lfo * 0.6;
+      const fAmt = ctx.createGain();
+      fAmt.gain.value = 320;
+      fLfo.connect(fAmt).connect(filt.frequency);
+      fLfo.start();
+
+      const g = ctx.createGain();
+      g.gain.value = L.gain * depth * 0.55;
+      const aLfo = ctx.createOscillator();
+      aLfo.frequency.value = L.lfo;
+      const aAmt = ctx.createGain();
+      aAmt.gain.value = L.gain * depth * 0.45;
+      aLfo.connect(aAmt).connect(g.gain);
+      aLfo.start();
+
+      const pan = ctx.createStereoPanner();
+      pan.pan.value = (L.mult % 2 === 0 ? 1 : -1) * 0.38;
+
+      osc.connect(filt).connect(g).connect(pan).connect(dest);
+      osc.start();
+      voice.oscillators.push(osc, fLfo, aLfo);
+      voice.nodes.push(filt, fAmt, g, aAmt, pan);
+    }
+  }
+
   async play(track) {
     this._init();
     if (this.ctx.state === 'suspended') await this.ctx.resume();
@@ -575,6 +630,9 @@ export class FrequencyEngine {
         voice, vg, 0.75
       );
     }
+
+    /* שכבת פאד אמביינטית מתחת לכל השאר */
+    if (track.pad) this._startPad(track, voice, vg);
 
     /* שכבת קצב — יוצאת ישירות למאסטר ולא דרך ה-LFO של היצירה,
        כדי שהבס-דראם יישאר הדוק גם מתחת לפעימות איזוכרוניות */
