@@ -364,19 +364,75 @@ export class FrequencyEngine {
       osc.onended = () => { try { g.disconnect(); f.disconnect(); } catch {} };
     };
 
-    /* תבנית בס — נעה עם האנרגיה */
-    const BASS_STEPS = energy > 0.75 ? [2, 6, 7, 10, 14, 15] : [2, 6, 10, 14];
-    const BASS_MULT = [1, 1, 1.5, 1, 1, 2];
+    /* תוף מרכזי — לתבניות שבטיות */
+    const tom = (t, f) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f, t);
+      osc.frequency.exponentialRampToValueAtTime(f * 0.55, t + 0.16);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.16, t + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+      osc.connect(g).connect(dest);
+      osc.start(t); osc.stop(t + 0.26);
+      osc.onended = () => { try { g.disconnect(); } catch {} };
+    };
+
+    /* סטאב אקורד — החתימה של דאב-טכנו, על העף-ביט */
+    const stab = t => {
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.07, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+      const f = ctx.createBiquadFilter();
+      f.type = 'lowpass'; f.frequency.value = 1600; f.Q.value = 2;
+      f.connect(g).connect(dest);
+      for (const mult of [2, 2.4, 3]) {          // יסוד, טרצה קטנה, קווינטה
+        const osc = ctx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.value = subFreq * mult;
+        osc.connect(f);
+        osc.start(t); osc.stop(t + 0.55);
+      }
+      voice.timers.push(setTimeout(() => {
+        try { g.disconnect(); f.disconnect(); } catch {}
+      }, (t - ctx.currentTime) * 1000 + 700));
+    };
+
+    /* תבניות קצב על רשת של 16 צעדים — כל ז'אנר והגרוב שלו */
+    const PATTERNS = {
+      four:   { kick: [0, 4, 8, 12], hat: [2, 6, 10, 14], clap: [4, 12],
+                bass: [2, 6, 10, 14], bassMult: [1, 1, 1.5, 1] },
+      psy:    { kick: [0, 4, 8, 12], hat: [2, 6, 10, 14], clap: [],
+                bass: [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15],
+                bassMult: [1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2], bassShort: true },
+      break:  { kick: [0, 10], hat: [2, 6, 8, 14], clap: [4, 12],
+                bass: [0, 5, 10, 13], bassMult: [1, 1.5, 1, 2] },
+      dub:    { kick: [0, 8], hat: [6, 14], clap: [],
+                bass: [0, 8], bassMult: [1, 1], stab: [3, 7, 11, 15] },
+      tribal: { kick: [0, 4, 8, 12], hat: [2, 6, 10, 14], clap: [],
+                bass: [0, 6, 10], bassMult: [1, 1.5, 1],
+                tom: [3, 7, 11, 14, 15] },
+      down:   { kick: [0, 7], hat: [2, 6, 10, 14], clap: [4, 12],
+                bass: [0, 7, 10], bassMult: [1, 1, 1.5] },
+    };
+    const P = PATTERNS[track.pattern] || PATTERNS.four;
+    const bassDur = step16 * (P.bassShort ? 0.85 : 1.6);
 
     const scheduleStep = (s, t) => {
-      if (s % 4 === 0) kick(t);
-      if (s % 4 === 2) noiseHit(t, { hp: 7500, dur: 0.045, vol: 0.055 });
-      if (energy > 0.7 && s % 2 === 1) noiseHit(t, { hp: 9000, dur: 0.025, vol: 0.03 });
-      if (energy > 0.45 && (s === 4 || s === 12)) {
+      if (P.kick.includes(s)) kick(t);
+      if (P.hat.includes(s)) noiseHit(t, { hp: 7500, dur: 0.045, vol: 0.055 });
+      if (energy > 0.7 && s % 2 === 1 && !P.stab) {
+        noiseHit(t, { hp: 9000, dur: 0.025, vol: 0.03 });
+      }
+      if (energy > 0.45 && P.clap.includes(s)) {
         noiseHit(t, { bp: 1500, dur: 0.13, vol: 0.09 });
       }
-      const bi = BASS_STEPS.indexOf(s);
-      if (bi >= 0) bass(t, BASS_MULT[bi % BASS_MULT.length], step16 * 1.6);
+      if (P.tom?.includes(s)) tom(t, 150 + (s % 3) * 45);
+      if (P.stab?.includes(s)) stab(t);
+      const bi = P.bass.indexOf(s);
+      if (bi >= 0) bass(t, P.bassMult[bi % P.bassMult.length], bassDur);
     };
 
     let step = 0;
