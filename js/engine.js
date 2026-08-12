@@ -194,30 +194,111 @@ export class FrequencyEngine {
     const RATIOS = SC[track.scale] || SC.psyche;
     const pace = track.pace || 3.0;
 
+    /* ------------------------------------------------------------
+       צבעי הקול הזורם. ברירת המחדל היא הקול המקורי; הצבעים
+       הנוספים נועדו לסגנון הניו-אייג' החם — חליל נשימתי, קול
+       אנושי ללא מילים ומיתרים ארוכים. כל צבע הוא סט פרשלים,
+       עומק ויברטו, בהירות פילטר, ואפשרות לרעש נשיפה ולפורמנטים.
+       ------------------------------------------------------------ */
+    const COLORS = {
+      default: {
+        partials: [
+          { mult: 1, gain: 1.0, det: 0 },
+          { mult: 1, gain: 0.5, det: 6 },        // כפיל מפולש — עובי
+          { mult: 2, gain: 0.26, det: -4 },
+          { mult: 3, gain: 0.1, det: 3 },
+          { mult: 4, gain: 0.04, det: 0 },
+        ],
+        vibRate: 5.1, vibAmt: 7, open: 900, breath: 0, formants: null,
+      },
+      /* חליל — כמעט רק יסוד, מעט הרמוניות אי-זוגיות ורעש נשיפה */
+      flute: {
+        partials: [
+          { mult: 1, gain: 1.0, det: 0 },
+          { mult: 1, gain: 0.26, det: 4 },
+          { mult: 2, gain: 0.07, det: -3 },
+          { mult: 3, gain: 0.05, det: 2 },
+        ],
+        vibRate: 5.4, vibAmt: 10, open: 1500, breath: 0.022, formants: null,
+      },
+      /* קול אנושי ללא מילים — סדרה מלאה עם שני פורמנטים של תנועת "אה" */
+      voice: {
+        partials: [
+          { mult: 1, gain: 1.0, det: 0 },
+          { mult: 1, gain: 0.4, det: 7 },
+          { mult: 2, gain: 0.34, det: -5 },
+          { mult: 3, gain: 0.2, det: 4 },
+          { mult: 4, gain: 0.09, det: 0 },
+          { mult: 5, gain: 0.05, det: 3 },
+        ],
+        vibRate: 5.7, vibAmt: 13, open: 1250, breath: 0.014,
+        formants: [{ f: 720, q: 5, gain: 7 }, { f: 1180, q: 6, gain: 5 }],
+      },
+      /* מיתרים — הרבה כפילים מפולשים, ויברטו איטי ורחב */
+      strings: {
+        partials: [
+          { mult: 1, gain: 1.0, det: 0 },
+          { mult: 1, gain: 0.6, det: 9 },
+          { mult: 1, gain: 0.5, det: -11 },
+          { mult: 2, gain: 0.3, det: 5 },
+          { mult: 3, gain: 0.18, det: -4 },
+          { mult: 4, gain: 0.1, det: 3 },
+          { mult: 5, gain: 0.05, det: 0 },
+        ],
+        vibRate: 4.3, vibAmt: 5, open: 1100, breath: 0, formants: null,
+      },
+    };
+    const COLOR = COLORS[track.timbre] || COLORS.default;
+
     const filt = ctx.createBiquadFilter();
     filt.type = 'lowpass';
-    filt.frequency.value = 900;
+    filt.frequency.value = COLOR.open;
     filt.Q.value = 1.6;
     const vg = ctx.createGain();
     vg.gain.value = 0.0001;
     const pan = ctx.createStereoPanner();
-    filt.connect(vg).connect(pan).connect(dest);
+    /* פורמנטים — מה שהופך סדרת הרמוניות ל"תנועה" של גרון אנושי */
+    let head = filt;
+    if (COLOR.formants) {
+      for (const F of COLOR.formants) {
+        const pk = ctx.createBiquadFilter();
+        pk.type = 'peaking';
+        pk.frequency.value = F.f;
+        pk.Q.value = F.q;
+        pk.gain.value = F.gain;
+        head.connect(pk);
+        head = pk;
+        voice.nodes.push(pk);
+      }
+    }
+    head.connect(vg).connect(pan).connect(dest);
+
+    /* רעש נשיפה — האוויר שעובר בכלי. עולה ויורד יחד עם הקול */
+    if (COLOR.breath > 0) {
+      const air = ctx.createBufferSource();
+      air.buffer = this._pinkNoise(ctx);
+      air.loop = true;
+      const abp = ctx.createBiquadFilter();
+      abp.type = 'bandpass';
+      abp.frequency.value = track.freq * 2.5;
+      abp.Q.value = 1.1;
+      const ag = ctx.createGain();
+      ag.gain.value = COLOR.breath;
+      air.connect(abp).connect(ag).connect(vg);
+      air.start();
+      voice.sources.push(air);
+      voice.nodes.push(abp, ag);
+    }
 
     /* ויברטו — הפרט הקטן שהופך צליל מסונתז לנשימה */
     const vib = ctx.createOscillator();
-    vib.frequency.value = 5.1;
+    vib.frequency.value = COLOR.vibRate;
     const vibAmt = ctx.createGain();
-    vibAmt.gain.value = 7;                       // סנטים
+    vibAmt.gain.value = COLOR.vibAmt;            // סנטים
     vib.connect(vibAmt);
     vib.start();
 
-    const PARTIALS = [
-      { mult: 1, gain: 1.0, det: 0 },
-      { mult: 1, gain: 0.5, det: 6 },            // כפיל מפולש — עובי
-      { mult: 2, gain: 0.26, det: -4 },
-      { mult: 3, gain: 0.1, det: 3 },
-      { mult: 4, gain: 0.04, det: 0 },
-    ];
+    const PARTIALS = COLOR.partials;
     const oscs = [];
     for (const p of PARTIALS) {
       const o = ctx.createOscillator();
@@ -266,8 +347,8 @@ export class FrequencyEngine {
       const fc = Math.max(200, filt.frequency.value);
       filt.frequency.cancelScheduledValues(t);
       filt.frequency.setValueAtTime(fc, t);
-      filt.frequency.linearRampToValueAtTime(1000 + Math.random() * 1800, t + pace * 0.46);
-      filt.frequency.linearRampToValueAtTime(750, t + pace * 0.96);
+      filt.frequency.linearRampToValueAtTime(COLOR.open * (1.11 + Math.random() * 2), t + pace * 0.46);
+      filt.frequency.linearRampToValueAtTime(COLOR.open * 0.833, t + pace * 0.96);
 
       pan.pan.cancelScheduledValues(t);
       pan.pan.setValueAtTime(pan.pan.value, t);
@@ -345,6 +426,24 @@ export class FrequencyEngine {
         { mult: 1.002, gain: 0.55, tc: 4.6 },   // פעימה איטית מאוד
         { mult: 4,     gain: 0.05, tc: 1.4 },
         { mult: 6,     gain: 0.02, tc: 0.9 },
+      ],
+      /* פסנתר חשמלי — היסוד חם ועגול, ומעליו "נקישת השן" המתכתית
+         שהיא החתימה של הכלי: פרשל גבוה מאוד עם דעיכה מיידית */
+      rhodes: [
+        { mult: 1,    gain: 1.0,  tc: 1.9 },
+        { mult: 2,    gain: 0.22, tc: 0.9 },
+        { mult: 3,    gain: 0.06, tc: 0.4 },
+        { mult: 6.2,  gain: 0.11, tc: 0.12 },
+        { mult: 10.5, gain: 0.05, tc: 0.06 },
+      ],
+      /* גיטרת ניילון — פריטה רכה, סדרה הרמונית מלאה ודעיכה בינונית */
+      nylon: [
+        { mult: 1, gain: 1.0,  tc: 1.3 },
+        { mult: 2, gain: 0.42, tc: 0.8 },
+        { mult: 3, gain: 0.22, tc: 0.5 },
+        { mult: 4, gain: 0.12, tc: 0.3 },
+        { mult: 5, gain: 0.07, tc: 0.2 },
+        { mult: 6, gain: 0.04, tc: 0.12 },
       ],
       /* שירת גרון — סדרת הרמוניות מלאה עם הדגשת העליונות */
       throat: [
@@ -502,21 +601,72 @@ export class FrequencyEngine {
     };
 
     const bass = (t, mult, dur) => {
+      const soft = !!P.bassSoft;
       const osc = ctx.createOscillator();
-      osc.type = 'sawtooth';
+      osc.type = soft ? 'triangle' : 'sawtooth';
       osc.frequency.value = subFreq * mult;
       const f = ctx.createBiquadFilter();
       f.type = 'lowpass';
-      f.frequency.setValueAtTime(900, t);
-      f.frequency.exponentialRampToValueAtTime(180, t + dur);
-      f.Q.value = 6;                                   // נשיכה חומצתית
+      /* בס רך — בלי הנשיכה: פילטר פתוח למחצה, Q נמוך, דעיכה עגולה */
+      f.frequency.setValueAtTime(soft ? 320 : 900, t);
+      f.frequency.exponentialRampToValueAtTime(soft ? 130 : 180, t + dur);
+      f.Q.value = soft ? 0.8 : 6;                      // נשיכה חומצתית
       const g = ctx.createGain();
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.11 * pGain, t + 0.01);
+      g.gain.exponentialRampToValueAtTime((soft ? 0.14 : 0.11) * pGain, t + (soft ? 0.09 : 0.01));
       g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       osc.connect(f).connect(g).connect(dest);
       osc.start(t); osc.stop(t + dur + 0.05);
       osc.onended = () => { try { g.disconnect(); f.disconnect(); } catch {} };
+    };
+
+    /* ------------------------------------------------------------
+       תוף מסגרת — התוף של המוזיקה הטנטרית. לא בעיטת מועדון:
+       עור רחב ונמוך שמתנדנד, גוף עץ שמהדהד תחתיו ונשיפת עור
+       מסוננת שנותנת את המגע של היד. איטי, עגול, ולא דוקר.
+       ------------------------------------------------------------ */
+    const frameDrum = t => {
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.34 * pGain, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.62);
+      g.connect(dest);
+      /* העור — ירידה מתונה, לא צניחה */
+      const skin = ctx.createOscillator();
+      skin.type = 'sine';
+      skin.frequency.setValueAtTime(96, t);
+      skin.frequency.exponentialRampToValueAtTime(58, t + 0.22);
+      skin.connect(g);
+      skin.start(t); skin.stop(t + 0.7);
+      /* גוף העץ — תהודה שקטה שממשיכה אחרי המכה */
+      const body = ctx.createOscillator();
+      body.type = 'triangle';
+      body.frequency.setValueAtTime(147, t);
+      body.frequency.exponentialRampToValueAtTime(112, t + 0.3);
+      const bg = ctx.createGain();
+      bg.gain.setValueAtTime(0.28, t);
+      bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+      body.connect(bg).connect(g);
+      body.start(t); body.stop(t + 0.45);
+      skin.onended = () => { try { g.disconnect(); bg.disconnect(); } catch {} };
+      /* מגע היד */
+      noiseHit(t, { bp: 900, dur: 0.05, vol: 0.028 });
+    };
+
+    /* "טק" — נקישת אצבע על שפת התוף, גבוהה וקצרה מאוד */
+    const tek = t => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(340, t);
+      osc.frequency.exponentialRampToValueAtTime(240, t + 0.05);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.07 * pGain, t + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+      osc.connect(g).connect(dest);
+      osc.start(t); osc.stop(t + 0.12);
+      osc.onended = () => { try { g.disconnect(); } catch {} };
+      noiseHit(t, { bp: 2100, dur: 0.035, vol: 0.026 });
     };
 
     /* תוף מרכזי — לתבניות שבטיות */
@@ -602,6 +752,28 @@ export class FrequencyEngine {
                 shaker: [5, 13], conga: [],
                 bass: [4, 12], bassMult: [1, 1],
                 bassLong: true, gain: 0.34 },
+      /* ------------------------------------------------------------
+         שלושת הגרוב הטנטריים — תוף מסגרת במקום בעיטה, בס רך,
+         ואפס האט. בקצב 56–76 הצעד הוא כמעט שנייה שלמה, ולכן
+         כל מכה מקבלת מקום לדעוך לפני הבאה.
+         ------------------------------------------------------------ */
+      /* טנטרה — הדופק העירום: מכה על 1 ועל 3, נקישה לפני כל אחת */
+      tantra: { kick: [], hat: [], clap: [], frame: [0, 8], tek: [6, 14],
+                shaker: [3, 11],
+                bass: [0, 8], bassMult: [1, 1],
+                bassLong: true, bassSoft: true, gain: 0.5 },
+      /* חיבוק — הדופק מתחיל להתנדנד: מכה מוקדמת על 1.5 שמושכת קדימה */
+      embrace: { kick: [], hat: [], clap: [], frame: [0, 6, 8], tek: [11, 15],
+                shaker: [2, 10, 14],
+                bass: [0, 8, 12], bassMult: [1, 1, 1.5],
+                bassLong: true, bassSoft: true, gain: 0.46 },
+      /* התמזגות — ארבע מכות שוות ונקישות ביניהן. הכי "נע" בפרק,
+         ועדיין בלי אף צליל מועדון אחד */
+      merge:  { kick: [], hat: [], clap: [], frame: [0, 4, 8, 12], tek: [2, 6, 10, 14],
+                shaker: [1, 5, 9, 13],
+                conga: [7, 15],
+                bass: [0, 6, 8, 14], bassMult: [1, 1.5, 1, 1],
+                bassLong: true, bassSoft: true, gain: 0.54 },
       /* דיפ האוס אורגני — קיק על כל רבע, אופן-האט על העף-ביט,
          בס מתגלגל בין הקיקים, וקונגות בעמדות לא סימטריות */
       house:  { kick: [0, 4, 8, 12], hat: [], clap: [],
@@ -617,6 +789,8 @@ export class FrequencyEngine {
 
     const scheduleStep = (s, t) => {
       if (P.kick.includes(s)) kick(t);
+      if (P.frame?.includes(s)) frameDrum(t);
+      if (P.tek?.includes(s)) tek(t);
       if (P.hat.includes(s)) noiseHit(t, { hp: 7500, dur: 0.045, vol: 0.055 });
       if (energy > 0.7 && s % 2 === 1 && !P.stab) {
         noiseHit(t, { hp: 9000, dur: 0.025, vol: 0.03 });

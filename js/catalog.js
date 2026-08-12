@@ -29,6 +29,7 @@ export const CATEGORIES = [
   { id: 'calm',       label: 'רוגע ואיזון רגשי',    icon: '༄' },
   { id: 'love',       label: 'אהבה וזוגיות',        icon: '♥' },
   { id: 'sensual',    label: 'אירוטי עדין',         icon: '♀' },
+  { id: 'intimland',  label: 'אינטימלנד · לאוהבים', icon: '❦' },
   { id: 'dna',        label: 'תיקון DNA ותאים',     icon: '⧬' },
   { id: 'planets',    label: 'תדרים פלנטריים',      icon: '☉' },
   { id: 'earth',      label: 'תדרי כדור הארץ',      icon: '⊕' },
@@ -645,6 +646,103 @@ export const TRACKS = [
     title: 'מגע ארוך', sub: '112 BPM · תדר הכתר',
     desc: 'המהיר בפרק — עדיין קצב בינוני: תדר הכתר גבוה ומרחף, גרוב שזז והקול גולש בטווח רחב. לשעות שכבר לא סופרים בהן.',
     tags: ['בינוני', 'מרחף', 'כתר'], colors: ['#d6bcfa', '#241645'], glyph: '♀', ambience: 0.05 },
+
+  /* ------------------------------ אינטימלנד — לאוהבים ------------------------------
+     הפרק הזה בנוי בדיוק על השפה של מוזיקת ה"ניו-אייג' האינטימית":
+     טמפו 56–74 בלבד, תוף מסגרת במקום בעיטה, בס רך וארוך, ומעל הכל
+     קול אחד מתמשך — חליל נשימתי, קול אנושי ללא מילים או מיתרים —
+     שגולש בין התווים במקום להקיש אותם. אין האט, אין קלאפ, אין
+     שום צליל מועדון. הכל איזוכרוני, כלומר עובד דרך רמקולים.
+     המבנה עוקב אחרי קשת של ארבע תנועות: מגע · הרגשה · התמזגות · אחרי.
+     --------------------------------------------------------------------- */
+
+  /* ---- תנועה ראשונה: מגע ---- */
+  { id: 'il-near', category: 'intimland', freq: 639, mode: 'isochronic', beat: 8,
+    bpm: 58, energy: 0.34, pattern: 'tantra', pad: 1,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'flute', pace: 7, featured: true,
+    title: 'קרוב אליך', sub: '58 BPM · 639Hz · חליל',
+    desc: 'תדר החיבור, תוף מסגרת שמכה פעמיים בתיבה, וחליל נשימתי שמחזיק תו אחד שבע שניות. נקודת הפתיחה של הפרק — עוד לא קורה כלום, וזה בדיוק העניין.',
+    tags: ['מגע', 'חליל', 'איטי'], colors: ['#e0a458', '#2a1206'], glyph: '❦', ambience: 0.07 },
+
+  { id: 'il-firsttouch', category: 'intimland', freq: 221.23, mode: 'isochronic', beat: 7.83,
+    bpm: 56, energy: 0.3, pattern: 'tantra', pad: 1,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'voice', pace: 7.6,
+    title: 'המגע הראשון', sub: '56 BPM · ונוס 221.23Hz',
+    desc: 'התדר הפלנטרי של ונוס לפי חישוב האוקטבה הקוסמית — כוכב האהבה והיופי. מעליו קול אנושי ללא מילים, עם פורמנטים אמיתיים של תנועת "אה". האיטי ביותר בפרק.',
+    tags: ['ונוס', 'קול', 'ראשוני'], colors: ['#d98a7b', '#2b0f12'], glyph: '❦', ambience: 0.075 },
+
+  { id: 'il-longnight', category: 'intimland', freq: 341.3, mode: 'isochronic', beat: 8,
+    bpm: 60, energy: 0.36, pattern: 'embrace', pad: 0.95,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'strings', pace: 6.4, featured: true,
+    title: 'לילה ארוך של אהבה', sub: '60 BPM · הרמוניית הלב · מיתרים',
+    desc: 'הגרוב מתחיל להתנדנד — מכה מוקדמת שמושכת את התיבה קדימה. מעליו מיתרים ארוכים בשלושה כפילים מפולשים, שנשמעים כמו קשת אחת שלא נגמרת.',
+    tags: ['מיתרים', 'לילה', 'לב'], colors: ['#c9784f', '#1e0c06'], glyph: '❦', ambience: 0.07 },
+
+  /* ---- תנועה שנייה: הרגשה ---- */
+  { id: 'il-youhere', category: 'intimland', freq: 136.1, mode: 'isochronic', beat: 7.83,
+    bpm: 63, energy: 0.36, pattern: 'embrace', pad: 0.95,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'voice', pace: 6,
+    title: 'כאן, עכשיו', sub: '63 BPM · תדר האום · פעימת שומאן',
+    desc: 'תדר האום הנמוך עם פעימת כדור הארץ מתחת, וקול שמרחף מעל בלי למהר לשום מקום. התדר הזה יושב עמוק בחזה — הוא מורגש לפני שהוא נשמע.',
+    tags: ['אום', 'נוכחות', 'שומאן'], colors: ['#b5651d', '#1a0a03'], glyph: '❦', ambience: 0.075 },
+
+  { id: 'il-skin', category: 'intimland', freq: 432, mode: 'isochronic', beat: 9,
+    bpm: 64, energy: 0.38, pattern: 'tantra', pad: 0.9,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'flute', pace: 5.8,
+    title: 'שפת העור', sub: '64 BPM · כוונון 432',
+    desc: 'כוונון הטבע, חליל עם רעש נשיפה שומע ממש את האוויר בכלי, ותוף מסגרת עירום. הפחות-מעובד שבפרק.',
+    tags: ['432', 'עור', 'נשימה'], colors: ['#f0b27a', '#301505'], glyph: '❦', ambience: 0.08 },
+
+  { id: 'il-warm', category: 'intimland', freq: 528, mode: 'isochronic', beat: 9,
+    bpm: 66, energy: 0.4, pattern: 'embrace', pad: 0.9,
+    melody: true, melodyScale: 'penta', timbre: 'rhodes', pace: 3.8,
+    title: 'חום עולה', sub: '66 BPM · 528Hz · פסנתר חשמלי',
+    desc: 'כאן נכנס פסנתר חשמלי חם עם נקישת השן המתכתית שלו — הצליל שמזוהה יותר מכל עם האלבומים האלה. תדר 528 מתחת, והחום עולה לאט.',
+    tags: ['פסנתר', '528', 'חם'], colors: ['#dd9a4e', '#2c1503'], glyph: '❦', ambience: 0.065 },
+
+  { id: 'il-breathe', category: 'intimland', freq: 221.23, mode: 'isochronic', beat: 7.83,
+    bpm: 62, energy: 0.34, pattern: 'embrace', pad: 1,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'voice', pace: 6.8,
+    title: 'נושמים יחד', sub: '62 BPM · ונוס · פעימת שומאן',
+    desc: 'ונוס שוב, הפעם על פעימת שומאן 7.83 — הקצב שאליו שתי נשימות מתיישרות מעצמן אחרי כמה דקות. הפאד הרחב ביותר בפרק.',
+    tags: ['נשימה', 'סנכרון', 'ונוס'], colors: ['#e8b4a0', '#2a1013'], glyph: '❦', ambience: 0.08 },
+
+  /* ---- תנועה שלישית: התמזגות ---- */
+  { id: 'il-deeper', category: 'intimland', freq: 111, mode: 'isochronic', beat: 7.83,
+    bpm: 68, energy: 0.4, pattern: 'merge', pad: 0.95,
+    melody: true, flow: true, melodyScale: 'shaman', timbre: 'voice', pace: 5,
+    title: 'עמוק יותר', sub: '68 BPM · 111Hz · סולם פריגי',
+    desc: 'הצד הכהה של הפרק. תדר 111 עם קול בסולם פריגי מינורי — אותו קול בדיוק, רק שהסולם הופך אותו למסתורי במקום מתוק.',
+    tags: ['אפל', '111', 'עומק'], colors: ['#8c4a3a', '#170707'], glyph: '❦', ambience: 0.07 },
+
+  { id: 'il-onebody', category: 'intimland', freq: 210.42, mode: 'isochronic', beat: 8,
+    bpm: 70, energy: 0.42, pattern: 'merge', pad: 0.9,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'strings', pace: 4.8,
+    title: 'גוף אחד', sub: '70 BPM · תדר הירח 210.42Hz',
+    desc: 'תדר הירח הסינודי לפי האוקטבה הקוסמית — התדר שקושרים למחזוריות, לרגש ולגוף הנשי. ארבע מכות שוות בתיבה, ומיתרים שנעים מעל.',
+    tags: ['ירח', 'מיתרים', 'מיזוג'], colors: ['#c9a0a0', '#1c1020'], glyph: '❦', ambience: 0.065 },
+
+  { id: 'il-merger', category: 'intimland', freq: 639, mode: 'isochronic', beat: 10,
+    bpm: 72, energy: 0.44, pattern: 'merge', pad: 0.85,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'voice', pace: 4.4, featured: true,
+    title: 'התמזגות', sub: '72 BPM · 639Hz · שיא הקשת',
+    desc: 'שיא הקשת. תדר החיבור חוזר, הפעימה עולה ל-10Hz, והגרוב הכי נע בפרק — ועדיין אין בו אף צליל מועדון אחד. תוף מסגרת, נקישות אצבע ובס רך.',
+    tags: ['שיא', 'חיבור', '639'], colors: ['#e07a5f', '#2b0d0a'], glyph: '❦', ambience: 0.06 },
+
+  { id: 'il-bodyspace', category: 'intimland', freq: 172.06, mode: 'isochronic', beat: 9,
+    bpm: 74, energy: 0.44, pattern: 'merge', pad: 0.8,
+    melody: true, melodyScale: 'penta', timbre: 'nylon', pace: 3.4,
+    title: 'מרחב הגוף', sub: '74 BPM · השנה האפלטונית · גיטרת ניילון',
+    desc: 'המהיר בפרק. תדר השנה האפלטונית — מחזור הנקיפה של כדור הארץ מוקטן לאוקטבת שמיעה — וגיטרת ניילון שפורטת מעליו במקום קול מתמשך.',
+    tags: ['גיטרה', 'מהיר יחסית', 'אפלטוני'], colors: ['#d4a373', '#241a0c'], glyph: '❦', ambience: 0.06 },
+
+  /* ---- תנועה רביעית: אחרי ---- */
+  { id: 'il-afterglow', category: 'intimland', freq: 174, mode: 'isochronic', beat: 6,
+    bpm: 56, energy: 0.28, pattern: 'tantra', pad: 1,
+    melody: true, flow: true, melodyScale: 'penta', timbre: 'flute', pace: 8,
+    title: 'אחרי', sub: '56 BPM · 174Hz · פעימת תטא',
+    desc: 'הירידה. תדר שיכוך הכאב, פעימת תטא של 6Hz, וחליל עם התו הארוך ביותר בכל האפליקציה — שמונה שניות. נועד להישאר דולק אחרי שכבר לא זזים.',
+    tags: ['רגיעה', 'תטא', 'סיום'], colors: ['#a8846a', '#150d08'], glyph: '❦', ambience: 0.085 },
 
   /* ------------------------------ מרחב פנימי — אמביינט ארוך-נשימה ------------------------------
      פאד מתפתח משבע שכבות שלעולם לא מסתנכרנות, עם צלילים בודדים מעליו.
