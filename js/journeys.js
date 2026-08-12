@@ -931,6 +931,56 @@ export const JOURNEYS = [
       { id: 'tk-downtempo', min: 8 },
     ],
   },
+  /* ---------------- אינטימלנד — קשת של ארבע תנועות ----------------
+     בנוי כמו סדרת אלבומים ולא כמו רשימת השמעה: כל מסע הוא תנועה
+     אחת שלמה, והמסע הרביעי מריץ את כולן ברצף. השלבים ארוכים
+     בכוונה — 14–22 דקות — כי בטמפו 56 שום דבר לא קורה מהר. */
+  {
+    id: 'journey-intim-touch',
+    title: 'אינטימלנד · מגע',
+    sub: '3 שלבים · 54 דקות',
+    desc: 'התנועה הראשונה. חליל, קול וונוס על תוף מסגרת איטי — 56 עד 60 פעימות בדקה. שום דבר לא ממהר, ואין כאן שיא. רק התקרבות.',
+    colors: ['#e0a458', '#2a1206'], glyph: '❦',
+    steps: [
+      { id: 'il-near', min: 18 }, { id: 'il-firsttouch', min: 18 },
+      { id: 'il-longnight', min: 18 },
+    ],
+  },
+  {
+    id: 'journey-intim-feeling',
+    title: 'אינטימלנד · הרגשה',
+    sub: '4 שלבים · 64 דקות',
+    desc: 'התנועה השנייה. הגרוב מתחיל להתנדנד, נכנס פסנתר חשמלי חם, והתדרים עוברים מהאום העמוק אל 528. עדיין מתחת ל-66 פעימות.',
+    colors: ['#f0b27a', '#301505'], glyph: '❦',
+    steps: [
+      { id: 'il-youhere', min: 16 }, { id: 'il-skin', min: 16 },
+      { id: 'il-breathe', min: 16 }, { id: 'il-warm', min: 16 },
+    ],
+  },
+  {
+    id: 'journey-intim-merger',
+    title: 'אינטימלנד · התמזגות',
+    sub: '4 שלבים · 68 דקות',
+    desc: 'התנועה השלישית והנעה ביותר: 68 עד 74, ארבע מכות שוות בתיבה ונקישות אצבע ביניהן. עדיין אפס האט ואפס בעיטת מועדון.',
+    colors: ['#e07a5f', '#2b0d0a'], glyph: '❦',
+    steps: [
+      { id: 'il-deeper', min: 16 }, { id: 'il-onebody', min: 16 },
+      { id: 'il-merger', min: 18 }, { id: 'il-bodyspace', min: 18 },
+    ],
+  },
+  {
+    id: 'journey-intimland',
+    title: 'אינטימלנד · הקשת השלמה',
+    sub: '7 שלבים · 132 דקות',
+    desc: 'שעתיים ורבע ברצף אחד: מגע, הרגשה, התמזגות ואחרי. הטמפו עולה מ-56 ל-74 ויורד חזרה ל-56, והפרידה בסוף היא התו הארוך ביותר בכל האפליקציה. להשמעה רצופה בלי לגעת בטלפון.',
+    colors: ['#d98a7b', '#150d08'], glyph: '❦',
+    steps: [
+      { id: 'il-near', min: 18 }, { id: 'il-firsttouch', min: 18 },
+      { id: 'il-longnight', min: 18 }, { id: 'il-breathe', min: 18 },
+      { id: 'il-warm', min: 18 }, { id: 'il-merger', min: 20 },
+      { id: 'il-afterglow', min: 22 },
+    ],
+  },
 ];
 
 export const journeyById = Object.fromEntries(JOURNEYS.map(j => [j.id, j]));

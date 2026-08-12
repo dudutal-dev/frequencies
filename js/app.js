@@ -234,7 +234,7 @@ const ICON_BY_CATEGORY = {
   earth: 'earth', meditation: 'om', energy: 'sun', melodic: 'note',
   shaman: 'drum', bowls: 'bowl', mantra: 'beads',
   psychedelic: 'spiral', schumann: 'earth', techno: 'bolt', ambient: 'ripple',
-  organic: 'leaf', deephouse: 'ripple', sensual: 'heart',
+  organic: 'leaf', deephouse: 'ripple', sensual: 'heart', intimland: 'heart',
 };
 
 /* אייקון למסע — חלק מהסמלים הטקסטואליים לא נתמכים בכל הפונטים */
@@ -270,6 +270,8 @@ const JOURNEY_ICON = {
   'journey-deep-ambient': 'cloud', 'journey-ambient-dawn': 'sun',
   'journey-ambient-night': 'moon', 'journey-ambient-heart': 'heart',
   'journey-ambient-light': 'crown', 'journey-ambient-work': 'ripple',
+  'journey-intimland': 'heart', 'journey-intim-touch': 'feather',
+  'journey-intim-feeling': 'heart', 'journey-intim-merger': 'infinity',
 };
 const journeyIcon = j => ICONS[JOURNEY_ICON[j.id]] || j.glyph;
 
@@ -377,9 +379,10 @@ function renderHome() {
 
   /* נוסף לאחרונה — כדי שתוכן חדש לא ייקבר בסוף רשימה של 70 מסעות */
   const latest = [
-    'journey-sensual-rise', 'journey-sensual-slow', 'journey-sensual-night',
-    'journey-sensual-blue', 'journey-organic-house', 'journey-house-afterdark',
-    'journey-organic-session', 'journey-intimate-evening',
+    'journey-intimland', 'journey-intim-touch', 'journey-intim-feeling',
+    'journey-intim-merger', 'journey-sensual-rise', 'journey-sensual-slow',
+    'journey-sensual-night', 'journey-sensual-blue', 'journey-organic-house',
+    'journey-organic-session',
   ].map(id => journeyById[id]).filter(Boolean);
 
   html += `
@@ -412,6 +415,9 @@ function renderHome() {
     /* תופים, קצב וערב בזוג */
     'journey-tribal-fire', 'journey-techno-night', 'journey-intimate-evening',
     'journey-lovers-night',
+    /* אינטימלנד — תוף מסגרת ובס רך שנשמעים רק במערכת אמיתית */
+    'journey-intimland', 'journey-intim-touch', 'journey-intim-feeling',
+    'journey-intim-merger',
   ].map(id => journeyById[id]).filter(Boolean);
 
   html += `
@@ -504,6 +510,19 @@ const PATTERN_WORDS = {
   house: 'דיפ האוס deep house אורגני organic פסיכדלי מתגלגל קונגות',
   sensual: 'אירוטי חושני עדין רומנטי זוגי איטי',
   heartbeat: 'פעימת לב אירוטי חושני עדין איטי',
+  tantra: 'טנטרה tantra תוף מסגרת אינטימי לאוהבים ניו-אייג\' אמביינט איטי מאוד',
+  embrace: 'חיבוק אינטימי לאוהבים טנטרה ניו-אייג\' רומנטי מתנדנד',
+  merge: 'התמזגות אינטימי לאוהבים טנטרה תוף מסגרת קצב בינוני',
+};
+/* כלי הנגינה — כדי שחיפוש "חליל" או "מיתרים" ימצא את הקטעים */
+const TIMBRE_WORDS = {
+  flute: 'חליל נשיפה אוויר רך',
+  voice: 'קול אנושי ווקאל שירה ללא מילים גרון',
+  strings: 'מיתרים כינור צ\'לו קשת ארוכה',
+  rhodes: 'פסנתר חשמלי רודס rhodes קלידים חם',
+  nylon: 'גיטרה גיטרת ניילון פריטה מיתר',
+  bell: 'פעמון', kalimba: 'קלימבה', harp: 'נבל',
+  handpan: 'הנדפאן', crystal: 'קריסטל קערה', throat: 'שירת גרון',
 };
 const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
 
@@ -518,7 +537,7 @@ const TRACK_INDEX = TRACKS.map(t => ({
   hay: norm([
     t.title, t.sub, t.desc, (t.tags || []).join(' '), CAT_LABEL[t.category],
     MODE_WORDS[t.mode], SCALE_WORDS[t.scale] || '', SCALE_WORDS[t.melodyScale] || '',
-    t.timbre || '', t.melody ? 'מלודיה' : '', t.pad ? 'פאד אמביינט ambient מרחב ארוך' : '', t.flow ? 'זורם אורגני גולש flow' : '',
+    t.timbre || '', TIMBRE_WORDS[t.timbre] || '', t.melody ? 'מלודיה' : '', t.pad ? 'פאד אמביינט ambient מרחב ארוך' : '', t.flow ? 'זורם אורגני גולש flow' : '',
     t.bpm ? `${t.bpm} bpm טכנו קצב ריקוד ${PATTERN_WORDS[t.pattern] || ''}` : '',
   ].join(' ')),
   nums: [String(t.freq), t.beat ? String(t.beat) : '', t.bpm ? String(t.bpm) : ''].filter(Boolean),
