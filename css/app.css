@@ -429,8 +429,14 @@ nav.tabbar {
 }
 .p-play:active { transform: scale(0.9); }
 
+/* עוצמה — שורה משלה ברוחב מלא, קלה לתפיסה באגודל */
+.p-vol {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 16px; padding: 0 4px;
+}
+.p-vol .v-icon { font-size: 15px; color: var(--text-dim); flex-shrink: 0; }
 .p-utility {
-  display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap;
   justify-content: center;
 }
 .p-timer {
@@ -441,8 +447,6 @@ nav.tabbar {
 }
 .p-timer.armed { color: var(--gold); border-color: rgba(232, 192, 130, 0.5); }
 
-.p-vol { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0; }
-.p-vol .v-icon { font-size: 15px; color: var(--text-dim); }
 input[type='range'] {
   flex: 1; appearance: none; -webkit-appearance: none; height: 4px;
   background: rgba(255, 255, 255, 0.14); border-radius: 4px; outline: none;
@@ -651,6 +655,7 @@ input[type='range']::-moz-range-thumb {
 }
 @media (max-height: 640px) {
   .p-sub, .phones-note { display: none; }
+  .p-vol { margin-top: 10px; }
 }
 
 /* ------------------------------ Journey mini cards (home row) ------------------------------ */

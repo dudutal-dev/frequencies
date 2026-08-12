@@ -20,6 +20,10 @@ export class FrequencyEngine {
     this.current = null;        // הטראק הנוכחי
     this.volume = 0.7;
     this.instrument = 'auto';   // 'auto' = הכלי שהוגדר ליצירה עצמה
+    /* ביט בינאורלי דורש שכל אוזן תשמע תדר אחר — ברמקולים הערוצים
+       מתערבבים באוויר והאפקט לא נוצר. במצב רמקולים מגישים את אותו
+       ביט כפעימות איזוכרוניות, שעובדות בכל מערכת. */
+    this.speakerMode = false;
     this.onStateChange = null;  // callback לממשק
   }
 
@@ -515,11 +519,13 @@ export class FrequencyEngine {
     vg.connect(this.reverb);
     voice.gain = vg;
 
-    if (track.mode === 'melodic') {
+    const mode = this.speakerMode && track.mode === 'binaural' ? 'isochronic' : track.mode;
+
+    if (mode === 'melodic') {
       /* דרון שקט של תדר היסוד + מלחין גנרטיבי מעליו */
       voice.oscillators.push(...this._buildTone(track.freq, vg, 0.38));
       this._startMelody(track, voice, vg);
-    } else if (track.mode === 'binaural') {
+    } else if (mode === 'binaural') {
       /* שתי אוזניים, שני תדרים — המוח שומע את ההפרש */
       const L = ctx.createStereoPanner(); L.pan.value = -1;
       const R = ctx.createStereoPanner(); R.pan.value = 1;
@@ -534,7 +540,7 @@ export class FrequencyEngine {
     }
 
     /* פעימות איזוכרוניות — LFO עמוק בתדר הביט */
-    if (track.mode === 'isochronic') {
+    if (mode === 'isochronic') {
       const depth = 0.85;
       vg.gain.setTargetAtTime(1 - depth / 2, now, FADE_IN / 3);
       const lfo = ctx.createOscillator();
@@ -559,7 +565,7 @@ export class FrequencyEngine {
 
     /* שכבת מלודיה אופציונלית מעל כל מצב — הביט ממשיך לעבוד,
        והפעמונים מתנגנים מעליו באותו תדר יסוד (למסעות מוזיקליים) */
-    if (track.melody && track.mode !== 'melodic') {
+    if (track.melody && mode !== 'melodic') {
       this._startMelody(
         {
           freq: track.freq, pace: track.pace || 3.2,

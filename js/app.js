@@ -15,7 +15,7 @@ const SAVE_KEY = 'resonance_state_v1';
 function loadState() {
   const base = {
     favorites: [], recents: [], playlists: [], searches: [],
-    volume: 0.7, timer: 0, instrument: 'auto',
+    volume: 0.7, timer: 0, instrument: 'auto', speakerMode: false,
   };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -56,7 +56,8 @@ const els = {
   pJourney: $('p-journey'), pjName: $('pj-name'), pjStep: $('pj-step'), pjFill: $('pj-fill'),
   pMode: $('p-mode'), pTitle: $('p-title'), pSub: $('p-sub'), pDesc: $('p-desc'), pTags: $('p-tags'),
   pPrev: $('p-prev'), pPlay: $('p-play'), pNext: $('p-next'),
-  pTimer: $('p-timer'), pInstrument: $('p-instrument'), pVolume: $('p-volume'),
+  pTimer: $('p-timer'), pInstrument: $('p-instrument'), pSpeakers: $('p-speakers'),
+  pVolume: $('p-volume'),
   phonesNote: $('phones-note'),
   sheetBackdrop: $('sheet-backdrop'), sheetList: $('sheet-list'), sheetNew: $('sheet-new'),
   toast: $('toast'), toastText: $('toast-text'),
@@ -850,13 +851,16 @@ function closePlayer() {
 function updatePlayerView(track) {
   const melodySuffix = track.melody && track.mode !== 'melodic' ? ' · ♬ מלודיה חיה' : '';
   const bpmSuffix = track.bpm ? ` · ${track.bpm} BPM` : '';
+  /* במצב רמקולים ביט בינאורלי מוגש כפעימות — משקפים את זה בממשק */
+  const converted = state.speakerMode && track.mode === 'binaural';
+  const modeLabel = converted ? 'מותאם לרמקולים · פעימות' : MODE_LABEL[track.mode];
   els.pMode.textContent =
-    `${MODE_LABEL[track.mode]} · ${track.freq}Hz${track.beat ? ` +${track.beat}` : ''}${bpmSuffix}${melodySuffix}`;
+    `${modeLabel} · ${track.freq}Hz${track.beat ? ` +${track.beat}` : ''}${bpmSuffix}${melodySuffix}`;
   els.pTitle.textContent = track.title;
   els.pSub.textContent = track.sub;
   els.pDesc.textContent = track.desc;
   els.pTags.innerHTML = (track.tags || []).map(t => `<span class="p-tag">${t}</span>`).join('');
-  els.phonesNote.classList.toggle('visible', track.mode === 'binaural');
+  els.phonesNote.classList.toggle('visible', track.mode === 'binaural' && !state.speakerMode);
   updateJourneyUI();
   updatePlayerFavButton();
   updatePlayButtons();
@@ -883,6 +887,23 @@ els.pVolume.addEventListener('input', () => {
   engine.setVolume(v);
   state.volume = v;
 });
+
+/* ------------------------------ מצב רמקולים ------------------------------ */
+els.pSpeakers.addEventListener('click', async () => {
+  state.speakerMode = !state.speakerMode;
+  engine.speakerMode = state.speakerMode;
+  saveState();
+  updateSpeakerButton();
+  if (engine.current) await applyTrack(engine.current);
+  toast(state.speakerMode
+    ? 'מצב רמקולים — ביטים בינאורליים מוגשים כפעימות'
+    : 'מצב אוזניות — ביטים בינאורליים מלאים 🎧');
+});
+
+function updateSpeakerButton() {
+  els.pSpeakers.textContent = state.speakerMode ? '🔈 רמקולים' : '🎧 אוזניות';
+  els.pSpeakers.classList.toggle('armed', state.speakerMode);
+}
 
 /* ------------------------------ בחירת כלי נגינה ------------------------------ */
 const INSTRUMENTS = [
@@ -1090,6 +1111,8 @@ els.pVolume.value = state.volume;
 els.pTimer.textContent = timerLabel();
 els.pTimer.classList.toggle('armed', !!state.timer);
 engine.instrument = state.instrument;
+engine.speakerMode = state.speakerMode;
+updateSpeakerButton();
 els.pInstrument.textContent = instrumentLabel();
 els.pInstrument.classList.toggle('armed', state.instrument !== 'auto');
 renderHome();
