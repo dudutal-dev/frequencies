@@ -1036,6 +1036,16 @@ document.addEventListener('click', async e => {
 
   if (e.target.closest('[data-goto-journeys]')) { switchView('journeys'); return; }
 
+  /* בדיקות מערכת במסך האודות */
+  const test = e.target.closest('[data-test]');
+  if (test) {
+    await engine.playTest(test.dataset.test);
+    toast(test.dataset.test === 'channels'
+      ? 'שמאל · ימין · מרכז — שמונה שניות'
+      : 'סריקה 20→220Hz — עשרים וארבע שניות');
+    return;
+  }
+
   const more = e.target.closest('.section-more');
   if (more && more.dataset.cat) {
     activeChip = more.dataset.cat;
