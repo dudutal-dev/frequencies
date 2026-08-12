@@ -32,16 +32,18 @@ self.addEventListener('fetch', e => {
     e.respondWith(fetch(e.request).catch(() => caches.match('./index.html')));
     return;
   }
+  /* Stale-while-revalidate: מגישים מהקאש מיד, ומרעננים ברקע —
+     כך האפליקציה נטענת מהר וגם לא נתקעת על גרסה ישנה. */
   e.respondWith(
-    caches.match(e.request).then(hit =>
-      hit ||
-      fetch(e.request).then(res => {
+    caches.match(e.request).then(hit => {
+      const fresh = fetch(e.request).then(res => {
         if (res.ok && new URL(e.request.url).origin === location.origin) {
           const copy = res.clone();
           caches.open(CACHE).then(c => c.put(e.request, copy));
         }
         return res;
-      })
-    )
+      }).catch(() => hit);
+      return hit || fresh;
+    })
   );
 });

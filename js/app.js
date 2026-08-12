@@ -667,7 +667,27 @@ els.plCreate.addEventListener('click', createPlaylist);
 
 /* ------------------------------ Service Worker ------------------------------ */
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  /* היה כבר Service Worker פעיל בטעינה? אם לא, ההשתלטות הראשונה היא
+     ההתקנה עצמה — ואסור לרענן עליה. */
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloading = false;
+
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloading) return;
+    reloading = true;
+    location.reload();   // גרסה חדשה השתלטה — נטען אותה מיד
+  });
+
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js');
+      reg.update();
+      /* לבדוק עדכון גם כשחוזרים לאפליקציה מהרקע */
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) reg.update().catch(() => {});
+      });
+    } catch {}
+  });
 }
 
 /* ------------------------------ אתחול ------------------------------ */
