@@ -75,7 +75,7 @@ const MODE_LABEL = {
   pure: 'תדר טהור',
   binaural: 'Binaural 🎧',
   isochronic: 'איזוכרוני · גם ברמקולים',
-  melodic: 'מלודיה גנרטיבית · לא חוזרת על עצמה',
+  melodic: 'מלודיה גנרטיבית',
 };
 
 /* ============================================================
@@ -310,6 +310,28 @@ function renderHome() {
       <button class="hero-btn">▶ &nbsp;התחל האזנה</button>
     </div>
     <div class="tiles">${quick.map(tileHTML).join('')}</div>`;
+
+  /* מסעות מומלצים — כרטיסים רחבים ישר במסך הבית */
+  const picks = [
+    'journey-techno-rise', 'journey-chakras', 'journey-psychedelic',
+    'journey-soundbath', 'journey-genres', 'journey-sleep',
+    'journey-shaman-classic', 'journey-schumann-ladder',
+  ].map(id => journeyById[id]).filter(Boolean);
+
+  html += `
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title"><span class="sec-icon">✦</span>מסעות מומלצים</div>
+        <button class="section-more" data-goto-journeys="1">הכול ←</button>
+      </div>
+      <div class="row">${picks.map(j => `
+        <div class="jcard-mini" data-journey="${j.id}"
+             style="background: linear-gradient(140deg, ${j.colors[0]}, ${j.colors[1]})">
+          <span class="jm-icon">${journeyIcon(j)}</span>
+          <div class="jm-title">${j.title}</div>
+          <div class="jm-sub">${j.sub}</div>
+        </div>`).join('')}</div>
+    </div>`;
 
   for (const cat of CATEGORIES) {
     html += sectionHTML(cat, byCategory(cat.id));
@@ -829,7 +851,7 @@ function updatePlayerView(track) {
   const melodySuffix = track.melody && track.mode !== 'melodic' ? ' · ♬ מלודיה חיה' : '';
   const bpmSuffix = track.bpm ? ` · ${track.bpm} BPM` : '';
   els.pMode.textContent =
-    `${MODE_LABEL[track.mode]} · ${track.freq}Hz${track.beat ? ` + ביט ${track.beat}Hz` : ''}${bpmSuffix}${melodySuffix}`;
+    `${MODE_LABEL[track.mode]} · ${track.freq}Hz${track.beat ? ` +${track.beat}` : ''}${bpmSuffix}${melodySuffix}`;
   els.pTitle.textContent = track.title;
   els.pSub.textContent = track.sub;
   els.pDesc.textContent = track.desc;
@@ -991,8 +1013,10 @@ document.addEventListener('click', async e => {
     return;
   }
 
+  if (e.target.closest('[data-goto-journeys]')) { switchView('journeys'); return; }
+
   const more = e.target.closest('.section-more');
-  if (more) {
+  if (more && more.dataset.cat) {
     activeChip = more.dataset.cat;
     document.querySelector('.tab[data-view="library"]').click();
     renderChips(); renderLibrary();

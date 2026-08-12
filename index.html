@@ -148,25 +148,28 @@
           <div class="pj-bar"><div class="pj-fill" id="pj-fill"></div></div>
         </div>
 
-        <div class="p-title" id="p-title"></div>
-        <div class="p-sub" id="p-sub"></div>
-        <div class="p-mode" id="p-mode"></div>
-        <div class="p-desc" id="p-desc"></div>
-        <div class="phones-note" id="phones-note">🎧 יצירה בינאורלית — האזינו עם אוזניות סטריאו לאפקט מלא</div>
-        <div class="p-tags" id="p-tags"></div>
-
-        <div class="p-transport">
-          <button class="p-step" id="p-prev" aria-label="שלב קודם" hidden>⏮</button>
-          <button class="p-play" id="p-play" aria-label="נגן / עצור">❚❚</button>
-          <button class="p-step" id="p-next" aria-label="שלב הבא" hidden>⏭</button>
+        <div class="player-info">
+          <div class="p-title" id="p-title"></div>
+          <div class="p-sub" id="p-sub"></div>
+          <div class="p-mode" id="p-mode"></div>
+          <div class="p-desc" id="p-desc"></div>
+          <div class="phones-note" id="phones-note">🎧 יצירה בינאורלית — האזינו עם אוזניות סטריאו לאפקט מלא</div>
+          <div class="p-tags" id="p-tags"></div>
         </div>
 
-        <div class="p-utility">
-          <button class="p-timer" id="p-instrument">כלי: אוטומטי</button>
-          <button class="p-timer" id="p-timer">טיימר ∞</button>
-          <div class="p-vol">
-            <span class="v-icon">🔊</span>
-            <input type="range" id="p-volume" min="0" max="1" step="0.01" value="0.7" aria-label="עוצמה" />
+        <div class="player-controls">
+          <div class="p-transport">
+            <button class="p-step" id="p-prev" aria-label="שלב קודם" hidden>⏮</button>
+            <button class="p-play" id="p-play" aria-label="נגן / עצור">❚❚</button>
+            <button class="p-step" id="p-next" aria-label="שלב הבא" hidden>⏭</button>
+          </div>
+          <div class="p-utility">
+            <button class="p-timer" id="p-instrument">כלי: אוטומטי</button>
+            <button class="p-timer" id="p-timer">טיימר ∞</button>
+            <div class="p-vol">
+              <span class="v-icon">🔊</span>
+              <input type="range" id="p-volume" min="0" max="1" step="0.01" value="0.7" aria-label="עוצמה" />
+            </div>
           </div>
         </div>
       </div>
@@ -181,6 +184,9 @@
         <button class="sheet-new" id="sheet-new">+ פלייליסט חדש</button>
       </div>
     </div>
+
+    <!-- נושא את האודיו כדי שהניגון ימשיך גם כשעוברים אפליקציה -->
+    <audio id="bg-audio" playsinline></audio>
 
     <div class="toast" id="toast"><span id="toast-text"></span></div>
   </div>
