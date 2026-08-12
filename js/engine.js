@@ -678,5 +678,66 @@ export class FrequencyEngine {
     }, seconds * 1000 + 200);
   }
 
+  /* ------------------------------------------------------------
+     בדיקות מערכת — לוודא שמערכת סטריאו מוכנה לתדרים
+       'channels' — טון שמאל, ימין, ואז מרכז (אימות הפרדת ערוצים)
+       'sweep'    — סריקה 20→220Hz לאיתור גבול הבס של הרמקולים
+     ------------------------------------------------------------ */
+  async playTest(kind) {
+    this._init();
+    if (this.ctx.state === 'suspended') await this.ctx.resume();
+    if (this.usingStream) this.audioEl?.play().catch(() => {});
+    if (this.voice) this._teardown(this.voice, 0.4);
+
+    const ctx = this.ctx;
+    const now = ctx.currentTime + 0.2;
+    const voice = { oscillators: [], sources: [], nodes: [], timers: [], intervals: [] };
+    const vg = ctx.createGain();
+    vg.gain.value = 1;
+    vg.connect(this.dry);
+    voice.gain = vg;
+
+    if (kind === 'channels') {
+      [[-1, 0], [1, 2.6], [0, 5.2]].forEach(([pan, at]) => {
+        const t = now + at;
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = 440;
+        const p = ctx.createStereoPanner();
+        p.pan.value = pan;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.22, t + 0.05);
+        g.gain.setValueAtTime(0.22, t + 1.8);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 2);
+        osc.connect(g).connect(p).connect(vg);
+        osc.start(t); osc.stop(t + 2.1);
+        voice.oscillators.push(osc);
+        voice.nodes.push(p, g);
+      });
+      voice.timers.push(setTimeout(() => this.stop(), 8000));
+    } else {
+      const dur = 24;
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(20, now);
+      osc.frequency.exponentialRampToValueAtTime(220, now + dur);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.28, now + 0.5);
+      g.gain.setValueAtTime(0.28, now + dur - 0.6);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      osc.connect(g).connect(vg);
+      osc.start(now); osc.stop(now + dur + 0.2);
+      voice.oscillators.push(osc);
+      voice.nodes.push(g);
+      voice.timers.push(setTimeout(() => this.stop(), (dur + 0.6) * 1000));
+    }
+
+    this.voice = voice;
+    this.current = null;
+    this.onStateChange?.('playing', null);
+  }
+
   get isPlaying() { return !!this.voice; }
 }
