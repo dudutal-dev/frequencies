@@ -322,6 +322,55 @@ export const TRACKS = [
     desc: 'תדר הלב במיפוי ההרמוני-מוזיקלי (סקאלת C) — גרסה רכה וזורמת יותר של מרכז החזה. לזמן איכות זוגי.',
     tags: ['לב', 'זוגיות'], colors: ['#9ae6b4', '#1a3d2a'], glyph: '❣', ambience: 0.045 },
 
+  /* --- אינטימי — לשמיעה רציפה בזוג, בלי כלי הקשה --- */
+  { id: 'love-touch', category: 'love', freq: 639, mode: 'melodic', timbre: 'harp',
+    pad: true, pace: 6.8, sparkle: 0.2, featured: true,
+    title: 'מגע', sub: '639Hz · נבל על פאד חם',
+    desc: 'פאד עוטף על תדר החיבור, עם פריטות נבל שנופלות אחת לשבע שניות. בלי קצב, בלי התקדמות — רק נוכחות. לערב שאין בו לוח זמנים.',
+    tags: ['אינטימי', 'זוגי', 'רך'], colors: ['#f687b3', '#3d1226'], glyph: '❤', ambience: 0.055 },
+
+  { id: 'love-skin', category: 'love', freq: 341.3, mode: 'melodic', timbre: 'crystal',
+    pad: true, pace: 7.5, sparkle: 0.16,
+    title: 'עור', sub: '341.3Hz · קריסטל רחוק',
+    desc: 'תדר הלב ההרמוני עם קערות קריסטל שנשמעות מרחוק. הצליל הכי עדין בפרק — נועד לא להסיח את הדעת אפילו לרגע.',
+    tags: ['אינטימי', 'עדין'], colors: ['#fbb6ce', '#2b0f1e'], glyph: '❤', ambience: 0.06 },
+
+  { id: 'love-breath', category: 'love', freq: 136.1, mode: 'melodic', timbre: 'handpan',
+    pad: true, pace: 8.5, sparkle: 0.1,
+    title: 'נשימה משותפת', sub: 'OM 136.1Hz · הנדפאן',
+    desc: 'הפאד עולה ויורד לאט מספיק כדי שהנשימות יסתנכרנו אליו מעצמן. תדר ה-OM כבסיס, הנדפאן חם אחת לשמונה וחצי שניות.',
+    tags: ['נשימה', 'סנכרון', 'זוגי'], colors: ['#ed8936', '#2b1204'], glyph: '❤', ambience: 0.06 },
+
+  { id: 'love-venus-night', category: 'love', freq: 221.23, mode: 'melodic', timbre: 'harp',
+    pad: true, pace: 6.0, sparkle: 0.24, featured: true,
+    title: 'ליל ונוס', sub: '221.23Hz · תדר האהבה הפלנטרי',
+    desc: 'תדר כוכב נוגה מהאוקטבה הקוסמית — מסורתית תדר האהבה, החושניות והיופי — כפאד עם נבל. הצליל של ערב שנפתח לאט.',
+    tags: ['ונוס', 'חושני', 'ערב'], colors: ['#d53f8c', '#2d0a1e'], glyph: '❤', ambience: 0.055 },
+
+  { id: 'love-tantra', category: 'love', freq: 528, mode: 'melodic', timbre: 'crystal',
+    pad: true, pace: 5.5, sparkle: 0.26,
+    title: 'טנטרה', sub: '528Hz · תדר הנס',
+    desc: 'תדר הנס כפאד זהוב עם קריסטל — הצליל של אנרגיה שנעה לאט למעלה. לתרגול זוגי איטי או פשוט לקרבה ארוכה.',
+    tags: ['טנטרה', 'זוגי', 'אנרגיה'], colors: ['#f6e05e', '#3d2405'], glyph: '❤', ambience: 0.05 },
+
+  { id: 'love-longnight', category: 'love', freq: 174, mode: 'melodic', timbre: 'handpan',
+    pad: true, pace: 9.0, sparkle: 0.12,
+    title: 'לילה ארוך', sub: '174Hz · עמוק וכהה',
+    desc: 'הפאד הנמוך והכהה בפרק, על תדר שיכוך הכאב. מיועד לשעות הקטנות — כשהאור כבוי והזמן מפסיק להיות רלוונטי.',
+    tags: ['לילה', 'עמוק', 'ארוך'], colors: ['#805ad5', '#150c26'], glyph: '❤', ambience: 0.07 },
+
+  { id: 'love-afterglow', category: 'love', freq: 285, mode: 'melodic', timbre: 'crystal',
+    pad: true, pace: 8.0, sparkle: 0.14,
+    title: 'אחרי', sub: '285Hz · התחדשות',
+    desc: 'תדר ההתחדשות בעיבוד הרך ביותר — לשעה שאחרי, כשלא מדברים והנשימה חוזרת לאט לעצמה.',
+    tags: ['רגוע', 'אחרי', 'שקט'], colors: ['#4fd1c5', '#0c2b28'], glyph: '❤', ambience: 0.065 },
+
+  { id: 'love-whisper', category: 'love', freq: 432, mode: 'melodic', timbre: 'harp',
+    pad: true, pace: 7.0, sparkle: 0.22,
+    title: 'לחישה', sub: '432Hz · כוונון הטבע',
+    desc: 'פאד בכוונון 432 עם נבל שקט — חמים ופתוח בלי להיות מתוק מדי. עובד גם כרקע לארוחת ערב ארוכה.',
+    tags: ['432', 'חם', 'ערב'], colors: ['#9ae6b4', '#12301f'], glyph: '❤', ambience: 0.05 },
+
   /* ------------------------------ תדרים פלנטריים (האוקטבה הקוסמית של קוסטו) ------------------------------ */
   { id: 'planet-sun', category: 'planets', freq: 126.22, mode: 'pure', featured: true,
     title: 'השמש — 126.22Hz', sub: 'Sun Tone · חיוניות והארה',
