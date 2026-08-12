@@ -11,6 +11,7 @@
 
 export const CATEGORIES = [
   { id: 'featured',   label: 'נבחרות',              icon: '✦' },
+  { id: 'ambient',    label: 'מרחב פנימי',          icon: '◌' },
   { id: 'melodic',    label: 'מלודיות מרפאות',      icon: '♬' },
   { id: 'shaman',     label: 'שאמאני ופסיכדלי',     icon: '𓂀' },
   { id: 'techno',     label: 'טכנו וטראנס',         icon: '◼' },
@@ -520,6 +521,69 @@ export const TRACKS = [
     desc: 'תווים חדים ונקיים כגביש על תדר הניקוי — כל צליל שוטף שכבה. מוזיקת דיטוקס אנרגטי.',
     tags: ['גביש', 'ניקוי'], colors: ['#63b3ed', '#173753'], glyph: '◇', ambience: 0.03 },
 
+  /* ------------------------------ מרחב פנימי — אמביינט ארוך-נשימה ------------------------------
+     פאד מתפתח משבע שכבות שלעולם לא מסתנכרנות, עם צלילים בודדים מעליו.
+     נועד להאזנה ארוכה — חצי שעה ומעלה, כמו אלבום ריפוי שלם. */
+  { id: 'amb-innerspace', category: 'ambient', freq: 136.1, mode: 'melodic', timbre: 'crystal',
+    pad: true, pace: 7.0, sparkle: 0.18, featured: true,
+    title: 'מרחב פנימי', sub: 'OM 136.1Hz · פאד אינסופי',
+    desc: 'הפאד המלא על תדר ה-OM: שבע שכבות הרמוניות שנעות בקצבים שונים ולכן המרקם לא חוזר על עצמו לעולם. צליל קריסטל בודד כל שבע שניות. לחצי שעה ומעלה.',
+    tags: ['אמביינט', 'מרחב', 'OM'], colors: ['#9f7aea', '#150d29'], glyph: '◌', ambience: 0.05 },
+
+  { id: 'amb-cosmos', category: 'ambient', freq: 963, mode: 'melodic', timbre: 'bell',
+    pad: true, pace: 8.5, sparkle: 0.22, featured: true,
+    title: 'קוסמוס', sub: '963Hz · תדר הכתר',
+    desc: 'פאד גבוה ובוהק על תדר האור, עם פעמוני מקדש נדירים מאוד. תחושת חלל פתוח — הצליל של להסתכל למעלה בלילה בהיר.',
+    tags: ['קוסמי', 'כתר', 'רחב'], colors: ['#d6bcfa', '#1e1235'], glyph: '◌', ambience: 0.045 },
+
+  { id: 'amb-nebula', category: 'ambient', freq: 174, mode: 'melodic', timbre: 'handpan',
+    pad: true, pace: 9.0, sparkle: 0.1,
+    title: 'ערפילית', sub: '174Hz · נמוך וסמיך',
+    desc: 'פאד נמוך וסמיך על תדר שיכוך הכאב, עם נגיעות הנדפאן שמופיעות אחת לתשע שניות. הכי כבד ועוטף בפרק.',
+    tags: ['ערפילית', 'סמיך', 'כאב'], colors: ['#7c5cff', '#0f0a1e'], glyph: '◌', ambience: 0.06 },
+
+  { id: 'amb-dawn', category: 'ambient', freq: 528, mode: 'melodic', timbre: 'harp',
+    pad: true, pace: 5.5, sparkle: 0.26,
+    title: 'שחר', sub: '528Hz · נבל על פאד',
+    desc: 'תדר הנס כפאד חמים, עם פריטות נבל שנופלות מעליו. האמביינט הכי אופטימי כאן — לבקרים שקטים.',
+    tags: ['שחר', 'נבל', 'אופטימי'], colors: ['#f6e05e', '#3d2a05'], glyph: '◌', ambience: 0.045 },
+
+  { id: 'amb-void', category: 'ambient', freq: 111, mode: 'melodic', timbre: 'throat',
+    pad: true, pace: 11.0, sparkle: 0.06,
+    title: 'הריק', sub: '111Hz · מינימלי קיצוני',
+    desc: 'כמעט רק פאד: צליל גרוני בודד אחת לאחת-עשרה שניות על תדר 111 של חללי הקדושה. לתרגול ריקות או לרקע שנעלם מהתודעה.',
+    tags: ['ריק', 'מינימלי', '111'], colors: ['#a0aec0', '#101319'], glyph: '◌', ambience: 0.055 },
+
+  { id: 'amb-drift', category: 'ambient', freq: 285, mode: 'melodic', timbre: 'crystal',
+    pad: true, pace: 6.5, sparkle: 0.2,
+    title: 'ריחוף', sub: '285Hz · התחדשות',
+    desc: 'פאד על תדר ההתחדשות עם קערות קריסטל רחוקות. תחושה של להיסחף במים חמימים בלי לגעת בקרקעית.',
+    tags: ['ריחוף', 'התחדשות'], colors: ['#4fd1c5', '#0a2b28'], glyph: '◌', ambience: 0.05 },
+
+  { id: 'amb-stars', category: 'ambient', freq: 432, mode: 'melodic', timbre: 'bell',
+    pad: true, pace: 6.0, sparkle: 0.34,
+    title: 'שדה כוכבים', sub: '432Hz · כוונון הטבע',
+    desc: 'פאד בכוונון 432 עם פעמונים שמנצנצים באוקטבות גבוהות — כמו כוכבים שנדלקים אחד אחרי השני. פתוח ורחב.',
+    tags: ['כוכבים', '432', 'נצנוץ'], colors: ['#68d391', '#0d2b18'], glyph: '◌', ambience: 0.045 },
+
+  { id: 'amb-deepspace', category: 'ambient', freq: 90, mode: 'melodic', timbre: 'throat',
+    pad: true, pace: 10.0, sparkle: 0.05,
+    title: 'חלל עמוק', sub: '90Hz · התדר הנמוך ביותר',
+    desc: 'הפאד הנמוך ביותר בספרייה — 90Hz שהחזה מרגיש לפני שהאוזן שומעת. במערכת סטריאו זה ממלא את החדר כולו.',
+    tags: ['עמוק', 'חלל', 'סאב'], colors: ['#2c5282', '#04060f'], glyph: '◌', ambience: 0.065 },
+
+  { id: 'amb-vision', category: 'ambient', freq: 136.1, mode: 'melodic', scale: 'psyche',
+    timbre: 'crystal', pad: true, pace: 5.0, sparkle: 0.3,
+    title: 'חזיונות במרחב', sub: 'OM 136.1Hz · פאד + סולם ספטימלי',
+    desc: 'המפגש בין שני העולמות: הפאד האינסופי של המרחב הפנימי, והתווים המכופפים של מסע החזיונות. אמביינט שמעוות בעדינות.',
+    tags: ['חזיונות', 'אמביינט', 'פסיכדלי'], colors: ['#ed64a6', '#1b0d33'], glyph: '◌', ambience: 0.05 },
+
+  { id: 'amb-timeless', category: 'ambient', freq: 108, mode: 'melodic', timbre: 'throat',
+    pad: true, pace: 8.0, sparkle: 0.08,
+    title: 'מחוץ לזמן', sub: '108Hz · המספר המקודש',
+    desc: 'פאד גרוני על 108 — מספר החזרות במאלה. איטי מספיק כדי שתאבדו את תחושת הזמן, וזו בדיוק המטרה.',
+    tags: ['108', 'זמן', 'טקסי'], colors: ['#b7791f', '#1a1002'], glyph: '◌', ambience: 0.055 },
+
   /* ------------------------------ שאמאני ופסיכדלי ------------------------------ */
   { id: 'sh-drum', category: 'shaman', freq: 180, mode: 'melodic', scale: 'shaman', pace: 1.3, sparkle: 0.1, featured: true,
     title: 'תוף השאמאן', sub: '180Hz · סולם פריגי · תבנית תוף',
@@ -535,6 +599,24 @@ export const TRACKS = [
     title: 'מסע החזיונות', sub: 'OM 136.1Hz · תווים מתפתלים',
     desc: 'מוטיב בן שבעה תווים שמתפתל ולא חוזר לאותה נקודה — על תדר ה-OM. הצליל של תודעה שמשילה את גבולותיה.',
     tags: ['חזיונות', 'פסיכדלי', 'OM'], colors: ['#ed64a6', '#2a0a2a'], glyph: '◉', ambience: 0.05 },
+
+  { id: 'sh-vision-deep', category: 'shaman', freq: 136.1, mode: 'melodic', scale: 'psyche',
+    timbre: 'crystal', pad: 0.85, pace: 4.2, sparkle: 0.26,
+    title: 'החזיונות — עמוק', sub: 'OM 136.1Hz · קריסטל על פאד',
+    desc: 'אותו עולם של מסע החזיונות, בשכבה עמוקה יותר: פאד מתפתח מתחת וקערות קריסטל שנופלות לאט מעליו. התווים מרוחקים יותר והמרחב גדול יותר.',
+    tags: ['חזיונות', 'עמוק', 'פאד'], colors: ['#d53f8c', '#2a0a2a'], glyph: '◉', ambience: 0.05 },
+
+  { id: 'sh-vision-far', category: 'shaman', freq: 136.1, mode: 'melodic', scale: 'psyche',
+    timbre: 'handpan', orbit: true, pad: 0.6, pace: 3.0, sparkle: 0.2,
+    title: 'החזיונות — מרוחק', sub: 'OM 136.1Hz · הנדפאן מסתובב',
+    desc: 'הצלילים מקיפים את הראש בזמן שהם מתכופפים — הנדפאן חם על פאד רחב. השלב שבו כבר לא ברור מאיפה מגיע הצליל.',
+    tags: ['חזיונות', 'מסתובב'], colors: ['#b83280', '#1b0d33'], glyph: '◉', ambience: 0.05 },
+
+  { id: 'sh-vision-light', category: 'shaman', freq: 272.2, mode: 'melodic', scale: 'psyche',
+    timbre: 'bell', pad: 0.5, echo: 2, pace: 2.4, sparkle: 0.36,
+    title: 'החזיונות — אור', sub: '272.2Hz · אוקטבה מעל',
+    desc: 'אוקטבה מעל תדר ה-OM: פעמונים בהירים עם הדים, על פאד דק. הסיום המואר של המסע — אותו סולם, רגיסטר גבוה.',
+    tags: ['חזיונות', 'אור', 'גבוה'], colors: ['#f687b3', '#44102b'], glyph: '◉', ambience: 0.04 },
 
   { id: 'sh-serpent', category: 'shaman', freq: 174, mode: 'melodic', scale: 'shaman', pace: 1.8, sparkle: 0.16,
     title: 'הנחש הקדמון', sub: '174Hz · פריגי עמוק',

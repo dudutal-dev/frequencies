@@ -177,6 +177,11 @@ const ICON_BY_ID = {
   'sh-serpent': 'serpent', 'sh-firecircle': 'flame', 'sh-datura': 'lotus8',
   'sh-ancestors': 'mountain', 'sh-peyote': 'spiral', 'sh-trance': 'drum',
   'sh-dmt': 'star', 'sh-underworld': 'arrowDown', 'sh-upperworld': 'arrowUp',
+  'sh-vision-deep': 'crystal', 'sh-vision-far': 'bowl', 'sh-vision-light': 'star',
+  'amb-innerspace': 'ripple', 'amb-cosmos': 'star', 'amb-nebula': 'cloud',
+  'amb-dawn': 'sun', 'amb-void': 'ripple', 'amb-drift': 'drop',
+  'amb-stars': 'star', 'amb-deepspace': 'delta', 'amb-vision': 'eye',
+  'amb-timeless': 'infinity',
   'mel-bells-528': 'bell', 'mel-harp-432': 'note', 'mel-kalimba-639': 'note',
   'mel-temple-963': 'bell', 'mel-musicbox-396': 'note', 'mel-handpan-174': 'bowl',
   'mel-chimes-om': 'om', 'mel-wind-852': 'feather', 'mel-lullaby-285': 'moon',
@@ -203,7 +208,7 @@ const ICON_BY_CATEGORY = {
   calm: 'ripple', love: 'heart', dna: 'helix', planets: 'planet',
   earth: 'earth', meditation: 'om', energy: 'sun', melodic: 'note',
   shaman: 'drum', bowls: 'bowl', mantra: 'beads',
-  psychedelic: 'spiral', schumann: 'earth', techno: 'bolt',
+  psychedelic: 'spiral', schumann: 'earth', techno: 'bolt', ambient: 'ripple',
 };
 
 /* אייקון למסע — חלק מהסמלים הטקסטואליים לא נתמכים בכל הפונטים */
@@ -235,6 +240,9 @@ const JOURNEY_ICON = {
   'journey-tribal-fire': 'drum', 'journey-breaks': 'bolt',
   'journey-chillout': 'cloud', 'journey-genres': 'infinity',
   'journey-run': 'flame',
+  'journey-vision-hour': 'eye', 'journey-inner-space': 'ripple',
+  'journey-deep-ambient': 'cloud', 'journey-ambient-dawn': 'sun',
+  'journey-ambient-night': 'moon',
 };
 const journeyIcon = j => ICONS[JOURNEY_ICON[j.id]] || j.glyph;
 
@@ -407,7 +415,7 @@ const TRACK_INDEX = TRACKS.map(t => ({
   hay: norm([
     t.title, t.sub, t.desc, (t.tags || []).join(' '), CAT_LABEL[t.category],
     MODE_WORDS[t.mode], SCALE_WORDS[t.scale] || '', SCALE_WORDS[t.melodyScale] || '',
-    t.timbre || '', t.melody ? 'מלודיה' : '',
+    t.timbre || '', t.melody ? 'מלודיה' : '', t.pad ? 'פאד אמביינט ambient מרחב ארוך' : '',
     t.bpm ? `${t.bpm} bpm טכנו קצב ריקוד ${PATTERN_WORDS[t.pattern] || ''}` : '',
   ].join(' ')),
   nums: [String(t.freq), t.beat ? String(t.beat) : '', t.bpm ? String(t.bpm) : ''].filter(Boolean),
