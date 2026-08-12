@@ -206,6 +206,10 @@ const ICON_BY_ID = {
   'org-dreams': 'cloud', 'org-liquid': 'drop', 'org-forest': 'leaf',
   'org-river': 'ripple', 'org-serpentine': 'serpent', 'org-bloom': 'lotus8',
   'org-mirage': 'eye', 'org-nightflight': 'star',
+  'oh-deep': 'ripple', 'oh-desert': 'mountain', 'oh-sunrise': 'sun',
+  'oh-mystic': 'crown', 'oh-tribal': 'drum', 'oh-deepblue': 'drop',
+  'oh-warm': 'heart', 'oh-night': 'moon', 'oh-mirage': 'eye',
+  'oh-dawn': 'leaf', 'oh-schumann': 'earth', 'oh-temple': 'crystal',
   'tk-warmup': 'alpha', 'tk-groove': 'beta', 'tk-drive': 'bolt',
   'tk-peak': 'gamma', 'tk-acid': 'bolt', 'tk-hypnotic': 'target',
   'tk-dark': 'mountain', 'tk-trance': 'star', 'tk-hardpeak': 'flame',
@@ -363,9 +367,9 @@ function renderHome() {
 
   /* נוסף לאחרונה — כדי שתוכן חדש לא ייקבר בסוף רשימה של 70 מסעות */
   const latest = [
-    'journey-organic-session', 'journey-organic-trip', 'journey-organic-drive',
-    'journey-intimate-evening', 'journey-lovers-night', 'journey-vision-hour',
-    'journey-inner-space', 'journey-ambient-work',
+    'journey-organic-house', 'journey-house-afterdark', 'journey-house-sunset',
+    'journey-house-grounded', 'journey-organic-session', 'journey-organic-trip',
+    'journey-intimate-evening', 'journey-vision-hour',
   ].map(id => journeyById[id]).filter(Boolean);
 
   html += `
@@ -477,6 +481,7 @@ const PATTERN_WORDS = {
   tribal: 'שבטי tribal אפרו afro פרקושן תופים',
   down: 'דאון-טמפו downtempo טריפ-הופ trip hop איטי צ\'יל',
   organic: 'אורגני organic פסיבינט psybient זורם קצב בינוני',
+  house: 'דיפ האוס deep house אורגני organic פסיכדלי מתגלגל קונגות',
 };
 const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
 

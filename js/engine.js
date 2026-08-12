@@ -534,6 +534,22 @@ export class FrequencyEngine {
       osc.onended = () => { try { g.disconnect(); } catch {} };
     };
 
+    /* קונגה — צליל יד על עור, גבוה וקצר עם סלאפ */
+    const conga = (t, f) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f, t);
+      osc.frequency.exponentialRampToValueAtTime(f * 0.68, t + 0.07);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.115 * pGain, t + 0.004);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+      osc.connect(g).connect(dest);
+      osc.start(t); osc.stop(t + 0.17);
+      osc.onended = () => { try { g.disconnect(); } catch {} };
+      noiseHit(t, { hp: 2600, dur: 0.028, vol: 0.02 });
+    };
+
     /* סטאב אקורד — החתימה של דאב-טכנו, על העף-ביט */
     const stab = t => {
       const g = ctx.createGain();
@@ -575,10 +591,18 @@ export class FrequencyEngine {
       organic: { kick: [0, 8], hat: [2, 4, 6, 10, 12, 14], clap: [],
                 bass: [0, 3, 8, 11, 14], bassMult: [1, 1.5, 1, 2, 1],
                 gain: 0.62 },
+      /* דיפ האוס אורגני — קיק על כל רבע, אופן-האט על העף-ביט,
+         בס מתגלגל בין הקיקים, וקונגות בעמדות לא סימטריות */
+      house:  { kick: [0, 4, 8, 12], hat: [], clap: [],
+                openhat: [2, 6, 10, 14],
+                shaker: [1, 3, 5, 7, 9, 11, 13, 15],
+                conga: [3, 7, 10, 11, 15],
+                bass: [2, 6, 10, 14], bassMult: [1, 1, 1.5, 1],
+                bassLong: true, gain: 0.72 },
     };
     const P = PATTERNS[track.pattern] || PATTERNS.four;
     const pGain = P.gain ?? 1;
-    const bassDur = step16 * (P.bassShort ? 0.85 : 1.6);
+    const bassDur = step16 * (P.bassShort ? 0.85 : P.bassLong ? 2.3 : 1.6);
 
     const scheduleStep = (s, t) => {
       if (P.kick.includes(s)) kick(t);
@@ -589,6 +613,9 @@ export class FrequencyEngine {
       if (energy > 0.45 && P.clap.includes(s)) {
         noiseHit(t, { bp: 1500, dur: 0.13, vol: 0.09 });
       }
+      if (P.openhat?.includes(s)) noiseHit(t, { hp: 6200, dur: 0.17, vol: 0.05 });
+      if (P.shaker?.includes(s)) noiseHit(t, { hp: 9500, dur: 0.03, vol: 0.022 });
+      if (P.conga?.includes(s)) conga(t, 210 + (s % 4) * 55);
       if (P.tom?.includes(s)) tom(t, 150 + (s % 3) * 45);
       if (P.stab?.includes(s)) stab(t);
       const bi = P.bass.indexOf(s);

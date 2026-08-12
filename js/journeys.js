@@ -697,6 +697,54 @@ export const JOURNEYS = [
     ],
   },
 
+  /* ------------------------------ סטים של דיפ האוס אורגני ------------------------------ */
+  {
+    id: 'journey-organic-house',
+    title: 'סט האוס אורגני',
+    sub: '6 שלבים · 108 דקות',
+    desc: 'הסט המלא של הז\'אנר, שעה ושלושת רבעי: שחר 432 בקצב 117, זריחה על החוף, דיפ אורגני, חום, מדבר בלילה — ולילה עמוק ב-124 לשיא. הטמפו עולה נקודה בכל שלב.',
+    colors: ['#9ae6b4', '#805ad5'], glyph: '❋',
+    steps: [
+      { id: 'oh-dawn', min: 18 }, { id: 'oh-sunrise', min: 18 },
+      { id: 'oh-deep', min: 18 }, { id: 'oh-warm', min: 18 },
+      { id: 'oh-desert', min: 18 }, { id: 'oh-night', min: 18 },
+    ],
+  },
+  {
+    id: 'journey-house-sunset',
+    title: 'שקיעה על החוף',
+    sub: '4 שלבים · 72 דקות',
+    desc: 'הסט של שעת הזהב: שחר 432, זריחה על החוף, חום וכחול עמוק. הכי רך בפרק — לרחבה שעדיין מדברת, או למרפסת.',
+    colors: ['#f6e05e', '#2b6cb0'], glyph: '❋',
+    steps: [
+      { id: 'oh-dawn', min: 18 }, { id: 'oh-sunrise', min: 18 },
+      { id: 'oh-warm', min: 18 }, { id: 'oh-deepblue', min: 18 },
+    ],
+  },
+  {
+    id: 'journey-house-afterdark',
+    title: 'אחרי החשכה',
+    sub: '5 שלבים · 100 דקות',
+    desc: 'הצד האפל והמתגלגל: שבטי אורגני, מדבר בלילה, תעתוע בסולם המעוות, מיסטי — ולילה עמוק ב-124 לסיום. שעה ארבעים בלי לרדת מהגרוב.',
+    colors: ['#b7791f', '#805ad5'], glyph: '❋',
+    steps: [
+      { id: 'oh-tribal', min: 20 }, { id: 'oh-desert', min: 20 },
+      { id: 'oh-mirage', min: 20 }, { id: 'oh-mystic', min: 20 },
+      { id: 'oh-night', min: 20 },
+    ],
+  },
+  {
+    id: 'journey-house-grounded',
+    title: 'האוס מוארק',
+    sub: '4 שלבים · 76 דקות',
+    desc: 'גרוב מלא עם עוגן: האוס מוארק על שומאן, מקדש מתגלגל, דיפ אורגני וכחול עמוק. רוקד ומוארק לאורך שעה ורבע.',
+    colors: ['#48bb78', '#667eea'], glyph: '❋',
+    steps: [
+      { id: 'oh-schumann', min: 19 }, { id: 'oh-temple', min: 19 },
+      { id: 'oh-deep', min: 19 }, { id: 'oh-deepblue', min: 19 },
+    ],
+  },
+
   /* ------------------------------ סטים של טכנו — עולים ------------------------------ */
   {
     id: 'journey-techno-rise',
