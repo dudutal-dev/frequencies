@@ -152,6 +152,7 @@
       <div class="player-top">
         <button class="p-close" id="p-close" aria-label="סגירה">⌄</button>
         <div class="p-top-actions">
+          <button class="p-icon" id="p-airplay" aria-label="שידור למערכת" hidden></button>
           <button class="p-icon" id="p-add" aria-label="הוספה לפלייליסט">+</button>
           <button class="p-icon" id="p-fav" aria-label="מועדף">♡</button>
         </div>
@@ -210,7 +211,7 @@
     </div>
 
     <!-- נושא את האודיו כדי שהניגון ימשיך גם כשעוברים אפליקציה -->
-    <audio id="bg-audio" playsinline></audio>
+    <audio id="bg-audio" playsinline x-webkit-airplay="allow"></audio>
 
     <div class="toast" id="toast"><span id="toast-text"></span></div>
   </div>
