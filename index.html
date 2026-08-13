@@ -74,6 +74,74 @@
       </section>
 
       <!-- אודות -->
+      <section class="view" id="view-analyze">
+        <div class="analyze">
+          <p class="an-intro">
+            בחרו קובץ שמע מהמכשיר. האפליקציה מודדת ממנו טמפו, מרכז טונאלי, בהירות ואופי
+            הגרוב — ובונה מהם יצירה חדשה משלה באותה רוח.
+            <strong>הכל רץ על המכשיר שלכם. שום קובץ לא נשלח לשום מקום.</strong>
+          </p>
+
+          <label class="an-pick">
+            <input type="file" id="an-file" accept="audio/*" hidden />
+            <span class="an-pick-btn">בחירת קובץ שמע</span>
+            <span class="an-pick-note">MP3 · M4A · WAV · FLAC</span>
+          </label>
+
+          <div class="an-progress" id="an-progress" hidden>
+            <div class="an-prog-bar"><div class="an-prog-fill" id="an-prog-fill"></div></div>
+            <div class="an-prog-label" id="an-prog-label"></div>
+          </div>
+
+          <div class="an-result" id="an-result" hidden>
+            <div class="an-file" id="an-file-name"></div>
+            <div class="an-stats" id="an-stats"></div>
+
+            <div class="an-tune">
+              <div class="an-tune-title">כוונון לפני היצירה</div>
+              <div class="an-row">
+                <span class="an-lbl">סולם</span>
+                <div class="an-seg" id="an-scale">
+                  <button data-scale="penta">מז'ורי</button>
+                  <button data-scale="shaman">מינורי</button>
+                  <button data-scale="psyche">פסיכדלי</button>
+                  <button data-scale="warp">מעוות</button>
+                </div>
+              </div>
+              <div class="an-row">
+                <span class="an-lbl">כלי</span>
+                <div class="an-seg" id="an-timbre">
+                  <button data-timbre="flute">חליל</button>
+                  <button data-timbre="voice">קול</button>
+                  <button data-timbre="strings">מיתרים</button>
+                  <button data-timbre="rhodes">פסנתר</button>
+                  <button data-timbre="handpan">הנדפאן</button>
+                  <button data-timbre="crystal">קריסטל</button>
+                </div>
+              </div>
+              <div class="an-row">
+                <span class="an-lbl">קצב</span>
+                <div class="an-seg" id="an-tempo">
+                  <button data-tempo="0.5">חצי</button>
+                  <button data-tempo="1">כמו המקור</button>
+                  <button data-tempo="2">כפול</button>
+                  <button data-tempo="0">בלי קצב</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="an-actions">
+              <button class="an-go" id="an-play">נגן בסגנון הזה</button>
+              <button class="an-save" id="an-save">שמירה לספרייה</button>
+            </div>
+            <p class="an-legal">
+              נמדדים פרמטרים של סגנון בלבד — טמפו, סולם ומרקם. היצירה שנוצרת היא מוזיקה
+              מקורית שהמנוע כותב, ולא העתק של ההקלטה.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section class="view" id="view-about">
         <div class="about">
           <h2>מהי RESONANCE?</h2>
