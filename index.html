@@ -25,6 +25,7 @@
       <h1 class="page-title" id="page-title">בית</h1>
       <div class="top-end">
         <div class="logo">RESONANCE</div>
+        <button class="top-icon filter-btn" id="btn-filter" aria-label="סינון תוכן"></button>
         <button class="top-icon" id="btn-about" aria-label="אודות">?</button>
       </div>
     </header>
@@ -315,6 +316,16 @@
     </div>
 
     <!-- Bottom Sheet — הוספה לפלייליסט -->
+    <!-- סינון גלובלי — חל על כל הטאבים -->
+    <div class="sheet-backdrop" id="filter-backdrop" hidden>
+      <div class="sheet">
+        <div class="sheet-grip"></div>
+        <div class="sheet-title">סינון תוכן</div>
+        <div class="sheet-note">הסינון חל על כל האפליקציה — בית, מסעות, חיפוש, ספרייה ומועדפים.</div>
+        <div class="filter-list" id="filter-list"></div>
+      </div>
+    </div>
+
     <div class="sheet-backdrop" id="sheet-backdrop" hidden>
       <div class="sheet">
         <div class="sheet-grip"></div>

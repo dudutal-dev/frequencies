@@ -601,11 +601,15 @@ input[type='range']::-moz-range-thumb {
 .pj-scrub:focus-visible { outline: 2px solid var(--gold); outline-offset: 6px; border-radius: 4px; }
 
 .pj-times {
-  display: flex; align-items: baseline; gap: 8px;
-  margin-top: 9px; font-size: 11px; color: var(--text-faint);
+  display: flex; align-items: baseline; gap: 10px;
+  margin-top: 10px; font-size: 10.5px; letter-spacing: 0.06em;
   font-variant-numeric: tabular-nums;
 }
-.pj-times > span:last-child { margin-inline-start: auto; }
+/* ספרות עם נקודתיים בתוך הקשר RTL עלולות להתהפך — נועלים כיוון */
+.pj-times > span:first-child,
+.pj-times > span:last-child { direction: ltr; unicode-bidi: isolate; }
+.pj-times > span:first-child { color: var(--gold); font-weight: 700; }
+.pj-times > span:last-child { color: var(--text-faint); margin-inline-start: auto; }
 .pj-scrub-hint {
   flex: 1; text-align: center; color: var(--gold); font-weight: 700;
   opacity: 0; transition: opacity 0.15s;
@@ -969,3 +973,58 @@ input[type='range']::-moz-range-thumb {
 .an-entry .icn { width: 26px; height: 26px; color: var(--gold); flex-shrink: 0; }
 .an-entry-t { font-size: 14.5px; font-weight: 800; }
 .an-entry-s { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+
+/* ------------------------------ Global content filter ------------------------------ */
+.filter-btn { display: flex; align-items: center; justify-content: center; }
+.filter-btn .icn { width: 15px; height: 15px; }
+.filter-btn.on {
+  background: rgba(232, 192, 130, 0.16); color: var(--gold);
+  border-color: rgba(232, 192, 130, 0.5);
+}
+/* נקודה שמסמנת שסינון פעיל — נראית גם כשהאייקון קטן */
+.filter-btn.on::after {
+  content: ''; position: absolute; inset-block-start: -2px; inset-inline-start: -2px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold); border: 2px solid var(--bg);
+}
+.filter-btn { position: relative; }
+
+.sheet-note {
+  font-size: 11.5px; color: var(--text-faint); line-height: 1.6;
+  margin: -4px 0 14px; text-align: center;
+}
+.filter-list { display: flex; flex-direction: column; gap: 8px; }
+.filter-opt {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 13px 15px; border-radius: var(--radius-sm); cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line);
+  font-family: inherit; text-align: start; color: var(--text);
+}
+.filter-opt.active {
+  background: rgba(232, 192, 130, 0.12);
+  border-color: rgba(232, 192, 130, 0.45);
+}
+.filter-opt .icn { width: 20px; height: 20px; color: var(--gold); flex-shrink: 0; }
+.filter-opt-meta { display: block; flex: 1; min-width: 0; }
+.filter-opt-t { display: block; font-size: 14px; font-weight: 700; }
+.filter-opt-s { display: block; font-size: 11px; color: var(--text-faint); margin-top: 3px; line-height: 1.45; }
+.filter-opt-n {
+  font-size: 11px; font-weight: 800; color: var(--gold);
+  font-variant-numeric: tabular-nums; flex-shrink: 0;
+}
+
+/* פס מצב שמופיע בראש כל טאב כשסינון פעיל, כדי שלא ייראה
+   כאילו תוכן פשוט נעלם */
+.filter-bar {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 18px 12px; padding: 9px 14px; border-radius: 999px;
+  background: rgba(232, 192, 130, 0.1);
+  border: 1px solid rgba(232, 192, 130, 0.28);
+  font-size: 11.5px; color: var(--gold);
+}
+.filter-bar .icn { width: 14px; height: 14px; flex-shrink: 0; }
+.filter-bar-clear {
+  margin-inline-start: auto; background: none; border: 0; cursor: pointer;
+  font-family: inherit; font-size: 11.5px; font-weight: 700;
+  color: var(--text-dim); text-decoration: underline;
+}
