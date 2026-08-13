@@ -8,6 +8,7 @@ import { JOURNEYS, journeyById } from './journeys.js';
 import { FrequencyEngine } from './engine.js';
 import { MandalaVisualizer } from './visualizer.js';
 import { Sequencer } from './sequencer.js';
+import { analyzeFile, toEngine } from './analyzer.js';
 
 /* ------------------------------ מצב + Auto-Save ------------------------------ */
 const SAVE_KEY = 'resonance_state_v1';
@@ -16,7 +17,7 @@ function loadState() {
   const base = {
     favorites: [], recents: [], playlists: [], searches: [],
     volume: 0.7, timer: 0, instrument: 'auto', speakerMode: false,
-    lastView: 'home', lastTrack: null,
+    lastView: 'home', lastTrack: null, userTracks: [],
   };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -26,6 +27,18 @@ function loadState() {
 }
 
 const state = loadState();
+
+/* ------------------------------------------------------------
+   יצירות שהמשתמש ייצר מניתוח קובץ שמע. הן נדחפות לתוך הקטלוג
+   עצמו כאן, לפני שנבנים אינדקס החיפוש והספרייה — וכך הן מתנהגות
+   בדיוק כמו כל יצירה אחרת: חיפוש, מועדפים, פלייליסטים, הכל.
+   ------------------------------------------------------------ */
+if (!CATEGORIES.some(c => c.id === 'mine')) {
+  CATEGORIES.push({ id: 'mine', label: 'היצירות שלי', icon: '✎' });
+}
+for (const t of state.userTracks || []) {
+  if (!byId[t.id]) { TRACKS.push(t); byId[t.id] = t; }
+}
 
 function saveState() {
   try {
@@ -127,6 +140,8 @@ const ICONS = {
   eye: SVG('<path d="M5 20s6-9 15-9 15 9 15 9-6 9-15 9-15-9-15-9z"/><circle cx="20" cy="20" r="4.5"/>'),
   flame: SVG('<path d="M20 33c5.5 0 9-3.8 9-8.6 0-6.5-6-8-6-14.4-5 3-9 7.6-9 14.4 0 4.8 3 8.6 6 8.6z"/><path d="M20 33c-2.4 0-4-1.9-4-4.3 0-3 3-4 4-7 1.6 2.4 4 4 4 7 0 2.4-1.6 4.3-4 4.3z" opacity="0.55"/>'),
   serpent: SVG('<path d="M10 33c0-6 8-5 8-11S8 16 8 10c0-3 3-4 6-3"/><path d="M22 33c0-6 8-5 8-11s-6-6-6-10"/><circle cx="24" cy="9" r="2" fill="currentColor" stroke="none"/>'),
+  waveform: SVG('<path d="M6 24h4l3-11 4 22 4-16 3 9h10"/>'),
+  pencil: SVG('<path d="M8 32l-2 6 6-2L34 12a3 3 0 0 0-4-4z"/><path d="M27 9l4 4"/>'),
   spiral: SVG('<path d="M20 20a3 3 0 1 1 3 3 6 6 0 1 1-6-6 9 9 0 1 1 9 9 12 12 0 1 1-12-12"/>'),
   crown: SVG('<path d="M8 28l-2-15 8 6 6-11 6 11 8-6-2 15z"/><line x1="8" y1="32" x2="32" y2="32"/>'),
   heart: SVG('<path d="M20 32S7 24 7 16a6.6 6.6 0 0 1 13-2 6.6 6.6 0 0 1 13 2c0 8-13 16-13 16z"/>'),
@@ -237,6 +252,7 @@ const ICON_BY_CATEGORY = {
   shaman: 'drum', bowls: 'bowl', mantra: 'beads',
   psychedelic: 'spiral', schumann: 'earth', techno: 'bolt', ambient: 'ripple',
   organic: 'leaf', deephouse: 'ripple', sensual: 'heart', intimland: 'heart',
+  mine: 'pencil',
 };
 
 /* אייקון למסע — חלק מהסמלים הטקסטואליים לא נתמכים בכל הפונטים */
@@ -371,6 +387,18 @@ function renderHome() {
     html += sectionHTML({ id: 'recents', label: 'הושמעו לאחרונה', icon: '↻' },
                         recents.slice(0, 14));
   }
+
+  /* כניסה למנתח הסגנון */
+  html += `
+    <div class="section">
+      <div class="an-entry" data-goto-analyze="1">
+        ${ICONS.waveform}
+        <div>
+          <div class="an-entry-t">נתחו שיר משלכם</div>
+          <div class="an-entry-s">בחרו קובץ שמע — נמדדים ממנו טמפו, סולם ומרקם, ונבנית יצירה בסגנון</div>
+        </div>
+      </div>
+    </div>`;
 
   /* מסעות מומלצים — כרטיסים רחבים ישר במסך הבית */
   const picks = [
@@ -806,7 +834,7 @@ els.pAdd.addEventListener('click', openSheet);
 /* ------------------------------ ניווט ------------------------------ */
 const PAGE_TITLE = {
   home: 'בית', journeys: 'מסעות', search: 'חיפוש', library: 'ספרייה',
-  favorites: 'מועדפים', about: 'אודות',
+  favorites: 'מועדפים', about: 'אודות', analyze: 'ניתוח סגנון',
 };
 
 function switchView(view) {
@@ -1285,6 +1313,7 @@ document.addEventListener('click', async e => {
   }
 
   if (e.target.closest('[data-goto-journeys]')) { switchView('journeys'); return; }
+  if (e.target.closest('[data-goto-analyze]')) { switchView('analyze'); return; }
   if (e.target.closest('[data-speakers-on]')) { await setSpeakerMode(true); return; }
   if (e.target.closest('[data-stereo-all]')) {
     activeChip = 'speakers';
@@ -1385,6 +1414,141 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     } catch {}
   });
 }
+
+/* ------------------------------ מנתח סגנון ------------------------------
+   בוחרים קובץ שמע מהמכשיר, האפליקציה מודדת ממנו פרמטרים של סגנון
+   ובונה מהם יצירה חדשה משלה. הכל מקומי — הקובץ לא יוצא מהמכשיר.
+   ------------------------------------------------------------------- */
+let anResult = null;                 // { measured, engine } מהניתוח האחרון
+let anTune = { scale: null, timbre: null, tempo: 1 };
+
+const SCALE_LABEL = { penta: 'מז\'ורי', shaman: 'מינורי', psyche: 'פסיכדלי', warp: 'מעוות' };
+
+function anStat(num, cap, weak) {
+  return `<div class="an-stat${weak ? ' weak' : ''}"><span class="an-num">${num}</span><span class="an-cap">${cap}</span></div>`;
+}
+
+function anRenderResult() {
+  const m = anResult.measured;
+  $('an-file-name').textContent = m.fileName;
+  /* מרווח נמוך מול הסולם השני = ההכרעה בין מז'ור למינור לא חדה.
+     מסמנים את זה במקום להציג מספר בטוח שאינו בטוח. */
+  const keyWeak = m.keyMargin < 0.08;
+  $('an-stats').innerHTML = [
+    anStat(m.bpm, 'BPM'),
+    anStat(m.key, 'סולם', keyWeak),
+    anStat(`${m.tonicHz}Hz`, 'תדר יסוד', keyWeak),
+    anStat(`${Math.round(m.percussive * 100)}%`, 'כלי הקשה'),
+    anStat(`${m.centroid}Hz`, 'מרכז ספקטרלי'),
+    anStat(`${Math.round(m.subRatio * 100)}%`, 'תחתונים'),
+  ].join('');
+
+  anTune = { scale: anResult.engine.melodyScale, timbre: anResult.engine.timbre, tempo: 1 };
+  anPaintTune();
+  $('an-result').hidden = false;
+}
+
+function anPaintTune() {
+  for (const [id, key, val] of [
+    ['an-scale', 'scale', anTune.scale],
+    ['an-timbre', 'timbre', anTune.timbre],
+    ['an-tempo', 'tempo', String(anTune.tempo)],
+  ]) {
+    $(id).querySelectorAll('button').forEach(b => {
+      const d = b.dataset.scale ?? b.dataset.timbre ?? b.dataset.tempo;
+      b.classList.toggle('active', d === val);
+    });
+  }
+}
+
+for (const [id, field] of [['an-scale', 'scale'], ['an-timbre', 'timbre'], ['an-tempo', 'tempo']]) {
+  $(id).addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    const v = b.dataset.scale ?? b.dataset.timbre ?? b.dataset.tempo;
+    anTune[field] = field === 'tempo' ? parseFloat(v) : v;
+    anPaintTune();
+  });
+}
+
+/* בונה יצירה מהמדידות + הכוונון הידני */
+function anBuildTrack(save) {
+  const m = anResult.measured;
+  const e = anResult.engine;
+  const flowByTimbre = ['flute', 'voice', 'strings'].includes(anTune.timbre);
+  const bpm = anTune.tempo && e.bpm ? Math.round(e.bpm * anTune.tempo) : undefined;
+  const base = m.fileName.replace(/\.[^.]+$/, '').slice(0, 40);
+  return {
+    id: save ? `mine-${Date.now().toString(36)}` : 'mine-preview',
+    category: 'mine',
+    freq: e.freq,
+    mode: 'isochronic',
+    beat: e.beat,
+    bpm,
+    pattern: bpm ? e.pattern : undefined,
+    energy: e.energy,
+    pad: e.pad,
+    melody: true,
+    flow: flowByTimbre,
+    melodyScale: anTune.scale,
+    timbre: anTune.timbre,
+    pace: e.pace,
+    ambience: e.ambience,
+    title: base || 'יצירה משלי',
+    sub: `${bpm ? bpm + ' BPM · ' : ''}${m.key} · ${e.freq}Hz`,
+    desc: `נוצר מניתוח סגנון של "${base}". נמדדו טמפו ${m.bpm}, סולם ${m.key}, `
+        + `${Math.round(m.percussive * 100)}% כלי הקשה ומרכז ספקטרלי ${m.centroid}Hz — `
+        + `ומהם המנוע כותב מוזיקה מקורית משלו באותה רוח.`,
+    tags: ['שלי', SCALE_LABEL[anTune.scale] || '', bpm ? `${bpm} BPM` : 'ללא קצב'].filter(Boolean),
+    colors: ['#e8c082', '#2a1a3a'],
+    glyph: '✎',
+    ambienceNote: undefined,
+  };
+}
+
+$('an-file').addEventListener('change', async e => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  $('an-result').hidden = true;
+  $('an-progress').hidden = false;
+  const setProg = (label, p) => {
+    $('an-prog-label').textContent = label;
+    $('an-prog-fill').style.width = `${Math.round(p * 100)}%`;
+  };
+  setProg('קורא את הקובץ…', 0.02);
+  try {
+    anResult = await analyzeFile(file, setProg);
+    setProg('הושלם', 1);
+    setTimeout(() => { $('an-progress').hidden = true; }, 400);
+    anRenderResult();
+  } catch (err) {
+    $('an-progress').hidden = true;
+    console.warn('analyze failed:', err);
+    toast('לא הצלחתי לקרוא את הקובץ — נסו פורמט אחר');
+  } finally {
+    e.target.value = '';           // כדי שאפשר יהיה לבחור שוב את אותו קובץ
+  }
+});
+
+$('an-play').addEventListener('click', () => {
+  if (!anResult) return;
+  const t = anBuildTrack(false);
+  byId[t.id] = t;
+  playTrack(t);
+  openPlayer();
+});
+
+$('an-save').addEventListener('click', () => {
+  if (!anResult) return;
+  const t = anBuildTrack(true);
+  state.userTracks = [...(state.userTracks || []), t];
+  TRACKS.push(t);
+  byId[t.id] = t;
+  saveState();
+  renderChips();
+  renderLibrary();
+  toast(`"${t.title}" נשמר לספרייה ✎`);
+});
 
 /* ------------------------------ אתחול ------------------------------ */
 els.pVolume.value = state.volume;
