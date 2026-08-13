@@ -1061,3 +1061,12 @@ input[type='range']::-moz-range-thumb {
   font-family: inherit; font-size: 11.5px; font-weight: 700;
   color: var(--text-dim); text-decoration: underline;
 }
+
+.an-warn {
+  margin-top: 4px; padding: 13px 15px; border-radius: var(--radius-sm);
+  background: rgba(232, 192, 130, 0.07);
+  border: 1px solid rgba(232, 192, 130, 0.2);
+  font-size: 11.5px; line-height: 1.75; color: var(--text-dim);
+}
+.an-warn strong { color: var(--gold); font-weight: 800; }
+.an-warn em { font-style: normal; color: var(--text); }

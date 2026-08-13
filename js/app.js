@@ -1707,6 +1707,17 @@ async function stopListening() {
   let at = 0;
   for (const c of chunks) { y.set(c, at); at += c.length; }
 
+  /* הקלטה כמעט שקטה מייצרת מדידות חסרות משמעות. עדיף לומר
+     שלא נקלט צליל מאשר להציג טמפו וסולם שנשלפו מרעש רקע —
+     וזה בדיוק מה שקורה כשנגינה ממכשיר אחר נעצרה עם פתיחת המיקרופון. */
+  let rms = 0;
+  for (let i = 0; i < total; i++) rms += y[i] * y[i];
+  rms = Math.sqrt(rms / total);
+  if (rms < 0.004) {
+    toast('כמעט לא נקלט צליל — בדקו שהמוזיקה מתנגנת ושהמיקרופון לא חסום');
+    return;
+  }
+
   $('an-progress').hidden = false;
   anSetProgress('מכין את ההקלטה…', 0.05);
   try {
