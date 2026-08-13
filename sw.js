@@ -1,5 +1,5 @@
 /* RESONANCE · Service Worker — עבודה מלאה אופליין */
-const CACHE = 'resonance-v33';
+const CACHE = 'resonance-v34';
 const ASSETS = [
   './',
   './index.html',

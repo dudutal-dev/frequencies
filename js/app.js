@@ -56,6 +56,8 @@ const els = {
   miniSub: $('mini-sub'), miniPlay: $('mini-play'), miniNext: $('mini-next'),
   player: $('player'), pClose: $('p-close'), pAdd: $('p-add'), pFav: $('p-fav'),
   pJourney: $('p-journey'), pjName: $('pj-name'), pjStep: $('pj-step'), pjFill: $('pj-fill'),
+  pjScrub: $('pj-scrub'), pjThumb: $('pj-thumb'), pjTicks: $('pj-ticks'),
+  pjElapsed: $('pj-elapsed'), pjTotal: $('pj-total'), pjHint: $('pj-hint'),
   pMode: $('p-mode'), pTitle: $('p-title'), pSub: $('p-sub'), pDesc: $('p-desc'), pTags: $('p-tags'),
   pPrev: $('p-prev'), pPlay: $('p-play'), pNext: $('p-next'),
   pTimer: $('p-timer'), pInstrument: $('p-instrument'), pSpeakers: $('p-speakers'),
@@ -896,9 +898,93 @@ seq.onStep = async track => {
 };
 
 seq.onTick = (remaining, total) => {
-  els.pjFill.style.width = `${((total - remaining) / total) * 100}%`;
+  /* בזמן גרירה האצבע שולטת בפס — לא נותנים לשעון להילחם בה */
+  if (!scrubbing) paintProgress(seq.elapsed);
   els.pjStep.textContent = `שלב ${seq.index + 1}/${seq.total} · נותרו ${fmtTime(remaining)}`;
 };
+
+/* ------------------------------ פס גרירה במסע ------------------------------
+   המסעות והפלייליסטים הם הדבר היחיד באפליקציה שיש לו ציר זמן אמיתי:
+   סכום כל השלבים. הפס מייצג את המסע כולו, וגרירה בו קופצת לנקודה —
+   גם אם היא באמצע שלב אחר לגמרי.
+   ---------------------------------------------------------------------- */
+let scrubbing = false;
+
+/* RTL: ההתקדמות נעה מימין לשמאל, ולכן היחס נמדד מהקצה הימני */
+function scrubFraction(clientX) {
+  const r = els.pjScrub.getBoundingClientRect();
+  if (!r.width) return 0;
+  return Math.max(0, Math.min(1, (r.right - clientX) / r.width));
+}
+
+function paintProgress(abs) {
+  const total = seq.totalSeconds;
+  const pct = total ? Math.max(0, Math.min(1, abs / total)) * 100 : 0;
+  els.pjFill.style.width = `${pct}%`;
+  els.pjThumb.style.insetInlineStart = `${pct}%`;
+  els.pjElapsed.textContent = fmtTime(abs);
+  els.pjTotal.textContent = fmtTime(total);
+  els.pjScrub.setAttribute('aria-valuenow', Math.round(abs));
+  els.pjScrub.setAttribute('aria-valuemax', Math.round(total));
+  els.pjScrub.setAttribute('aria-valuetext', `${fmtTime(abs)} מתוך ${fmtTime(total)}`);
+}
+
+function renderTicks() {
+  const total = seq.totalSeconds;
+  if (!total) { els.pjTicks.innerHTML = ''; return; }
+  let acc = 0;
+  const marks = [];
+  for (let i = 0; i < seq.steps.length - 1; i++) {
+    acc += seq.steps[i].seconds;
+    marks.push(`<i style="inset-inline-start:${(acc / total) * 100}%"></i>`);
+  }
+  els.pjTicks.innerHTML = marks.join('');
+}
+
+function previewAt(abs) {
+  paintProgress(abs);
+  const { step, index } = seq.stepAt(abs);
+  els.pjHint.textContent = `${index + 1}. ${step.track.title}`;
+  els.pjHint.classList.add('on');
+}
+
+els.pjScrub.addEventListener('pointerdown', e => {
+  if (!seq.active) return;
+  scrubbing = true;
+  els.pjScrub.classList.add('dragging');
+  els.pjScrub.setPointerCapture(e.pointerId);
+  previewAt(scrubFraction(e.clientX) * seq.totalSeconds);
+});
+
+els.pjScrub.addEventListener('pointermove', e => {
+  if (!scrubbing) return;
+  e.preventDefault();
+  previewAt(scrubFraction(e.clientX) * seq.totalSeconds);
+});
+
+function endScrub(e, commit) {
+  if (!scrubbing) return;
+  scrubbing = false;
+  els.pjScrub.classList.remove('dragging');
+  els.pjHint.classList.remove('on');
+  try { els.pjScrub.releasePointerCapture(e.pointerId); } catch {}
+  if (commit) seq.seek(scrubFraction(e.clientX) * seq.totalSeconds);
+  paintProgress(seq.elapsed);
+}
+els.pjScrub.addEventListener('pointerup', e => endScrub(e, true));
+els.pjScrub.addEventListener('pointercancel', e => endScrub(e, false));
+
+/* מקלדת — חיצים מזיזים דקה, Home/End לקצוות */
+els.pjScrub.addEventListener('keydown', e => {
+  if (!seq.active) return;
+  const jump = { ArrowRight: -60, ArrowLeft: 60, ArrowUp: 60, ArrowDown: -60 }[e.key];
+  if (jump !== undefined) { seq.seek(seq.elapsed + jump); }
+  else if (e.key === 'Home') seq.seek(0);
+  else if (e.key === 'End') seq.seek(seq.totalSeconds);
+  else return;
+  e.preventDefault();
+  paintProgress(seq.elapsed);
+});
 
 seq.onEnd = completed => {
   if (completed) {
@@ -918,7 +1004,8 @@ function updateJourneyUI() {
   els.pNext.hidden = !on;
   if (on) {
     els.pjName.textContent = seq.name;
-    els.pjFill.style.width = '0%';
+    renderTicks();
+    paintProgress(seq.elapsed);
   }
 }
 
