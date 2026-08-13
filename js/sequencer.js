@@ -31,16 +31,76 @@ export class Sequencer {
     this._enterStep();
   }
 
-  _enterStep() {
+  _startClock() {
     const step = this.steps[this.index];
-    this.remaining = step.seconds;
-    this.onStep?.(step.track, this.index);
-    this.onTick?.(this.remaining, step.seconds, this.index);
     this._tick = setInterval(() => {
       this.remaining -= 1;
       this.onTick?.(Math.max(0, this.remaining), step.seconds, this.index);
       if (this.remaining <= 0) this.next();
     }, 1000);
+  }
+
+  /* offset = כמה שניות לתוך השלב מתחילים. 0 = מההתחלה */
+  _enterStep(offset = 0) {
+    const step = this.steps[this.index];
+    this.remaining = Math.max(1, step.seconds - offset);
+    this.onStep?.(step.track, this.index);
+    this.onTick?.(this.remaining, step.seconds, this.index);
+    this._startClock();
+  }
+
+  /* ------------------------------------------------------------
+     קפיצה לנקודה מוחלטת ברצף כולו (בשניות מתחילת המסע).
+     אם הנקודה נופלת בשלב שכבר מתנגן — מזיזים רק את השעון ולא
+     נוגעים באודיו, כדי שגרירה בתוך שלב לא תקטע את הצליל.
+     ------------------------------------------------------------ */
+  seek(abs) {
+    if (!this.active || !this.steps.length) return;
+    const total = this.totalSeconds;
+    abs = Math.max(0, Math.min(total - 1, abs));
+
+    let i = 0;
+    let acc = 0;
+    while (i < this.steps.length - 1 && acc + this.steps[i].seconds <= abs) {
+      acc += this.steps[i].seconds;
+      i += 1;
+    }
+    const offset = abs - acc;
+    const sameStep = i === this.index;
+
+    this.stopTimers();
+    this.index = i;
+    if (sameStep) {
+      const step = this.steps[i];
+      this.remaining = Math.max(1, step.seconds - offset);
+      this.onTick?.(this.remaining, step.seconds, i);
+      this._startClock();
+    } else {
+      this._enterStep(offset);
+    }
+  }
+
+  /* אורך הרצף כולו, ומיקום מוחלט בתוכו — הבסיס לפס הגרירה */
+  get totalSeconds() {
+    return this.steps.reduce((s, st) => s + st.seconds, 0);
+  }
+
+  get elapsed() {
+    if (!this.steps.length) return 0;
+    let acc = 0;
+    for (let i = 0; i < this.index; i++) acc += this.steps[i].seconds;
+    return acc + (this.steps[this.index].seconds - this.remaining);
+  }
+
+  /* השלב שנמצא בנקודה מוחלטת מסוימת — לתצוגת התצוגה-המקדימה בגרירה */
+  stepAt(abs) {
+    let acc = 0;
+    for (let i = 0; i < this.steps.length; i++) {
+      if (abs < acc + this.steps[i].seconds) return { step: this.steps[i], index: i };
+      acc += this.steps[i].seconds;
+    }
+    const i = this.steps.length - 1;
+    return { step: this.steps[i], index: i };
   }
 
   next() {
