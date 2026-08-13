@@ -17,7 +17,7 @@ function loadState() {
   const base = {
     favorites: [], recents: [], playlists: [], searches: [],
     volume: 0.7, timer: 0, instrument: 'auto', speakerMode: false,
-    lastView: 'home', lastTrack: null, userTracks: [],
+    lastView: 'home', lastTrack: null, userTracks: [], filter: 'all',
   };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -69,6 +69,7 @@ const els = {
   miniSub: $('mini-sub'), miniPlay: $('mini-play'), miniNext: $('mini-next'),
   player: $('player'), pClose: $('p-close'), pAdd: $('p-add'), pFav: $('p-fav'),
   pJourney: $('p-journey'), pjName: $('pj-name'), pjStep: $('pj-step'), pjFill: $('pj-fill'),
+  btnFilter: $('btn-filter'), filterBackdrop: $('filter-backdrop'), filterList: $('filter-list'),
   pjScrub: $('pj-scrub'), pjThumb: $('pj-thumb'), pjTicks: $('pj-ticks'),
   pjElapsed: $('pj-elapsed'), pjTotal: $('pj-total'), pjHint: $('pj-hint'),
   pMode: $('p-mode'), pTitle: $('p-title'), pSub: $('p-sub'), pDesc: $('p-desc'), pTags: $('p-tags'),
@@ -140,6 +141,8 @@ const ICONS = {
   eye: SVG('<path d="M5 20s6-9 15-9 15 9 15 9-6 9-15 9-15-9-15-9z"/><circle cx="20" cy="20" r="4.5"/>'),
   flame: SVG('<path d="M20 33c5.5 0 9-3.8 9-8.6 0-6.5-6-8-6-14.4-5 3-9 7.6-9 14.4 0 4.8 3 8.6 6 8.6z"/><path d="M20 33c-2.4 0-4-1.9-4-4.3 0-3 3-4 4-7 1.6 2.4 4 4 4 7 0 2.4-1.6 4.3-4 4.3z" opacity="0.55"/>'),
   serpent: SVG('<path d="M10 33c0-6 8-5 8-11S8 16 8 10c0-3 3-4 6-3"/><path d="M22 33c0-6 8-5 8-11s-6-6-6-10"/><circle cx="24" cy="9" r="2" fill="currentColor" stroke="none"/>'),
+  filter: SVG('<path d="M6 9h32l-13 15v10l-6 3V24z"/>'),
+  speaker: SVG('<path d="M10 17h7l9-7v28l-9-7h-7z"/><path d="M31 16a10 10 0 0 1 0 16"/>'),
   waveform: SVG('<path d="M6 24h4l3-11 4 22 4-16 3 9h10"/>'),
   pencil: SVG('<path d="M8 32l-2 6 6-2L34 12a3 3 0 0 0-4-4z"/><path d="M27 9l4 4"/>'),
   spiral: SVG('<path d="M20 20a3 3 0 1 1 3 3 6 6 0 1 1-6-6 9 9 0 1 1 9 9 12 12 0 1 1-12-12"/>'),
@@ -369,11 +372,12 @@ function journeyCoverHTML(j) {
 
 function renderHome() {
   const hero = byId['dna-528'] || TRACKS[0];
-  const recents = state.recents.map(id => byId[id]).filter(Boolean);
+  const recents = filterTracks(state.recents.map(id => byId[id]).filter(Boolean));
   /* אריחי קיצור — אחרונים, ומושלם בנבחרות אם אין מספיק */
-  const quick = [...recents, ...byCategory('featured').filter(t => !recents.includes(t))].slice(0, 6);
+  const quick = filterTracks(
+    [...recents, ...byCategory('featured').filter(t => !recents.includes(t))]).slice(0, 6);
 
-  let html = `
+  let html = filterBarHTML() + `
     <div class="hero" data-id="${hero.id}">
       <div class="hero-label">✦ יצירת היום</div>
       <div class="hero-title">${hero.title}</div>
@@ -474,6 +478,7 @@ function renderHome() {
 }
 
 function sectionHTML(cat, tracks) {
+  tracks = filterTracks(tracks);
   if (!tracks.length) return '';
   return `
     <div class="section">
@@ -484,6 +489,107 @@ function sectionHTML(cat, tracks) {
       <div class="row">${tracks.map(cardHTML).join('')}</div>
     </div>`;
 }
+
+/* ------------------------------------------------------------
+   סינון גלובלי. בניגוד לצ'יפים של הספרייה, שהם מקומיים לטאב
+   אחד, הסינון הזה חל על כל האפליקציה בבת אחת — בית, מסעות,
+   חיפוש, ספרייה ומועדפים — כדי שאפשר יהיה לומר "רק מלודיות"
+   פעם אחת ולראות את כל האפליקציה בעדשה הזו.
+   ------------------------------------------------------------ */
+const FILTERS = [
+  { id: 'all', icon: 'infinity', label: 'הכול',
+    sub: 'בלי סינון', test: () => true },
+  { id: 'melody', icon: 'note', label: 'מלודיות בלבד',
+    sub: 'יצירות שיש בהן מוזיקה מתנגנת — לא צליל קבוע',
+    test: t => !!t.melody || t.mode === 'melodic' },
+  { id: 'pure', icon: 'ripple', label: 'תדרים טהורים בלבד',
+    sub: 'צליל יציב ללא מלודיה — לעבודה, שינה ומדיטציה',
+    test: t => !t.melody && t.mode !== 'melodic' },
+  { id: 'rhythm', icon: 'drum', label: 'עם קצב',
+    sub: 'כל מה שיש בו גרוב ותופים',
+    test: t => !!t.bpm },
+  { id: 'calmOnly', icon: 'moon', label: 'בלי קצב',
+    sub: 'שקט — בלי תופים ובלי בס',
+    test: t => !t.bpm },
+  { id: 'speakers', icon: 'speaker', label: 'מתאים לרמקולים',
+    sub: 'עובד במערכת סטריאו בלי אוזניות',
+    test: t => t.mode !== 'binaural' },
+];
+const filterById = id => FILTERS.find(f => f.id === id) || FILTERS[0];
+
+const passes = t => filterById(state.filter).test(t);
+const filterTracks = list => (state.filter === 'all' ? list : list.filter(passes));
+/* מסע עובר אם רוב השלבים שלו עוברים — אחרת מסע של שבעה שלבים
+   היה נעלם בגלל שלב בודד, או שורד בזכות שלב בודד */
+function journeyPasses(j) {
+  if (state.filter === 'all') return true;
+  const steps = j.steps.map(s => byId[s.id]).filter(Boolean);
+  if (!steps.length) return false;
+  return steps.filter(passes).length * 2 >= steps.length;
+}
+const filterJourneys = list => (state.filter === 'all' ? list : list.filter(journeyPasses));
+
+/* פס המצב שמופיע בראש טאב מסונן */
+function filterBarHTML() {
+  if (state.filter === 'all') return '';
+  const f = filterById(state.filter);
+  const n = TRACKS.filter(passes).length;
+  return `
+    <div class="filter-bar">
+      ${ICONS[f.icon] || ''}
+      <span>מסונן: ${f.label} · ${n} יצירות</span>
+      <button class="filter-bar-clear" data-filter-clear="1">ביטול</button>
+    </div>`;
+}
+
+function renderFilterButton() {
+  els.btnFilter.innerHTML = ICONS.filter;
+  els.btnFilter.classList.toggle('on', state.filter !== 'all');
+  els.btnFilter.setAttribute('aria-label', `סינון תוכן — ${filterById(state.filter).label}`);
+}
+
+function renderFilterSheet() {
+  els.filterList.innerHTML = FILTERS.map(f => {
+    const n = f.id === 'all' ? TRACKS.length : TRACKS.filter(f.test).length;
+    return `
+      <button class="filter-opt ${f.id === state.filter ? 'active' : ''}" data-filter="${f.id}">
+        ${ICONS[f.icon] || ''}
+        <span class="filter-opt-meta">
+          <span class="filter-opt-t">${f.label}</span>
+          <span class="filter-opt-s">${f.sub}</span>
+        </span>
+        <span class="filter-opt-n">${n}</span>
+      </button>`;
+  }).join('');
+}
+
+function applyFilter(id) {
+  state.filter = id;
+  saveState();
+  renderFilterButton();
+  renderFilterSheet();
+  /* כל הטאבים נבנים מחדש — הסינון גלובלי, לא מקומי */
+  renderHome(); renderLibrary(); renderJourneys(); renderPlaylists();
+  renderFavorites();
+  if ($('view-search').classList.contains('active')) renderSearch();
+  markPlaying();
+}
+
+els.btnFilter.addEventListener('click', () => {
+  renderFilterSheet();
+  els.filterBackdrop.hidden = false;
+});
+els.filterBackdrop.addEventListener('click', e => {
+  const opt = e.target.closest('[data-filter]');
+  if (opt) {
+    applyFilter(opt.dataset.filter);
+    els.filterBackdrop.hidden = true;
+    const f = filterById(state.filter);
+    toast(state.filter === 'all' ? 'הסינון בוטל' : `מסונן: ${f.label}`);
+    return;
+  }
+  if (e.target === els.filterBackdrop) els.filterBackdrop.hidden = true;
+});
 
 /* ------------------------------ ספרייה ------------------------------ */
 let activeChip = 'all';
@@ -505,6 +611,7 @@ function renderLibrary() {
   let tracks = activeChip === 'all' ? TRACKS
              : activeChip === 'speakers' ? TRACKS.filter(t => t.mode !== 'binaural')
              : byCategory(activeChip);
+  tracks = filterTracks(tracks);
   if (q) {
     tracks = tracks.filter(t =>
       [t.title, t.sub, t.desc, String(t.freq), ...(t.tags || [])].join(' ').includes(q)
@@ -660,12 +767,14 @@ function renderSearch() {
     return;
   }
 
-  const { tracks, journeys } = searchAll(q);
+  let { tracks, journeys } = searchAll(q);
+  tracks = filterTracks(tracks);
+  journeys = filterJourneys(journeys);
   if (!tracks.length && !journeys.length) {
     body.innerHTML = `<div class="empty-note">לא נמצאו תוצאות עבור "${q}".<br>נסו תדר (528), מטרה (שינה) או תחושה (רוגע).</div>`;
     return;
   }
-  body.innerHTML = `
+  body.innerHTML = filterBarHTML() + `
     ${journeys.length ? `
       <div class="section-head" style="padding-top:12px">
         <div class="section-title"><span class="sec-icon">✦</span>מסעות</div>
@@ -692,7 +801,7 @@ function rememberSearch(q) {
 
 /* ------------------------------ מועדפים ------------------------------ */
 function renderFavorites() {
-  const favs = state.favorites.map(id => byId[id]).filter(Boolean);
+  const favs = filterTracks(state.favorites.map(id => byId[id]).filter(Boolean));
   els.favList.innerHTML = favs.length
     ? favs.map(t => `
         <div class="list-item" data-id="${t.id}">
@@ -703,7 +812,9 @@ function renderFavorites() {
           </div>
           <button class="li-fav" data-unfav="${t.id}" aria-label="הסרה ממועדפים">♥</button>
         </div>`).join('')
-    : '<div class="empty-note">עדיין אין מועדפים.<br>לחצו ♡ בנגן כדי לשמור יצירות שאהבתם.</div>';
+    : `<div class="empty-note">${state.filter === 'all'
+        ? 'עדיין אין מועדפים.<br>לחצו ♡ בנגן כדי לשמור יצירות שאהבתם.'
+        : 'אין מועדפים שעונים על הסינון הפעיל.'}</div>`;
   markPlaying();
 }
 
@@ -736,7 +847,10 @@ function journeyCardHTML(j) {
 }
 
 function renderJourneys() {
-  els.journeysList.innerHTML = JOURNEYS.map(journeyCardHTML).join('');
+  const list = filterJourneys(JOURNEYS);
+  els.journeysList.innerHTML = filterBarHTML() + (list.length
+    ? list.map(journeyCardHTML).join('')
+    : '<div class="empty-note">אין מסעות שעונים על הסינון הפעיל.</div>');
 }
 
 /* ------------------------------ פלייליסטים ------------------------------ */
@@ -1314,6 +1428,7 @@ document.addEventListener('click', async e => {
 
   if (e.target.closest('[data-goto-journeys]')) { switchView('journeys'); return; }
   if (e.target.closest('[data-goto-analyze]')) { switchView('analyze'); return; }
+  if (e.target.closest('[data-filter-clear]')) { applyFilter('all'); toast('הסינון בוטל'); return; }
   if (e.target.closest('[data-speakers-on]')) { await setSpeakerMode(true); return; }
   if (e.target.closest('[data-stereo-all]')) {
     activeChip = 'speakers';
@@ -1565,6 +1680,7 @@ engine.speakerMode = state.speakerMode;
 updateSpeakerButton();
 els.pInstrument.textContent = instrumentLabel();
 els.pInstrument.classList.toggle('armed', state.instrument !== 'auto');
+renderFilterButton();
 renderHome();
 renderChips();
 renderLibrary();
