@@ -83,11 +83,30 @@
             <strong>הכל רץ על המכשיר שלכם. שום קובץ לא נשלח לשום מקום.</strong>
           </p>
 
-          <label class="an-pick">
-            <input type="file" id="an-file" accept="audio/*" hidden />
-            <span class="an-pick-btn">בחירת קובץ שמע</span>
-            <span class="an-pick-note">MP3 · M4A · WAV · FLAC</span>
-          </label>
+          <div class="an-sources">
+            <button class="an-src" id="an-listen">
+              <span class="an-src-t">האזנה חיה</span>
+              <span class="an-src-s">נגנו את השיר — מיוטיוב, מהסטריאו, מכל מקום — והאפליקציה תקשיב ותנתח</span>
+            </button>
+
+            <label class="an-src an-src-file">
+              <input type="file" id="an-file" accept="audio/*" hidden />
+              <span class="an-src-t">קובץ מהמכשיר</span>
+              <span class="an-src-s">MP3 · M4A · WAV · FLAC</span>
+            </label>
+
+            <button class="an-src an-src-tab" id="an-tab" hidden>
+              <span class="an-src-t">מטאב בדפדפן</span>
+              <span class="an-src-s">איכות גבוהה יותר ממיקרופון — במחשב בלבד</span>
+            </button>
+          </div>
+
+          <div class="an-live" id="an-live" hidden>
+            <div class="an-live-time" id="an-live-time">0:00</div>
+            <div class="an-meter"><div class="an-meter-fill" id="an-meter"></div></div>
+            <div class="an-live-note" id="an-live-note">מקשיב… נגנו את הקטע</div>
+            <button class="an-stop" id="an-stop">עצירה וניתוח</button>
+          </div>
 
           <div class="an-progress" id="an-progress" hidden>
             <div class="an-prog-bar"><div class="an-prog-fill" id="an-prog-fill"></div></div>

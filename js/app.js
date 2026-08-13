@@ -8,7 +8,7 @@ import { JOURNEYS, journeyById } from './journeys.js';
 import { FrequencyEngine } from './engine.js';
 import { MandalaVisualizer } from './visualizer.js';
 import { Sequencer } from './sequencer.js';
-import { analyzeFile, toEngine } from './analyzer.js';
+import { analyzeFile, analyzeSamples, toEngine } from './analyzer.js';
 
 /* ------------------------------ מצב + Auto-Save ------------------------------ */
 const SAVE_KEY = 'resonance_state_v1';
@@ -1621,15 +1621,130 @@ function anBuildTrack(save) {
   };
 }
 
+/* ------------------------------------------------------------
+   האזנה חיה. מקליטים מה שמתנגן בחדר (או מטאב במחשב), והמנתח
+   מסנן החוצה דיבור, פרסומות ושקט לפני שהוא מודד משהו — ולכן
+   אין צורך לתפוס בדיוק את הרגע שבו המוזיקה מתחילה.
+   ההקלטה לא נשמרת ולא נשלחת לשום מקום; רק המדידות שורדות.
+   ------------------------------------------------------------ */
+const MAX_LISTEN = 45;    // שניות
+const MIN_LISTEN = 10;
+let listening = null;     // { ctx, stream, proc, chunks, started, timer }
+
+function anSetProgress(label, p) {
+  $('an-prog-label').textContent = label;
+  $('an-prog-fill').style.width = `${Math.round(p * 100)}%`;
+}
+
+async function startListening(getStream, sourceName) {
+  if (listening) return;
+  if (engine.isPlaying) stopPlayback();      // אחרת נקליט את עצמנו
+  let stream;
+  try {
+    stream = await getStream();
+  } catch (err) {
+    toast(err?.name === 'NotAllowedError'
+      ? 'צריך אישור גישה למיקרופון כדי להאזין'
+      : 'לא הצלחתי לפתוח את מקור השמע');
+    return;
+  }
+  if (!stream.getAudioTracks().length) {
+    stream.getTracks().forEach(t => t.stop());
+    toast('לא נבחר ערוץ שמע — סמנו "שיתוף אודיו" בבורר');
+    return;
+  }
+
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  const ctx = new Ctx();
+  const src = ctx.createMediaStreamSource(stream);
+  const proc = ctx.createScriptProcessor(4096, 1, 1);
+  /* מנותב דרך שער אילם — בלי זה נוצר משוב אקוסטי מיידי */
+  const mute = ctx.createGain();
+  mute.gain.value = 0;
+  const chunks = [];
+
+  proc.onaudioprocess = e => {
+    const d = e.inputBuffer.getChannelData(0);
+    chunks.push(new Float32Array(d));
+    let s = 0;
+    for (let i = 0; i < d.length; i++) s += d[i] * d[i];
+    const rms = Math.sqrt(s / d.length);
+    $('an-meter').style.width = `${Math.min(100, rms * 320)}%`;
+  };
+  src.connect(proc).connect(mute).connect(ctx.destination);
+
+  listening = { ctx, stream, proc, src, mute, chunks, started: Date.now(), sourceName };
+  $('an-live').hidden = false;
+  $('an-result').hidden = true;
+  $('an-stop').disabled = true;
+  $('an-live-note').textContent = `מקשיב דרך ${sourceName}… נגנו את הקטע`;
+
+  listening.timer = setInterval(() => {
+    const sec = Math.floor((Date.now() - listening.started) / 1000);
+    $('an-live-time').textContent = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+    if (sec >= MIN_LISTEN) {
+      $('an-stop').disabled = false;
+      $('an-live-note').textContent = 'אפשר לעצור בכל רגע — ככל שארוך יותר, מדויק יותר';
+    }
+    if (sec >= MAX_LISTEN) stopListening();
+  }, 250);
+}
+
+async function stopListening() {
+  if (!listening) return;
+  const { ctx, stream, proc, src, mute, chunks, timer } = listening;
+  clearInterval(timer);
+  const sr = ctx.sampleRate;
+  try { proc.onaudioprocess = null; src.disconnect(); proc.disconnect(); mute.disconnect(); } catch {}
+  stream.getTracks().forEach(t => t.stop());
+  ctx.close?.();
+  listening = null;
+  $('an-live').hidden = true;
+
+  const total = chunks.reduce((s, c) => s + c.length, 0);
+  if (total < sr * 4) { toast('ההקלטה קצרה מדי לניתוח'); return; }
+  const y = new Float32Array(total);
+  let at = 0;
+  for (const c of chunks) { y.set(c, at); at += c.length; }
+
+  $('an-progress').hidden = false;
+  anSetProgress('מכין את ההקלטה…', 0.05);
+  try {
+    anResult = await analyzeSamples(y, sr, anSetProgress, { fileName: 'הקלטה חיה' });
+    anSetProgress('הושלם', 1);
+    setTimeout(() => { $('an-progress').hidden = true; }, 400);
+    anRenderResult();
+  } catch (err) {
+    $('an-progress').hidden = true;
+    console.warn('live analyze failed:', err);
+    toast('הניתוח נכשל — נסו הקלטה ארוכה יותר');
+  }
+}
+
+$('an-listen').addEventListener('click', () => startListening(
+  () => navigator.mediaDevices.getUserMedia({
+    audio: {
+      echoCancellation: false, noiseSuppression: false,
+      autoGainControl: false, channelCount: 1,
+    },
+  }),
+  'מיקרופון'));
+
+/* שיתוף טאב קיים רק בדפדפני מחשב */
+if (navigator.mediaDevices?.getDisplayMedia) {
+  $('an-tab').hidden = false;
+  $('an-tab').addEventListener('click', () => startListening(
+    () => navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }),
+    'טאב'));
+}
+$('an-stop').addEventListener('click', stopListening);
+
 $('an-file').addEventListener('change', async e => {
   const file = e.target.files?.[0];
   if (!file) return;
   $('an-result').hidden = true;
   $('an-progress').hidden = false;
-  const setProg = (label, p) => {
-    $('an-prog-label').textContent = label;
-    $('an-prog-fill').style.width = `${Math.round(p * 100)}%`;
-  };
+  const setProg = anSetProgress;
   setProg('קורא את הקובץ…', 0.02);
   try {
     anResult = await analyzeFile(file, setProg);

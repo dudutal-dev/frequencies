@@ -299,11 +299,106 @@ async function decodeToMono(file, onProgress) {
   };
 }
 
+/* דגימות גולמיות בכל תדר דגימה → מונו ב-22050 */
+async function resample(y, srIn) {
+  if (srIn === SR) return y;
+  const ctx = new OfflineAudioContext(1, Math.ceil((y.length * SR) / srIn), SR);
+  const buf = ctx.createBuffer(1, y.length, srIn);
+  buf.copyToChannel(Float32Array.from(y), 0);
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  src.connect(ctx.destination);
+  src.start();
+  return (await ctx.startRendering()).getChannelData(0);
+}
+
+/* ------------------------------------------------------------
+   שער המוזיקליות.
+
+   כשמקליטים "מה שמתנגן עכשיו" נכנס גם מה שאינו מוזיקה — דיבור,
+   פרסומת, שקט, מישהו שמדבר מעל. הקטע נחתך לחלונות, וכל חלון
+   נשקל בשני מדדים:
+
+     טונאליות — כמה מהאנרגיה יושבת בפסגות ספקטרליות חדות.
+                 צליל מנוגן מייצר פסגות יציבות; דיבור ורעש לא.
+     רציפות   — איזה חלק מהמסגרות בחלון בכלל מעל רצפת אנרגיה.
+                 למוזיקה יש מרקם רצוף; לדיבור יש חורים בין הברות.
+
+   רק חלונות שעוברים את שניהם נכנסים לניתוח. כך פרסומת בהתחלה
+   או דיבור באמצע פשוט לא משפיעים על התוצאה.
+   ------------------------------------------------------------ */
+function windowScores(A, framesPerWin) {
+  const out = [];
+  for (let start = 0; start + framesPerWin <= A.length; start += framesPerWin) {
+    let energy = 0, tonalSum = 0, live = 0;
+    for (let f = start; f < start + framesPerWin; f++) {
+      const fr = A[f];
+      let tot = 0, peak = 0;
+      for (let b = 2; b < fr.length - 1; b++) {
+        tot += fr[b];
+        if (fr[b] > fr[b - 1] && fr[b] >= fr[b + 1]) peak += fr[b];
+      }
+      energy += tot;
+      if (tot > 0) tonalSum += peak / tot;
+    }
+    const meanEnergy = energy / framesPerWin;
+    out.push({ start, frames: framesPerWin, meanEnergy, tonal: tonalSum / framesPerWin, live });
+  }
+  /* רצפת האנרגיה נקבעת יחסית לחלון החזק ביותר, כדי שהשער
+     יעבוד גם בהקלטה שקטה וגם בהקלטה חזקה */
+  const loudest = Math.max(...out.map(w => w.meanEnergy), 1e-9);
+  for (const w of out) w.rel = w.meanEnergy / loudest;
+  return out;
+}
+
+function gateMusical(A, framesPerWin) {
+  const wins = windowScores(A, framesPerWin);
+  if (wins.length < 2) return { frames: null, wins, keptWins: wins.length, totalWins: wins.length };
+  const keep = wins.filter(w => w.rel > 0.12 && w.tonal > 0.42);
+  /* אם השער פסל כמעט הכל, עדיף לנתח הכל מאשר להחזיר כלום */
+  if (keep.length < Math.max(1, Math.ceil(wins.length * 0.15))) {
+    return { frames: null, wins, keptWins: wins.length, totalWins: wins.length, bypassed: true };
+  }
+  const frames = [];
+  for (const w of keep) for (let f = w.start; f < w.start + w.frames; f++) frames.push(A[f]);
+  return { frames, wins, keptWins: keep.length, totalWins: wins.length };
+}
+
 export async function analyzeFile(file, onProgress = () => {}) {
   const { y, fullDuration, windowStart, windowDur } = await decodeToMono(file, onProgress);
+  return analyzeSamples(y, SR, onProgress, { fullDuration, windowStart, windowDur, fileName: file.name });
+}
+
+/* ניתוח דגימות גולמיות — משמש גם את הקובץ וגם את ההאזנה החיה */
+export async function analyzeSamples(raw, srIn, onProgress = () => {}, meta = {}) {
+  onProgress('מכין את האות…', 0.12);
+  const y = await resample(raw, srIn);
+  const windowDur = meta.windowDur ?? y.length / SR;
+  const fullDuration = meta.fullDuration ?? windowDur;
+  const windowStart = meta.windowStart ?? 0;
 
   onProgress('מנתח קצב ואונסטים…', 0.2);
-  const A = await spectrogram(y, N_A, HOP_A, p => onProgress('מנתח קצב ואונסטים…', 0.2 + p * 0.3));
+  let A = await spectrogram(y, N_A, HOP_A, p => onProgress('מנתח קצב ואונסטים…', 0.2 + p * 0.3));
+
+  /* מסננים החוצה דיבור, פרסומות ושקט לפני שמודדים כל דבר אחר */
+  const framesPerWin = Math.max(8, Math.round((6 * SR) / HOP_A));
+  const gate = gateMusical(A, framesPerWin);
+  const musicalSec = Math.round(((gate.frames ? gate.frames.length : A.length) * HOP_A) / SR);
+  const droppedSec = Math.round(((A.length - (gate.frames ? gate.frames.length : A.length)) * HOP_A) / SR);
+
+  /* אותו סינון חייב לחול גם על מעבר הכרומה — אחרת הדיבור
+     שסיננו החוצה עדיין יקבע את הסולם */
+  let yMus = y;
+  if (gate.frames) {
+    const keep = gate.wins.filter(w => w.rel > 0.12 && w.tonal > 0.42);
+    const parts = keep.map(w => y.subarray(w.start * HOP_A,
+      Math.min(y.length, (w.start + w.frames) * HOP_A + N_A)));
+    const len = parts.reduce((s, p) => s + p.length, 0);
+    yMus = new Float32Array(len);
+    let at = 0;
+    for (const p of parts) { yMus.set(p, at); at += p.length; }
+    A = gate.frames;
+  }
 
   const env = onsetEnvelope(A);
   const { bpm, strength } = estimateTempo(env, HOP_A);
@@ -319,7 +414,7 @@ export async function analyzeFile(file, onProgress = () => {}) {
   for (let i = 1; i < env.length - 1; i++) {
     if (env[i] > mean + sd && env[i] >= env[i - 1] && env[i] > env[i + 1]) hits++;
   }
-  const onsetsPerSec = hits / (windowDur || 1);
+  const onsetsPerSec = hits / (musicalSec || windowDur || 1);
 
   onProgress('מפריד הרמוניה מהקשה…', 0.55);
   const H = movAvgTime(A, 17);
@@ -353,7 +448,7 @@ export async function analyzeFile(file, onProgress = () => {}) {
   const flatness = cells ? Math.exp(logSum / cells) / (linSum / cells || 1) : 0;
 
   onProgress('מזהה סולם…', 0.82);
-  const B = await spectrogram(y, N_B, HOP_B);
+  const B = await spectrogram(yMus.length > N_B ? yMus : y, N_B, HOP_B);
   const chroma = chromaVector(B, N_B);
   const key = estimateKey(chroma);
 
@@ -364,7 +459,9 @@ export async function analyzeFile(file, onProgress = () => {}) {
 
   onProgress('מסיים…', 0.95);
   const measured = {
-    fileName: file.name,
+    fileName: meta.fileName || 'הקלטה חיה',
+    musicalSec, droppedSec,
+    gateBypassed: !!gate.bypassed,
     fullDuration,
     windowStart: Math.round(windowStart),
     windowDur: Math.round(windowDur),
