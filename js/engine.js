@@ -335,13 +335,15 @@ export class FrequencyEngine {
         o.frequency.exponentialRampToValueAtTime(f * mult, t + glide);
       }
 
-      /* נשימה: תפיחה איטית ודעיכה חלקית — התווים חופפים */
+      /* נשימה: תפיחה איטית ודעיכה *חלקית*. הרצפה גבוהה בכוונה —
+         הקו לא נופל לאפס בין תו לתו, ולכן הוא נשמע לגאטו אחד
+         מתמשך ולא סדרה של תווים נפרדים. */
       const peak = (0.16 + Math.random() * 0.07) * scale;
       const cur = Math.max(0.0001, vg.gain.value);
       vg.gain.cancelScheduledValues(t);
       vg.gain.setValueAtTime(cur, t);
       vg.gain.exponentialRampToValueAtTime(peak, t + pace * 0.44);
-      vg.gain.exponentialRampToValueAtTime(0.025 * scale, t + pace * 0.96);
+      vg.gain.exponentialRampToValueAtTime(peak * 0.52, t + pace * 0.99);
 
       /* הפילטר נפתח יחד עם הנשימה — הצליל "מתבהר" ואז נסגר */
       const fc = Math.max(200, filt.frequency.value);
@@ -354,8 +356,10 @@ export class FrequencyEngine {
       pan.pan.setValueAtTime(pan.pan.value, t);
       pan.pan.linearRampToValueAtTime((Math.random() * 2 - 1) * 0.5, t + pace);
 
-      /* תזמון לא מדויק בכוונה — נשימה אנושית ולא רשת */
-      const next = pace * (0.82 + Math.random() * 0.4);
+      /* תזמון לא מדויק בכוונה — נשימה אנושית ולא רשת. הטווח
+         נגמר לפני שהדעיכה מסתיימת, כך שהתו הבא נכנס בזמן
+         שהקודם עוד מצלצל והגלישה ביניהם רציפה. */
+      const next = pace * (0.7 + Math.random() * 0.26);
       voice.timers.push(setTimeout(glideTo, next * 1000));
     };
     voice.timers.push(setTimeout(glideTo, 400));
@@ -896,37 +900,57 @@ export class FrequencyEngine {
 
     const mode = this.speakerMode && track.mode === 'binaural' ? 'isochronic' : track.mode;
 
+    /* ------------------------------------------------------------
+       שער התדר עצמו. הפעימות האיזוכרוניות יושבות כאן ורק כאן —
+       המלודיה, הפאד והאווירה מחוברים ישירות ל-vg ועוקפים אותו.
+       בלי ההפרדה הזו ה-LFO קוצץ את המלודיה שש עד עשר פעמים
+       בשנייה, ובמקום קו זורם נשמע צליל חוזר שקוטע אותה.
+       (שכבת הקצב כבר עקפה את זה מזמן; זו אותה סיבה בדיוק.)
+       ------------------------------------------------------------ */
+    const carrier = ctx.createGain();
+    carrier.connect(vg);
+    voice.nodes.push(carrier);
+
     if (mode === 'melodic') {
       /* דרון שקט של תדר היסוד + מלחין גנרטיבי מעליו */
-      voice.oscillators.push(...this._buildTone(track.freq, vg, 0.38));
+      voice.oscillators.push(...this._buildTone(track.freq, carrier, 0.38));
       this._startMelody(track, voice, vg);
     } else if (mode === 'binaural') {
       /* שתי אוזניים, שני תדרים — המוח שומע את ההפרש */
       const L = ctx.createStereoPanner(); L.pan.value = -1;
       const R = ctx.createStereoPanner(); R.pan.value = 1;
-      L.connect(vg); R.connect(vg);
+      L.connect(carrier); R.connect(carrier);
       voice.oscillators.push(
         ...this._buildTone(track.freq, L, 0.9),
         ...this._buildTone(track.freq + track.beat, R, 0.9),
       );
       voice.nodes.push(L, R);
     } else {
-      voice.oscillators.push(...this._buildTone(track.freq, vg));
+      voice.oscillators.push(...this._buildTone(track.freq, carrier));
     }
 
-    /* פעימות איזוכרוניות — LFO עמוק בתדר הביט */
+    /* ביצירה מלודית התדר הוא הבסיס ולא הכוכב: הוא יורד באיזון
+       כדי שהחלק *הפועם* יהיה נתח קטן מהתמהיל. ביצירת תדר טהור
+       הוא נשאר במלוא עוצמתו. */
+    const carrierLevel = track.melody ? 0.55 : 1;
+
+    /* פעימות איזוכרוניות — LFO בתדר הביט, על התדר בלבד.
+       עומק הפעימה תלוי במה שמעליה: ביצירת תדר טהור הפעימה היא
+       כל העניין ונשארת חזקה כשהייתה, וביצירה מלודית היא רק
+       הבסיס — שם היא רדודה, כדי שלא תקצוץ את המוזיקה. */
     if (mode === 'isochronic') {
-      const depth = 0.85;
-      vg.gain.setTargetAtTime(1 - depth / 2, now, FADE_IN / 3);
+      const depth = track.pulseDepth ?? (track.melody ? 0.45 : 0.85);
+      carrier.gain.setValueAtTime(carrierLevel * (1 - depth / 2), now);
       const lfo = ctx.createOscillator();
       lfo.frequency.value = track.beat;
       const lfoGain = ctx.createGain();
-      lfoGain.gain.value = depth / 2;
-      lfo.connect(lfoGain).connect(vg.gain);
+      lfoGain.gain.value = carrierLevel * depth / 2;
+      lfo.connect(lfoGain).connect(carrier.gain);
       lfo.start();
       voice.oscillators.push(lfo);
       voice.nodes.push(lfoGain);
     } else {
+      carrier.gain.setValueAtTime(carrierLevel, now);
       /* LFO נשימה — גלי עוצמה איטיים שמונעים עייפות אוזן */
       const breath = ctx.createOscillator();
       breath.frequency.value = 0.07;
